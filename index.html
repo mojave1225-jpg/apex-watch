@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX WATCH — 超富裕層行動監視システム</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- SCAN LINE OVERLAY -->
+  <div class="scanline"></div>
+  <div class="noise"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-left">
+      <div class="logo-block">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">APEX<span class="accent">WATCH</span></span>
+      </div>
+      <div class="subtitle">超富裕層行動監視システム / Ultra-High-Net-Worth Behavioral Intelligence</div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><span class="dot"></span>LIVE</div>
+      <div class="timestamp" id="clock">--:--:-- UTC</div>
+    </div>
+  </header>
+
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alertBanner">
+    <div class="alert-text" id="alertText">システム起動中... データ取得開始...</div>
+  </div>
+
+  <!-- THREAT METER -->
+  <section class="threat-section">
+    <div class="threat-container">
+      <div class="threat-label-top">APEX DOOMSDAY INDEX™</div>
+      <div class="threat-meter-wrap">
+        <div class="threat-arc">
+          <svg viewBox="0 0 300 160" class="arc-svg">
+            <defs>
+              <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00ff88"/>
+                <stop offset="40%" style="stop-color:#ffdd00"/>
+                <stop offset="70%" style="stop-color:#ff8800"/>
+                <stop offset="100%" style="stop-color:#ff0044"/>
+              </linearGradient>
+            </defs>
+            <!-- background arc -->
+            <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
+            <!-- colored arc -->
+            <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
+            <!-- active arc -->
+            <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
+              stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
+            <!-- needle -->
+            <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+              transform-origin="150 150" style="transition: transform 2s ease"/>
+            <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
+            <!-- ticks -->
+            <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
+            <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
+            <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
+          </svg>
+        </div>
+        <div class="threat-score-block">
+          <div class="score-value" id="mainScore">--</div>
+          <div class="score-label" id="threatLabel">計算中...</div>
+        </div>
+      </div>
+      <div class="threat-sublabels">
+        <span class="sub-ok">通常</span>
+        <span class="sub-warn">警戒</span>
+        <span class="sub-danger">危険</span>
+        <span class="sub-critical">緊急</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY GRID -->
+  <main class="dashboard-grid">
+
+    <!-- 1. ASSETS -->
+    <div class="panel" id="panel-assets">
+      <div class="panel-header">
+        <span class="panel-icon">◈</span>
+        <span class="panel-title">資産逃避 / Asset Flight</span>
+        <span class="panel-status" id="status-assets">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-assets">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-assets" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">BTC価格 (USD)</span>
+          <span class="ind-value" id="btc-price">--</span>
+          <span class="ind-arrow" id="btc-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">ETH価格 (USD)</span>
+          <span class="ind-value" id="eth-price">--</span>
+          <span class="ind-arrow" id="eth-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">金価格 (USD/oz)</span>
+          <span class="ind-value" id="gold-price">--</span>
+          <span class="ind-arrow" id="gold-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">恐怖&強欲指数</span>
+          <span class="ind-value" id="fear-greed">--</span>
+          <span class="ind-arrow" id="fg-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">オフショア富 推定</span>
+          <span class="ind-value">$36.1T</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-assets"></div>
+    </div>
+
+    <!-- 2. RESIDENCY -->
+    <div class="panel" id="panel-residency">
+      <div class="panel-header">
+        <span class="panel-icon">⬡</span>
+        <span class="panel-title">居住権取得 / Residency Flight</span>
+        <span class="panel-status" id="status-residency">計算中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-residency">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-residency" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">CBI申請数 (年)</span>
+          <span class="ind-value">+38,000</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">マルタ黄金VISAキャンセル率</span>
+          <span class="ind-value">0%</span>
+          <span class="ind-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">ニュージーランドバンカー購入</span>
+          <span class="ind-value">+240%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">アラブ首長国連邦ゴールドカード</span>
+          <span class="ind-value">+127%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">スイス永住権申請</span>
+          <span class="ind-value">+89%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-residency">出典: Henley & Partners, Arton Capital 2025年報告</div>
+    </div>
+
+    <!-- 3. MEDICAL -->
+    <div class="panel" id="panel-medical">
+      <div class="panel-header">
+        <span class="panel-icon">✚</span>
+        <span class="panel-title">医療・延命 / Bio-Medical Prep</span>
+        <span class="panel-status" id="status-medical">計算中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-medical">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-medical" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">長寿研究投資 (年間)</span>
+          <span class="ind-value">$4.2B</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">老化リバーサル企業数</span>
+          <span class="ind-value">250+</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">個人用医療機材購入</span>
+          <span class="ind-value">+320%</span>
+          <span class="ind-arrow up">↑↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">プライベートICU施設</span>
+          <span class="ind-value">+45%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">冷凍保存契約 (Alcor)</span>
+          <span class="ind-value">+1,800</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-medical">Altos Labs, Calico, Unity Biotechnology 投資データ</div>
+    </div>
+
+    <!-- 4. COMMUNICATIONS -->
+    <div class="panel" id="panel-comms">
+      <div class="panel-header">
+        <span class="panel-icon">⊛</span>
+        <span class="panel-title">通信インフラ / Communications</span>
+        <span class="panel-status" id="status-comms">計算中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-comms">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-comms" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">Starlink衛星軌道数</span>
+          <span class="ind-value" id="starlink-count">7,000+</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">私設衛星端末契約</span>
+          <span class="ind-value">+890%</span>
+          <span class="ind-arrow up">↑↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">ファラデーケージ施設</span>
+          <span class="ind-value">+156%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">暗号通信デバイス出荷</span>
+          <span class="ind-value">+267%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">オフグリッド通信ノード</span>
+          <span class="ind-value">+340%</span>
+          <span class="ind-arrow up">↑↑↑</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-comms">SpaceX公開データ・通信業界レポート</div>
+    </div>
+
+    <!-- 5. MOBILITY -->
+    <div class="panel" id="panel-mobility">
+      <div class="panel-header">
+        <span class="panel-icon">▲</span>
+        <span class="panel-title">移動手段 / Escape Mobility</span>
+        <span class="panel-status" id="status-mobility">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-mobility">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-mobility" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">プライベートジェット登録増加</span>
+          <span class="ind-value" id="jet-count">+28%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">スーパーヨット発注数</span>
+          <span class="ind-value">+45%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">長距離ヘリコプター購入</span>
+          <span class="ind-value">+67%</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">地下バンカー移動用車両</span>
+          <span class="ind-value">+190%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">防弾SUV注文 (G-class等)</span>
+          <span class="ind-value">待機リスト 2年</span>
+          <span class="ind-arrow danger">!</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-mobility">GAMA・SuperYacht Times・ADS-Bデータ</div>
+    </div>
+
+    <!-- 6. SECURITY -->
+    <div class="panel" id="panel-security">
+      <div class="panel-header">
+        <span class="panel-icon">⬡</span>
+        <span class="panel-title">警備強化 / Private Security</span>
+        <span class="panel-status" id="status-security">計算中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-security">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-security" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">民間警備市場規模</span>
+          <span class="ind-value">$376B</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">元特殊部隊雇用 (PMC)</span>
+          <span class="ind-value">+145%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">バンカー建設会社受注</span>
+          <span class="ind-value">+500%</span>
+          <span class="ind-arrow up">↑↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">AI監視システム導入</span>
+          <span class="ind-value">+230%</span>
+          <span class="ind-arrow up">↑↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">地下シェルター準備期間</span>
+          <span class="ind-value">5年分備蓄</span>
+          <span class="ind-arrow danger">!</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-security">Allied Market Research・Vivos・xPoint報告</div>
+    </div>
+
+  </main>
+
+  <!-- NEWS FEED -->
+  <section class="news-section">
+    <div class="news-header">
+      <span class="news-title">◈ SIGNAL INTELLIGENCE FEED — リアルタイムシグナル</span>
+      <span class="news-refresh" id="newsRefresh">更新中...</span>
+    </div>
+    <div class="news-ticker-wrap">
+      <div class="news-ticker" id="newsTicker">
+        <span class="ticker-item">接続中...</span>
+      </div>
+    </div>
+    <div class="news-grid" id="newsGrid">
+      <div class="news-placeholder">ニュースデータ取得中...</div>
+    </div>
+  </section>
+
+  <!-- WORLD MAP SECTION -->
+  <section class="map-section">
+    <div class="map-header-row">
+      <span>◈ グローバル脅威マップ — 超富裕層活動集中地域</span>
+      <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
+    </div>
+    <div class="map-container" id="mapContainer">
+      <!-- D3 world map rendered by map.js -->
+    </div>
+    <div class="map-legend">
+      <span class="legend-item red">● 緊急 (移住急増・バンカー建設)</span>
+      <span class="legend-item orange">● 危険 (資産逃避・PMC雇用)</span>
+      <span class="legend-item yellow">● 警戒 (口座開設・資金流入)</span>
+    </div>
+    <!-- Tooltip -->
+    <div class="map-tooltip" id="mapTooltip"></div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="timeline-section">
+    <div class="timeline-header">◈ APEX EVENT TIMELINE — 直近シグナル年表</div>
+    <div class="timeline-scroll">
+      <div class="timeline-track" id="timelineTrack"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-left">
+      APEX WATCH v2.6.14 | データソース: CoinGecko API, Alternative.me, Henley & Partners, GAMA, SpaceX, Allied Market Research, Vivos Group, Arton Capital
+    </div>
+    <div class="footer-right">
+      免責事項: このサイトは公開データの集計・教育目的であり、特定の人物・組織を標的にするものではありません
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+  <script src="data.js"></script>
+  <script src="map.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
