@@ -130,7 +130,7 @@ html, body {
   grid-template-columns: 1fr 3fr;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
-  min-height: 580px;
+  min-height: max(780px, calc(100vh - 120px));
 }
 
 /* ── LEFT PANEL: flex column, meter top / youtube bottom ── */
