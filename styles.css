@@ -502,6 +502,144 @@ html, body {
   line-height: 1.4;
 }
 
+/* ── MILITARY PANEL HIGHLIGHT ── */
+.panel-military-highlight {
+  border-top: 2px solid rgba(255,0,68,0.4);
+  transition: box-shadow 0.5s ease;
+}
+
+/* ── MILITARY SECTION ── */
+.military-section {
+  background: #04060f;
+  border-top: 2px solid rgba(255,0,68,0.3);
+  padding: 20px 24px;
+}
+.mil-section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+}
+.mil-section-title {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent-red); letter-spacing: 2px;
+}
+.mil-blink { animation: blink 0.8s step-end infinite; }
+
+.mil-section-links { display: flex; gap: 10px; flex-wrap: wrap; }
+.mil-ext-link {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 5px 12px; border-radius: 3px; text-decoration: none;
+  border: 1px solid; transition: background 0.2s;
+  letter-spacing: 1px;
+}
+.mil-ext-link.fr24  { color: #ff8800; border-color: rgba(255,136,0,0.4); }
+.mil-ext-link.mt    { color: #00ccff; border-color: rgba(0,204,255,0.4); }
+.mil-ext-link.adsbx { color: #00ff88; border-color: rgba(0,255,136,0.4); }
+.mil-ext-link:hover { background: rgba(255,255,255,0.05); }
+
+/* ── ZONE GRID ── */
+.mil-zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px; background: var(--border);
+  margin-bottom: 20px;
+}
+.mil-zone-card {
+  background: #060a1a; padding: 14px;
+  border-left: 3px solid var(--border);
+  transition: border-color 0.5s;
+}
+.mil-zone-card[data-level="1"] { border-left-color: var(--accent-yellow); }
+.mil-zone-card[data-level="2"] { border-left-color: var(--accent-orange);
+  background: rgba(255,136,0,0.04); }
+.mil-zone-card[data-level="3"] { border-left-color: var(--accent-red);
+  background: rgba(255,0,68,0.06); animation: cardFlash 2s ease-in-out infinite; }
+@keyframes cardFlash {
+  0%,100%{ background: rgba(255,0,68,0.06); }
+  50%{ background: rgba(255,0,68,0.12); }
+}
+
+.mil-zone-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mil-zone-icon { font-size: 14px; color: var(--accent-orange); }
+.mil-zone-name {
+  font-family: var(--font-ui); font-size: 12px; font-weight: 600;
+  color: var(--text-primary); flex: 1; letter-spacing: 1px;
+}
+.mil-zone-level {
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 2px; letter-spacing: 1px;
+}
+.mil-zone-level.lv0 { color: var(--accent-green); border: 1px solid rgba(0,255,136,0.3); }
+.mil-zone-level.lv1 { color: var(--accent-yellow); border: 1px solid rgba(255,221,0,0.3); }
+.mil-zone-level.lv2 { color: var(--accent-orange); border: 1px solid rgba(255,136,0,0.4); }
+.mil-zone-level.lv3 {
+  color: var(--accent-red); border: 1px solid rgba(255,0,68,0.5);
+  animation: blink 0.6s step-end infinite;
+}
+
+.mil-zone-count-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.mil-zone-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+.mil-zone-count { font-family: var(--font-mono); font-size: 18px; font-weight: 700; }
+
+.mil-zone-navy {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--accent-blue); margin-bottom: 8px; line-height: 1.4;
+}
+
+.mil-aircraft-list { margin-top: 6px; }
+.mil-aircraft-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 3px 0; border-bottom: 1px solid rgba(26,42,74,0.4);
+  font-family: var(--font-mono); font-size: 10px;
+}
+.mil-cs { color: var(--accent-yellow); font-weight: 600; }
+.mil-country { color: var(--text-secondary); }
+.mil-alt { color: var(--text-dim); text-align: right; }
+.mil-more { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); margin-top: 4px; }
+.mil-no-detect { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); font-style: italic; }
+
+/* ── NAVAL TABLE ── */
+.mil-naval-section { margin-top: 20px; }
+.mil-naval-title {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent-blue); letter-spacing: 2px; margin-bottom: 12px;
+}
+.mil-naval-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px; background: var(--border);
+}
+.mil-naval-card {
+  background: #060a1a; padding: 12px;
+  border-left: 3px solid;
+}
+.mil-naval-card.lv0 { border-left-color: var(--accent-green); }
+.mil-naval-card.lv1 { border-left-color: var(--accent-yellow); }
+.mil-naval-card.lv2 { border-left-color: var(--accent-orange); background: rgba(255,136,0,0.04); }
+.mil-naval-card.lv3 { border-left-color: var(--accent-red); background: rgba(255,0,68,0.06); }
+
+.mil-ship-name {
+  font-family: var(--font-ui); font-size: 13px; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 3px;
+}
+.mil-ship-type { font-family: var(--font-mono); font-size: 9px; color: var(--text-secondary); margin-bottom: 5px; }
+.mil-ship-loc  { font-family: var(--font-mono); font-size: 11px; color: var(--accent-orange); margin-bottom: 4px; }
+.mil-ship-note { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+
+/* ── DATA SOURCE ── */
+.mil-datasource {
+  margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-dim); line-height: 1.6;
+}
+
 /* ── FOOTER ── */
 .site-footer {
   background: var(--bg-secondary);

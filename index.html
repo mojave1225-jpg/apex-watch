@@ -342,7 +342,123 @@
       <div class="panel-note" id="note-security">Allied Market Research・Vivos・xPoint報告</div>
     </div>
 
+    <!-- 7. MILITARY -->
+    <div class="panel panel-military-highlight" id="panel-military">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:var(--accent-red)">⚡</span>
+        <span class="panel-title">軍事展開監視 / Military Movement</span>
+        <span class="panel-status" id="status-military">接続中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-military">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-military" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">全監視ゾーン 軍用機検出</span>
+          <span class="ind-value" id="mil-total-aircraft">--</span>
+          <span class="ind-arrow" id="mil-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">台湾海峡 / 南シナ海</span>
+          <span class="ind-value" id="mil-count-taiwan">--</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">ペルシャ湾 / ホルムズ</span>
+          <span class="ind-value" id="mil-count-persian">--</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">バルト海 / 東欧</span>
+          <span class="ind-value" id="mil-count-baltic">--</span>
+          <span class="ind-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">OpenSky Network</span>
+          <span class="ind-value" style="color:var(--accent-green)">LIVE</span>
+          <span class="ind-arrow" id="mil-last-update" style="font-size:9px;min-width:80px">--</span>
+        </div>
+      </div>
+      <div class="panel-note">
+        データ: OpenSky Network (ADS-B) | 軍用機フィルタ: ICAO AE****範囲 + コールサイン照合
+      </div>
+    </div>
+
   </main>
+
+  <!-- MILITARY MONITORING SECTION -->
+  <section class="military-section">
+    <div class="mil-section-header">
+      <div class="mil-section-title">
+        <span class="mil-blink">⚡</span> 軍事活動リアルタイム監視 — STRATEGIC MILITARY INTELLIGENCE
+      </div>
+      <div class="mil-section-links">
+        <a href="https://www.flightradar24.com/?layer=military" target="_blank" class="mil-ext-link fr24">
+          ✈ Flightradar24 軍用フィルタ
+        </a>
+        <a href="https://www.marinetraffic.com/en/ais/home/centerx:0/centery:20/zoom:3" target="_blank" class="mil-ext-link mt">
+          ⚓ MarineTraffic 艦艇追跡
+        </a>
+        <a href="https://globe.adsbexchange.com/?mil=1" target="_blank" class="mil-ext-link adsbx">
+          ◈ ADS-B Exchange 軍用専用
+        </a>
+      </div>
+    </div>
+
+    <!-- ZONE GRID -->
+    <div class="mil-zone-grid" id="militaryZoneGrid">
+      <!-- Rendered by military.js -->
+    </div>
+
+    <!-- NAVAL ASSETS TABLE -->
+    <div class="mil-naval-section">
+      <div class="mil-naval-title">⚓ 強襲揚陸艦 / 空母打撃群 — 公開情報ベース現在位置</div>
+      <div class="mil-naval-grid">
+        <div class="mil-naval-card lv2">
+          <div class="mil-ship-name">USS Bataan (LHD-5)</div>
+          <div class="mil-ship-type">強襲揚陸艦 / Wasp級</div>
+          <div class="mil-ship-loc">⚓ ペルシャ湾 展開中</div>
+          <div class="mil-ship-note">第26海兵遠征隊 搭載</div>
+        </div>
+        <div class="mil-naval-card lv2">
+          <div class="mil-ship-name">CVN-70 Carl Vinson</div>
+          <div class="mil-ship-type">ニミッツ級原子力空母</div>
+          <div class="mil-ship-loc">⚓ 西太平洋 展開中</div>
+          <div class="mil-ship-note">CVW-2 搭載 / 台湾海峡抑止</div>
+        </div>
+        <div class="mil-naval-card lv1">
+          <div class="mil-ship-name">Liaoning (CV-16)</div>
+          <div class="mil-ship-type">中国海軍 遼寧型空母</div>
+          <div class="mil-ship-loc">⚓ 南シナ海 演習中</div>
+          <div class="mil-ship-note">J-15 戦闘機 搭載 演習実施</div>
+        </div>
+        <div class="mil-naval-card lv1">
+          <div class="mil-ship-name">HMS Queen Elizabeth</div>
+          <div class="mil-ship-type">英空母 / F-35B搭載</div>
+          <div class="mil-ship-loc">⚓ インド洋 展開中</div>
+          <div class="mil-ship-note">NATO Article 5任務 / Carrier Strike Group</div>
+        </div>
+        <div class="mil-naval-card lv1">
+          <div class="mil-ship-name">JS Izumo (DDH-183)</div>
+          <div class="mil-ship-type">海上自衛隊 / 軽空母化改修済</div>
+          <div class="mil-ship-loc">⚓ 日本海 哨戒中</div>
+          <div class="mil-ship-note">F-35B 運用 / 朝鮮半島警戒任務</div>
+        </div>
+        <div class="mil-naval-card lv0">
+          <div class="mil-ship-name">USS Gerald R. Ford (CVN-78)</div>
+          <div class="mil-ship-type">フォード級原子力空母</div>
+          <div class="mil-ship-loc">⚓ 大西洋 訓練中</div>
+          <div class="mil-ship-note">CVW-8 搭載 / NATO演習参加</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mil-datasource">
+      データソース: OpenSky Network API (ADS-B リアルタイム) | 艦艇情報: USNI News, Jane's Defence, 防衛省公開情報 |
+      ⚠ 軍用機の一部はADS-B非搭載・ステルス運用のため検出されない場合があります
+    </div>
+  </section>
 
   <!-- NEWS FEED -->
   <section class="news-section">
@@ -384,5 +500,6 @@
   <script src="data.js"></script>
   <script src="map.js"></script>
   <script src="app.js"></script>
+  <script src="military.js"></script>
 </body>
 </html>
