@@ -502,6 +502,194 @@ html, body {
   line-height: 1.4;
 }
 
+/* ── BIZJET PANEL ── */
+.panel-bizjet-highlight {
+  border-top: 2px solid rgba(255,136,0,0.4);
+  transition: box-shadow 0.5s ease;
+}
+
+/* ── BIZJET SECTION ── */
+.bizjet-section {
+  background: #050810;
+  border-top: 2px solid rgba(255,136,0,0.3);
+  padding: 20px 24px;
+}
+.bj-section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 18px;
+}
+.bj-section-title {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent-orange); letter-spacing: 2px;
+}
+.bj-section-links { display: flex; gap: 10px; flex-wrap: wrap; }
+.bj-ext-link {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 5px 12px; border-radius: 3px; text-decoration: none;
+  border: 1px solid; transition: background 0.2s; letter-spacing: 1px;
+}
+.bj-ext-link.fr24  { color: #ff8800; border-color: rgba(255,136,0,0.4); }
+.bj-ext-link.adsbx { color: #00ff88; border-color: rgba(0,255,136,0.4); }
+.bj-ext-link.osk   { color: #00ccff; border-color: rgba(0,204,255,0.4); }
+.bj-ext-link:hover { background: rgba(255,255,255,0.05); }
+
+/* ── ESCAPE FLOW METER ── */
+.bj-escape-bar-section {
+  background: rgba(255,136,0,0.04);
+  border: 1px solid rgba(255,136,0,0.15);
+  border-radius: 4px; padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.bj-escape-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-secondary); margin-bottom: 12px;
+}
+.bj-escape-title { color: var(--accent-orange); letter-spacing: 2px; }
+
+.bj-flow-visual {
+  display: flex; align-items: center; gap: 12px;
+}
+.bj-flow-hub, .bj-flow-haven {
+  text-align: center; min-width: 80px;
+}
+.bj-flow-hub span:first-child,
+.bj-flow-haven span:first-child {
+  font-family: var(--font-mono); font-size: 28px; font-weight: 700;
+  color: var(--accent-orange); display: block; line-height: 1;
+}
+.bj-flow-airports {
+  font-family: var(--font-mono); font-size: 8px;
+  color: var(--text-dim); margin-top: 4px;
+}
+.bj-flow-arrow-track {
+  flex: 1; height: 24px; background: rgba(255,136,0,0.1);
+  border-radius: 12px; position: relative; overflow: hidden;
+}
+.bj-flow-arrow-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, rgba(255,136,0,0.2), rgba(255,136,0,0.5));
+  border-radius: 12px; width: 50%;
+  transition: width 1.5s ease;
+}
+.bj-flow-plane {
+  position: absolute; font-size: 14px;
+  top: 50%; transform: translateY(-50%);
+  left: 48%; color: var(--accent-orange);
+  animation: planeFly 4s ease-in-out infinite;
+}
+@keyframes planeFly {
+  0%,100%{ left: 20%; opacity: 0.6; }
+  50%{ left: 70%; opacity: 1; }
+}
+
+/* ── AIRPORT BREAKDOWN ── */
+.bj-airport-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px; background: var(--border);
+  margin-bottom: 20px;
+}
+.bj-airport-row {
+  background: #060a1a; padding: 12px 14px;
+  border-left: 3px solid var(--border);
+  transition: border-color 0.5s, background 0.5s;
+}
+.bj-airport-row[data-level="1"] { border-left-color: var(--accent-yellow); }
+.bj-airport-row[data-level="2"] {
+  border-left-color: var(--accent-orange);
+  background: rgba(255,136,0,0.05);
+}
+.bj-airport-row[data-level="3"] {
+  border-left-color: var(--accent-red);
+  background: rgba(255,0,68,0.07);
+  animation: cardFlash 1.5s ease-in-out infinite;
+}
+.bj-ap-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+}
+.bj-ap-flag {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent-blue); font-weight: 700;
+  border: 1px solid rgba(0,204,255,0.3); padding: 1px 5px; border-radius: 2px;
+}
+.bj-ap-name {
+  font-family: var(--font-ui); font-size: 12px; font-weight: 600;
+  color: var(--text-primary); flex: 1;
+}
+.bj-ap-code {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+}
+.bj-ap-role {
+  font-family: var(--font-mono); font-size: 9px; padding: 2px 6px;
+  border-radius: 2px; letter-spacing: 1px;
+}
+.bj-ap-role.hub   { color: var(--accent-red);  border: 1px solid rgba(255,0,68,0.3); }
+.bj-ap-role.haven { color: var(--accent-green); border: 1px solid rgba(0,255,136,0.3); }
+
+.bj-ap-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 4px; margin-bottom: 6px;
+}
+.bj-stat { text-align: center; }
+.bj-stat-label {
+  font-family: var(--font-mono); font-size: 8px;
+  color: var(--text-dim); display: block; margin-bottom: 2px;
+}
+.bj-stat-val {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text-primary); font-weight: 600;
+}
+.bj-ap-note {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-dim); line-height: 1.4;
+}
+
+/* ── OPERATOR LIST ── */
+.bj-ops-section { margin-bottom: 16px; }
+.bj-ops-title {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent-blue); letter-spacing: 2px; margin-bottom: 10px;
+}
+.bj-ops-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px; background: var(--border);
+  margin-bottom: 8px;
+}
+.bj-op-row {
+  background: #060a1a; padding: 8px 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.bj-op-prefix {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  color: var(--accent-yellow); min-width: 36px;
+}
+.bj-op-name { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); flex: 1; }
+.bj-op-tier {
+  font-family: var(--font-mono); font-size: 9px; padding: 1px 5px;
+  border-radius: 2px; border: 1px solid;
+}
+.bj-op-tier.red    { color: var(--accent-red);    border-color: rgba(255,0,68,0.3); }
+.bj-op-tier.orange { color: var(--accent-orange); border-color: rgba(255,136,0,0.3); }
+.bj-op-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); }
+.bj-ops-note {
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); line-height: 1.6;
+}
+.bj-no-data {
+  background: #060a1a; padding: 12px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+  font-style: italic; grid-column: 1/-1;
+}
+.bj-datasource {
+  margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-dim); line-height: 1.6;
+}
+
 /* ── MILITARY PANEL HIGHLIGHT ── */
 .panel-military-highlight {
   border-top: 2px solid rgba(255,0,68,0.4);

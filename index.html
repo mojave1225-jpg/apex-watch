@@ -385,7 +385,115 @@
       </div>
     </div>
 
+    <!-- 8. BIZJET -->
+    <div class="panel panel-bizjet-highlight" id="panel-bizjet">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:var(--accent-orange)">✈</span>
+        <span class="panel-title">逃避ジェット監視 / BizJet Escape</span>
+        <span class="panel-status" id="status-bizjet">接続中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-bizjet">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-bizjet" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">出発ハブ 総機数</span>
+          <span class="ind-value" id="bj-hub-count">--</span>
+          <span class="ind-arrow" id="bj-hub-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">セーフヘイブン 着陸数</span>
+          <span class="ind-value" id="bj-haven-count">--</span>
+          <span class="ind-arrow" id="bj-haven-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">逃避比率 (避難地/拠点)</span>
+          <span class="ind-value" id="bj-escape-ratio">--</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">UHNWI オペレーター検出</span>
+          <span class="ind-value" id="bj-ops-count">--</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最終更新</span>
+          <span class="ind-value" id="bj-last-update" style="font-size:10px">--</span>
+          <span class="ind-arrow" style="color:var(--accent-green)">◈</span>
+        </div>
+      </div>
+      <div class="panel-note">
+        OpenSky Network | 8空港監視 | NetJets/VistaJet/Flexjet他 検出
+      </div>
+    </div>
+
   </main>
+
+  <!-- BIZJET ESCAPE MONITORING SECTION -->
+  <section class="bizjet-section">
+    <div class="bj-section-header">
+      <div class="bj-section-title">
+        ✈ プライベートジェット逃避監視 — HNWI ESCAPE FLIGHT INTELLIGENCE
+      </div>
+      <div class="bj-section-links">
+        <a href="https://www.flightradar24.com/data/aircraft" target="_blank" class="bj-ext-link fr24">
+          ✈ Flightradar24
+        </a>
+        <a href="https://globe.adsbexchange.com/" target="_blank" class="bj-ext-link adsbx">
+          ◈ ADS-B Exchange
+        </a>
+        <a href="https://opensky-network.org/network/explorer" target="_blank" class="bj-ext-link osk">
+          ⊛ OpenSky Explorer
+        </a>
+      </div>
+    </div>
+
+    <!-- ESCAPE RATIO BAR -->
+    <div class="bj-escape-bar-section">
+      <div class="bj-escape-label">
+        <span>出発ハブ活動</span>
+        <span class="bj-escape-title">逃避フローメーター</span>
+        <span>セーフヘイブン着陸</span>
+      </div>
+      <div class="bj-flow-visual">
+        <div class="bj-flow-hub">
+          <span id="bj-flow-hub-val">--</span>
+          <div class="bj-flow-airports">KTEB · KVNY · EGLF · LSZH</div>
+        </div>
+        <div class="bj-flow-arrow-track">
+          <div class="bj-flow-arrow-fill" id="bj-flow-fill"></div>
+          <span class="bj-flow-plane" id="bj-flow-plane">✈</span>
+        </div>
+        <div class="bj-flow-haven">
+          <span id="bj-flow-haven-val">--</span>
+          <div class="bj-flow-airports">LSGG · OMDB · WSSS · NZAA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AIRPORT BREAKDOWN TABLE -->
+    <div class="bj-airport-grid" id="bjAirportTable">
+      <!-- Rendered by bizjet.js -->
+    </div>
+
+    <!-- OPERATOR DETECTION -->
+    <div class="bj-ops-section">
+      <div class="bj-ops-title">◈ 検出オペレーター — HNWI Charter Activity</div>
+      <div class="bj-ops-list" id="bj-ops-list">
+        <div class="bj-no-data">データ取得中...</div>
+      </div>
+      <div class="bj-ops-note">
+        EJA=NetJets(バフェット系) · LXJ=Flexjet · VJT=VistaJet · WSJ=Wheels Up · TVJ=TAG Aviation(ジュネーブ)
+      </div>
+    </div>
+
+    <div class="bj-datasource">
+      データ: OpenSky Network REST API (ADS-B リアルタイム・8分更新) |
+      スパイク検知: ローリング平均比較（閾値 ×1.4/×1.8/×2.5）|
+      ⚠ プライベートフライトの一部はNOTAM・フライトブロックにより非表示の場合あり
+    </div>
+  </section>
 
   <!-- MILITARY MONITORING SECTION -->
   <section class="military-section">
@@ -501,5 +609,6 @@
   <script src="map.js"></script>
   <script src="app.js"></script>
   <script src="military.js"></script>
+  <script src="bizjet.js"></script>
 </body>
 </html>
