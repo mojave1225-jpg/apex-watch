@@ -185,7 +185,7 @@ function recalcMain() {
 
   // Needle: 0=-90deg, 100=+90deg
   const deg = -90 + (total / 100) * 180;
-  document.getElementById('needle').setAttribute('transform', `rotate(${deg}, 150, 150)`);
+  document.getElementById('needle').style.transform = `rotate(${deg}deg)`;
 
   // Alert banner
   updateAlertBanner(total);

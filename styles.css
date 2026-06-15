@@ -435,6 +435,13 @@ html, body {
 .tt-footer { margin-top: 6px; color: var(--text-dim); font-size: 9px;
   border-top: 1px solid var(--border); padding-top: 5px; }
 
+/* ── NEEDLE ── */
+#needle {
+  transform-origin: 150px 150px;
+  transform: rotate(-90deg);
+  transition: transform 2s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
 /* ── TIMELINE ── */
 .timeline-section {
   background: var(--bg-secondary);
