@@ -212,12 +212,45 @@ html, body {
   color: var(--text-secondary); padding: 4px 10px;
   background: rgba(255,255,255,0.03);
   border-bottom: 1px solid var(--border);
-  letter-spacing: 1px;
+  letter-spacing: 1px; flex-shrink: 0;
 }
 .yt-iframe {
   flex: 1; width: 100%; border: none;
   display: block; min-height: 0;
 }
+.yt-loading {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-secondary);
+}
+.yt-loading-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-red);
+  animation: blink 0.8s step-end infinite;
+  display: inline-block;
+}
+.yt-error {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; padding: 12px;
+  background: rgba(255,0,68,0.04);
+}
+.yt-error-icon {
+  font-size: 20px; color: var(--accent-red); opacity: 0.5;
+}
+.yt-error-msg {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-secondary); text-align: center;
+}
+.yt-error-link {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent-red); text-decoration: none;
+  border: 1px solid rgba(255,0,68,0.4);
+  padding: 4px 10px; border-radius: 2px;
+  transition: background 0.2s;
+}
+.yt-error-link:hover { background: rgba(255,0,68,0.1); }
 
 /* ── LOGO RESIZE for longer name ── */
 .logo-text { font-size: 17px !important; letter-spacing: 2px !important; }
