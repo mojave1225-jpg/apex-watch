@@ -33,50 +33,65 @@
     <div class="alert-text" id="alertText">システム起動中... データ取得開始...</div>
   </div>
 
-  <!-- THREAT METER -->
-  <section class="threat-section">
-    <div class="threat-container">
-      <div class="threat-label-top">APEX DOOMSDAY INDEX™</div>
-      <div class="threat-meter-wrap">
-        <div class="threat-arc">
-          <svg viewBox="0 0 300 160" class="arc-svg">
-            <defs>
-              <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#00ff88"/>
-                <stop offset="40%" style="stop-color:#ffdd00"/>
-                <stop offset="70%" style="stop-color:#ff8800"/>
-                <stop offset="100%" style="stop-color:#ff0044"/>
-              </linearGradient>
-            </defs>
-            <!-- background arc -->
-            <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
-            <!-- colored arc -->
-            <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
-            <!-- active arc -->
-            <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
-              stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
-            <!-- needle -->
-            <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
-            <!-- ticks -->
-            <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
-            <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
-            <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
-          </svg>
+  <!-- TOP ROW: THREAT METER + WORLD MAP (1:3) -->
+  <div class="top-row">
+
+    <!-- THREAT METER -->
+    <section class="threat-section">
+      <div class="threat-container">
+        <div class="threat-label-top">APEX DOOMSDAY INDEX™</div>
+        <div class="threat-meter-wrap">
+          <div class="threat-arc">
+            <svg viewBox="0 0 300 160" class="arc-svg">
+              <defs>
+                <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00ff88"/>
+                  <stop offset="40%" style="stop-color:#ffdd00"/>
+                  <stop offset="70%" style="stop-color:#ff8800"/>
+                  <stop offset="100%" style="stop-color:#ff0044"/>
+                </linearGradient>
+              </defs>
+              <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
+              <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
+              <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
+                stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
+              <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
+              <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
+              <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
+              <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
+            </svg>
+          </div>
+          <div class="threat-score-block">
+            <div class="score-value" id="mainScore">--</div>
+            <div class="score-label" id="threatLabel">計算中...</div>
+          </div>
         </div>
-        <div class="threat-score-block">
-          <div class="score-value" id="mainScore">--</div>
-          <div class="score-label" id="threatLabel">計算中...</div>
+        <div class="threat-sublabels">
+          <span class="sub-ok">通常</span>
+          <span class="sub-warn">警戒</span>
+          <span class="sub-danger">危険</span>
+          <span class="sub-critical">緊急</span>
         </div>
       </div>
-      <div class="threat-sublabels">
-        <span class="sub-ok">通常</span>
-        <span class="sub-warn">警戒</span>
-        <span class="sub-danger">危険</span>
-        <span class="sub-critical">緊急</span>
+    </section>
+
+    <!-- WORLD MAP (moved here) -->
+    <section class="map-section">
+      <div class="map-header-row">
+        <span>◈ グローバル脅威マップ — 超富裕層活動集中地域</span>
+        <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
       </div>
-    </div>
-  </section>
+      <div class="map-container" id="mapContainer"></div>
+      <div class="map-legend">
+        <span class="legend-item red">● 緊急</span>
+        <span class="legend-item orange">● 危険</span>
+        <span class="legend-item yellow">● 警戒</span>
+      </div>
+      <div class="map-tooltip" id="mapTooltip"></div>
+    </section>
+
+  </div>
 
   <!-- CATEGORY GRID -->
   <main class="dashboard-grid">
@@ -345,23 +360,6 @@
     </div>
   </section>
 
-  <!-- WORLD MAP SECTION -->
-  <section class="map-section">
-    <div class="map-header-row">
-      <span>◈ グローバル脅威マップ — 超富裕層活動集中地域</span>
-      <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
-    </div>
-    <div class="map-container" id="mapContainer">
-      <!-- D3 world map rendered by map.js -->
-    </div>
-    <div class="map-legend">
-      <span class="legend-item red">● 緊急 (移住急増・バンカー建設)</span>
-      <span class="legend-item orange">● 危険 (資産逃避・PMC雇用)</span>
-      <span class="legend-item yellow">● 警戒 (口座開設・資金流入)</span>
-    </div>
-    <!-- Tooltip -->
-    <div class="map-tooltip" id="mapTooltip"></div>
-  </section>
 
   <!-- TIMELINE -->
   <section class="timeline-section">
