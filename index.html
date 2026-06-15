@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APEX WATCH — 超富裕層行動監視システム</title>
+  <title>World Apocalypse Watch — 終末予兆監視システム</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -18,9 +18,9 @@
     <div class="header-left">
       <div class="logo-block">
         <span class="logo-icon">◈</span>
-        <span class="logo-text">APEX<span class="accent">WATCH</span></span>
+        <span class="logo-text">World <span class="accent">Apocalypse Watch</span></span>
       </div>
-      <div class="subtitle">超富裕層行動監視システム / Ultra-High-Net-Worth Behavioral Intelligence</div>
+      <div class="subtitle">終末予兆監視システム / World Apocalypse Early Warning System</div>
     </div>
     <div class="header-right">
       <div class="live-badge"><span class="dot"></span>LIVE</div>
@@ -36,45 +36,81 @@
   <!-- TOP ROW: THREAT METER + WORLD MAP (1:3) -->
   <div class="top-row">
 
-    <!-- THREAT METER -->
-    <section class="threat-section">
-      <div class="threat-container">
-        <div class="threat-label-top">APEX DOOMSDAY INDEX™</div>
-        <div class="threat-meter-wrap">
-          <div class="threat-arc">
-            <svg viewBox="0 0 300 160" class="arc-svg">
-              <defs>
-                <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" style="stop-color:#00ff88"/>
-                  <stop offset="40%" style="stop-color:#ffdd00"/>
-                  <stop offset="70%" style="stop-color:#ff8800"/>
-                  <stop offset="100%" style="stop-color:#ff0044"/>
-                </linearGradient>
-              </defs>
-              <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
-              <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
-              <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
-                stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
-              <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
-              <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
-              <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
-              <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
-            </svg>
+    <!-- LEFT PANEL: METER (top 50%) + YOUTUBE LIVE (bottom 50%) -->
+    <div class="left-panel">
+
+      <!-- THREAT METER -->
+      <section class="threat-section">
+        <div class="threat-container">
+          <div class="threat-label-top">DOOMSDAY INDEX™</div>
+          <div class="threat-meter-wrap">
+            <div class="threat-arc">
+              <svg viewBox="0 0 300 160" class="arc-svg">
+                <defs>
+                  <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#00ff88"/>
+                    <stop offset="40%" style="stop-color:#ffdd00"/>
+                    <stop offset="70%" style="stop-color:#ff8800"/>
+                    <stop offset="100%" style="stop-color:#ff0044"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
+                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
+                <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
+                  stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
+                <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
+                <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
+                <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
+                <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
+              </svg>
+            </div>
+            <div class="threat-score-block">
+              <div class="score-value" id="mainScore">--</div>
+              <div class="score-label" id="threatLabel">計算中...</div>
+            </div>
           </div>
-          <div class="threat-score-block">
-            <div class="score-value" id="mainScore">--</div>
-            <div class="score-label" id="threatLabel">計算中...</div>
+          <div class="threat-sublabels">
+            <span class="sub-ok">通常</span>
+            <span class="sub-warn">警戒</span>
+            <span class="sub-danger">危険</span>
+            <span class="sub-critical">緊急</span>
           </div>
         </div>
-        <div class="threat-sublabels">
-          <span class="sub-ok">通常</span>
-          <span class="sub-warn">警戒</span>
-          <span class="sub-danger">危険</span>
-          <span class="sub-critical">緊急</span>
+      </section>
+
+      <!-- YOUTUBE LIVE NEWS -->
+      <div class="news-live-panel">
+        <div class="news-live-header">
+          <span class="dot"></span>LIVE NEWS FEED
+        </div>
+        <div class="news-live-iframes">
+          <div class="yt-embed-wrap">
+            <div class="yt-embed-label">▶ LiveNOW from FOX</div>
+            <iframe
+              src="https://www.youtube.com/embed/live_stream?channel=UCahqHsTaADV8MMmj2D5i1Vg&autoplay=0&mute=1&modestbranding=1&rel=0"
+              frameborder="0"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+              class="yt-iframe"
+              title="LiveNOW from FOX">
+            </iframe>
+          </div>
+          <div class="yt-embed-wrap">
+            <div class="yt-embed-label">▶ CBS News 24/7</div>
+            <iframe
+              src="https://www.youtube.com/embed/live_stream?channel=UC8p1vwvB2H0Y-2VCdReSo9Q&autoplay=0&mute=1&modestbranding=1&rel=0"
+              frameborder="0"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+              class="yt-iframe"
+              title="CBS News">
+            </iframe>
+          </div>
         </div>
       </div>
-    </section>
+
+    </div>
 
     <!-- WORLD MAP (moved here) -->
     <section class="map-section">
