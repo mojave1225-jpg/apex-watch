@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mojave1225-jpg.github.io/apex-watch/sitemap.xml
