@@ -251,6 +251,15 @@ html, body {
   transition: background 0.2s;
 }
 .yt-error-link:hover { background: rgba(255,0,68,0.1); }
+.yt-retry-btn {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent-orange); background: transparent;
+  border: 1px solid rgba(255,136,0,0.5);
+  padding: 4px 14px; border-radius: 2px;
+  cursor: pointer; letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.yt-retry-btn:hover { background: rgba(255,136,0,0.15); }
 
 /* ── LOGO RESIZE for longer name ── */
 .logo-text { font-size: 17px !important; letter-spacing: 2px !important; }
