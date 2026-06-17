@@ -24,11 +24,11 @@ const INVIDIOUS_INSTANCES = [
 const YT_CHANNELS = [
   {
     wrapperId:   'yt-wrap-fox',
-    handle:      'livenowfox',
-    searchQuery: 'LiveNOW from FOX',
-    fallbackId:  'eOGN-0WLaiA', // updated 2026-06-17
-    label:       '▶ LiveNOW from FOX',
-    youtubeUrl:  'https://www.youtube.com/@livenowfox/live',
+    handle:      'ABCNewsLive',
+    searchQuery: 'ABC News Live',
+    fallbackId:  'w_Ma8oQLmSM', // ABC News Live 24/7
+    label:       '▶ ABC News Live',
+    youtubeUrl:  'https://www.youtube.com/@ABCNewsLive/live',
   },
   {
     wrapperId:   'yt-wrap-cbs',
