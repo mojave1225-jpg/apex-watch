@@ -95,25 +95,42 @@ async function initWorldMap() {
 
   const tooltip = document.getElementById('mapTooltip');
 
+  // デバッグ: 実際のIDフォーマットを確認
+  if (countries.features.length > 0) {
+    const sample = countries.features.slice(0, 5).map(f => `${f.id}(${typeof f.id})`);
+    console.log('[APEX MAP] country id samples:', sample.join(', '));
+  }
+
+  // IDを文字列・数値どちらでも照合できるルックアップ
+  function getConflict(d) {
+    return CONFLICT_ZONES[+d.id]          // 数値キー照合
+        || CONFLICT_ZONES[d.id]           // そのまま照合
+        || CONFLICT_ZONES[String(d.id).replace(/^0+/, '')] // 先頭ゼロ除去
+        || null;
+  }
+
   // Draw countries (紛争地域を色分け)
   svg.selectAll('.country')
     .data(countries.features)
     .join('path')
     .attr('class', 'country')
     .attr('d', pathGen)
-    .each(function(d) {
-      const c = CONFLICT_ZONES[+d.id];
-      if (!c) return;
-      const cfg = CONFLICT_CFG[c.level];
-      // .style() でインラインCSSを設定 → CSSクラスより優先度が高い
-      d3.select(this)
-        .style('fill', cfg.fill)
-        .style('stroke', cfg.stroke)
-        .style('stroke-width', c.level === 4 ? '2px' : c.level === 3 ? '1.4px' : '1px')
-        .style('cursor', 'pointer');
+    .style('fill', d => {
+      const c = getConflict(d);
+      return c ? CONFLICT_CFG[c.level].fill : null;
     })
+    .style('stroke', d => {
+      const c = getConflict(d);
+      return c ? CONFLICT_CFG[c.level].stroke : null;
+    })
+    .style('stroke-width', d => {
+      const c = getConflict(d);
+      if (!c) return null;
+      return c.level === 4 ? '2px' : c.level === 3 ? '1.4px' : '1px';
+    })
+    .style('cursor', d => getConflict(d) ? 'pointer' : null)
     .on('mouseenter', function(event, d) {
-      const c = CONFLICT_ZONES[+d.id];
+      const c = getConflict(d);
       if (!c) return;
       d3.select(this).style('fill', CONFLICT_CFG[c.level].fillHover);
       const cfg = CONFLICT_CFG[c.level];
@@ -131,11 +148,11 @@ async function initWorldMap() {
       positionTooltip(event);
     })
     .on('mousemove', function(event, d) {
-      if (!CONFLICT_ZONES[+d.id]) return;
+      if (!getConflict(d)) return;
       positionTooltip(event);
     })
     .on('mouseleave', function(event, d) {
-      const c = CONFLICT_ZONES[+d.id];
+      const c = getConflict(d);
       if (!c) return;
       d3.select(this).style('fill', CONFLICT_CFG[c.level].fill);
       tooltip.classList.remove('visible');
