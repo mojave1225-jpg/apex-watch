@@ -133,7 +133,7 @@ function setEmbed(ch, videoId) {
   w.innerHTML = `
     <div class="yt-embed-label">${ch.label}</div>
     <iframe
-      src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1"
+      src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&origin=https://mojave1225-jpg.github.io"
       frameborder="0"
       allow="autoplay; autoplay; encrypted-media; picture-in-picture"
       allowfullscreen
