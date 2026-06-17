@@ -151,25 +151,28 @@ function setError(ch, reason) {
 }
 
 // ── LOAD ONE CHANNEL ──
+// Invidiousで新しいライブIDが取れた時だけ差し替え。
+// 失敗時はHTMLに書かれた既存のiframeをそのまま維持する。
 async function loadChannel(ch) {
-  setLoading(ch);
   try {
     const videoId = await findLiveVideoId(ch);
     if (videoId) {
+      // 現在表示中のiframeと同じIDなら更新不要
+      const w = getWrap(ch);
+      const existing = w?.querySelector('iframe');
+      if (existing && existing.src.includes(videoId)) return;
       setEmbed(ch, videoId);
-    } else {
-      setError(ch, 'ライブ配信が見つかりませんでした（3分後に自動再試行）');
     }
+    // videoIdが取れなければ何もしない（既存iframeを維持）
   } catch (e) {
-    setError(ch, 'データ取得エラー（3分後に自動再試行）');
+    // エラー時も既存iframeを維持
   }
 }
 
-// ── AUTO-REFRESH (every 3 min for failed channels) ──
+// ── AUTO-REFRESH (every 10 min — try to find fresher live ID) ──
 function startAutoRefresh() {
   setInterval(() => {
     YT_CHANNELS.forEach(ch => {
-      // Only retry if NOT currently showing an iframe (i.e., error state)
       const w = getWrap(ch);
       if (w && !w.querySelector('iframe')) {
         loadChannel(ch);
