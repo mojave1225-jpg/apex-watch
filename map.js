@@ -102,19 +102,20 @@ async function initWorldMap() {
     .attr('class', 'country')
     .attr('d', pathGen)
     .each(function(d) {
-      const c = CONFLICT_ZONES[+d.id];   // +d.id: 文字列→数値変換
+      const c = CONFLICT_ZONES[+d.id];
       if (!c) return;
       const cfg = CONFLICT_CFG[c.level];
+      // .style() でインラインCSSを設定 → CSSクラスより優先度が高い
       d3.select(this)
-        .attr('fill', cfg.fill)
-        .attr('stroke', cfg.stroke)
-        .attr('stroke-width', c.level === 4 ? 2.0 : c.level === 3 ? 1.4 : 1.0)
+        .style('fill', cfg.fill)
+        .style('stroke', cfg.stroke)
+        .style('stroke-width', c.level === 4 ? '2px' : c.level === 3 ? '1.4px' : '1px')
         .style('cursor', 'pointer');
     })
     .on('mouseenter', function(event, d) {
       const c = CONFLICT_ZONES[+d.id];
       if (!c) return;
-      d3.select(this).attr('fill', CONFLICT_CFG[c.level].fillHover);
+      d3.select(this).style('fill', CONFLICT_CFG[c.level].fillHover);
       const cfg = CONFLICT_CFG[c.level];
       tooltip.innerHTML = `
         <div class="tt-title" style="color:${cfg.stroke}">
@@ -136,7 +137,7 @@ async function initWorldMap() {
     .on('mouseleave', function(event, d) {
       const c = CONFLICT_ZONES[+d.id];
       if (!c) return;
-      d3.select(this).attr('fill', CONFLICT_CFG[c.level].fill);
+      d3.select(this).style('fill', CONFLICT_CFG[c.level].fill);
       tooltip.classList.remove('visible');
     });
 
