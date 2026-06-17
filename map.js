@@ -109,53 +109,61 @@ async function initWorldMap() {
         || null;
   }
 
-  // Draw countries (紛争地域を色分け)
+  // Draw countries
+  // NOTE: All fill logic is done via .attr() here — never rely on CSS class fill
+  // because CSS class rules override SVG presentation attributes, which would
+  // break conflict-zone coloring.
   svg.selectAll('.country')
     .data(countries.features)
     .join('path')
     .attr('class', 'country')
     .attr('d', pathGen)
-    .style('fill', d => {
+    .attr('fill', d => {
       const c = getConflict(d);
-      return c ? CONFLICT_CFG[c.level].fill : null;
+      return c ? CONFLICT_CFG[c.level].fill : '#0c1428';
     })
-    .style('stroke', d => {
+    .attr('stroke', d => {
       const c = getConflict(d);
-      return c ? CONFLICT_CFG[c.level].stroke : null;
+      return c ? CONFLICT_CFG[c.level].stroke : '#1e3a6a';
     })
-    .style('stroke-width', d => {
+    .attr('stroke-width', d => {
       const c = getConflict(d);
-      if (!c) return null;
-      return c.level === 4 ? '2px' : c.level === 3 ? '1.4px' : '1px';
+      if (!c) return '0.5';
+      return c.level === 4 ? '2' : c.level === 3 ? '1.4' : '1';
     })
     .style('cursor', d => getConflict(d) ? 'pointer' : null)
     .on('mouseenter', function(event, d) {
       const c = getConflict(d);
-      if (!c) return;
-      d3.select(this).style('fill', CONFLICT_CFG[c.level].fillHover);
-      const cfg = CONFLICT_CFG[c.level];
-      tooltip.innerHTML = `
-        <div class="tt-title" style="color:${cfg.stroke}">
-          ⚔ ${c.name} <span style="font-size:9px;opacity:0.7">${c.eng}</span>
-        </div>
-        <div class="tt-row">
-          <span>重篤度</span>
-          <span class="tt-val" style="color:${cfg.stroke}">${cfg.label}</span>
-        </div>
-        <div class="tt-footer">${c.desc}</div>
-      `;
-      tooltip.classList.add('visible');
-      positionTooltip(event);
+      if (c) {
+        d3.select(this).attr('fill', CONFLICT_CFG[c.level].fillHover);
+        const cfg = CONFLICT_CFG[c.level];
+        tooltip.innerHTML = `
+          <div class="tt-title" style="color:${cfg.stroke}">
+            ⚔ ${c.name} <span style="font-size:9px;opacity:0.7">${c.eng}</span>
+          </div>
+          <div class="tt-row">
+            <span>重篤度</span>
+            <span class="tt-val" style="color:${cfg.stroke}">${cfg.label}</span>
+          </div>
+          <div class="tt-footer">${c.desc}</div>
+        `;
+        tooltip.classList.add('visible');
+        positionTooltip(event);
+      } else {
+        d3.select(this).attr('fill', '#162040');
+      }
     })
     .on('mousemove', function(event, d) {
-      if (!getConflict(d)) return;
-      positionTooltip(event);
+      if (getConflict(d)) positionTooltip(event);
     })
     .on('mouseleave', function(event, d) {
       const c = getConflict(d);
-      if (!c) return;
-      d3.select(this).style('fill', CONFLICT_CFG[c.level].fill);
-      tooltip.classList.remove('visible');
+      if (c) {
+        d3.select(this).attr('fill', CONFLICT_CFG[c.level].fill);
+        tooltip.classList.remove('visible');
+      } else {
+        d3.select(this).attr('fill', '#0c1428');
+      }
     });
 
   // Country borders

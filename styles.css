@@ -458,14 +458,14 @@ html, body {
 }
 .map-container svg { display: block; width: 100%; height: auto; }
 
-/* D3 country paths */
+/* D3 country paths — fill is set exclusively via D3 attr/style, NOT CSS */
 .map-container .country {
-  fill: #0c1428;
   stroke: #1e3a6a;
   stroke-width: 0.5px;
-  transition: fill 0.2s;
+  transition: fill 0.15s;
 }
-.map-container .country:hover { fill: #162040; }
+/* Do NOT add fill here — CSS class rules would override SVG presentation attributes
+   and corrupt the conflict-zone color logic. Fill is managed entirely in map.js. */
 @keyframes conflictPulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.6; }
