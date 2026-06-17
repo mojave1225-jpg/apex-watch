@@ -65,7 +65,7 @@ async function initWorldMap() {
   // Projection: Natural Earth 1 for aesthetic look
   const projection = d3.geoNaturalEarth1()
     .scale(W / 6.4)
-    .translate([W / 2, H / 2 + H * 0.05]);
+    .translate([W / 2 + W * 0.10, H / 2 + H * 0.05]);
 
   const pathGen = d3.geoPath().projection(projection);
 
