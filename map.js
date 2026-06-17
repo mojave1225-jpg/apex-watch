@@ -102,7 +102,7 @@ async function initWorldMap() {
     .attr('class', 'country')
     .attr('d', pathGen)
     .each(function(d) {
-      const c = CONFLICT_ZONES[d.id];
+      const c = CONFLICT_ZONES[+d.id];   // +d.id: 文字列→数値変換
       if (!c) return;
       const cfg = CONFLICT_CFG[c.level];
       d3.select(this)
@@ -112,7 +112,7 @@ async function initWorldMap() {
         .style('cursor', 'pointer');
     })
     .on('mouseenter', function(event, d) {
-      const c = CONFLICT_ZONES[d.id];
+      const c = CONFLICT_ZONES[+d.id];
       if (!c) return;
       d3.select(this).attr('fill', CONFLICT_CFG[c.level].fillHover);
       const cfg = CONFLICT_CFG[c.level];
@@ -130,11 +130,11 @@ async function initWorldMap() {
       positionTooltip(event);
     })
     .on('mousemove', function(event, d) {
-      if (!CONFLICT_ZONES[d.id]) return;
+      if (!CONFLICT_ZONES[+d.id]) return;
       positionTooltip(event);
     })
     .on('mouseleave', function(event, d) {
-      const c = CONFLICT_ZONES[d.id];
+      const c = CONFLICT_ZONES[+d.id];
       if (!c) return;
       d3.select(this).attr('fill', CONFLICT_CFG[c.level].fill);
       tooltip.classList.remove('visible');
