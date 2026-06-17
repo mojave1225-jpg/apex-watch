@@ -924,6 +924,65 @@ html, body {
   color: var(--text-dim); line-height: 1.6;
 }
 
+/* ── ABOUT SECTION ── */
+.about-section {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 40px;
+}
+.about-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.about-tagline {
+  font-family: var(--font-ui);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.about-body p {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 16px;
+}
+.about-emphasis {
+  font-size: 15px !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--accent-blue);
+  background: rgba(0,204,255,0.05);
+}
+.about-mission {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 24px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  background: rgba(0,204,255,0.03);
+}
+.about-mission-label {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.about-mission-item {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent-blue);
+  letter-spacing: 1px;
+  padding: 2px 0 2px 16px;
+}
+
 /* ── FOOTER ── */
 .site-footer {
   background: var(--bg-secondary);
