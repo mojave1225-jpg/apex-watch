@@ -41,10 +41,10 @@ const CONFLICT_ZONES = {
 };
 
 const CONFLICT_CFG = {
-  4: { fill: 'rgba(255,0,68,0.60)',   fillHover: 'rgba(255,0,68,0.88)',   stroke: '#ff0044', label: '重大紛争 / Critical War' },
-  3: { fill: 'rgba(255,80,0,0.52)',   fillHover: 'rgba(255,80,0,0.80)',   stroke: '#ff5000', label: '高強度紛争 / High Conflict' },
-  2: { fill: 'rgba(255,200,0,0.42)',  fillHover: 'rgba(255,200,0,0.70)',  stroke: '#ffc800', label: '中強度紛争 / Active Conflict' },
-  1: { fill: 'rgba(0,170,255,0.28)',  fillHover: 'rgba(0,170,255,0.55)',  stroke: '#00aaff', label: '緊張・不安定 / Tension' },
+  4: { fill: '#cc0033',  fillHover: '#ff1a55',  stroke: '#ff4466', label: '重大紛争 / Critical War' },
+  3: { fill: '#cc5500',  fillHover: '#ff7722',  stroke: '#ff8833', label: '高強度紛争 / High Conflict' },
+  2: { fill: '#aa8800',  fillHover: '#ffcc00',  stroke: '#ffdd00', label: '中強度紛争 / Active Conflict' },
+  1: { fill: '#005599',  fillHover: '#0088cc',  stroke: '#00aaff', label: '緊張・不安定 / Tension' },
 };
 
 async function initWorldMap() {
@@ -108,7 +108,7 @@ async function initWorldMap() {
       d3.select(this)
         .attr('fill', cfg.fill)
         .attr('stroke', cfg.stroke)
-        .attr('stroke-width', c.level === 4 ? 1.4 : 0.8)
+        .attr('stroke-width', c.level === 4 ? 2.0 : c.level === 3 ? 1.4 : 1.0)
         .style('cursor', 'pointer');
     })
     .on('mouseenter', function(event, d) {
