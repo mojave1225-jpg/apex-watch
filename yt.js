@@ -24,19 +24,17 @@ const INVIDIOUS_INSTANCES = [
 const YT_CHANNELS = [
   {
     wrapperId:   'yt-wrap-fox',
-    handle:      'ABCNewsLive',
-    searchQuery: 'ABC News Live',
-    fallbackId:  'w_Ma8oQLmSM', // ABC News Live 24/7
-    label:       '▶ ABC News Live',
-    youtubeUrl:  'https://www.youtube.com/@ABCNewsLive/live',
+    handle:      'aljazeeraenglish',
+    searchQuery: 'Al Jazeera English live',
+    label:       '▶ Al Jazeera English',
+    youtubeUrl:  'https://www.youtube.com/@aljazeeraenglish/live',
   },
   {
     wrapperId:   'yt-wrap-cbs',
-    handle:      'CBSNews',
-    searchQuery: 'CBS News 24/7',
-    fallbackId:  'ANRRMB446PQ', // stable 24/7 stream
-    label:       '▶ CBS News 24/7',
-    youtubeUrl:  'https://www.youtube.com/@CBSNews/live',
+    handle:      'dwnews',
+    searchQuery: 'DW News live stream',
+    label:       '▶ DW News',
+    youtubeUrl:  'https://www.youtube.com/@dwnews/live',
   },
 ];
 
