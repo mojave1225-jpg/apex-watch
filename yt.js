@@ -62,14 +62,15 @@ async function strategyChannel(handle) {
   const result = await invGet(`/channels/@${handle}`);
   if (!result?.data?.latestVideos) return null;
   const vids = result.data.latestVideos;
+  // For 24/7 channels: liveNow → lengthSeconds=0 → first video (always live)
   const live = vids.find(v => v.liveNow === true)
-            || vids.find(v => v.lengthSeconds === 0 && !v.isUpcoming);
+            || vids.find(v => v.lengthSeconds === 0 && !v.isUpcoming)
+            || vids[0]; // 24/7 channels: top video is always the live stream
   return live?.videoId || null;
 }
 
 // ── STRATEGY 2: channel /streams endpoint ──
 async function strategyStreams(handle) {
-  // First get channel ID from handle
   const ch = await invGet(`/channels/@${handle}`);
   if (!ch?.data?.authorId) return null;
   const ucid = ch.data.authorId;
@@ -77,7 +78,8 @@ async function strategyStreams(handle) {
   const result = await invGet(`/channels/${ucid}/streams`);
   if (!result?.data?.videos) return null;
   const live = result.data.videos.find(v => v.liveNow === true)
-             || result.data.videos.find(v => v.lengthSeconds === 0 && !v.isUpcoming);
+             || result.data.videos.find(v => v.lengthSeconds === 0 && !v.isUpcoming)
+             || result.data.videos[0];
   return live?.videoId || null;
 }
 
