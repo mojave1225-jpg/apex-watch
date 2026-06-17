@@ -7,7 +7,7 @@
 // ── STATE ──
 const state = {
   btc: null, eth: null, gold: null, fearGreed: null,
-  scores: { assets: 0, residency: 72, medical: 78, comms: 81, mobility: 67, security: 85, military: 40, bizjet: 40 },
+  scores: { assets: 0, residency: 72, medical: 78, comms: 81, mobility: 67, security: 85, military: 40, bizjet: 40, shipping: 50 },
   apiReady: false,
 };
 
@@ -153,7 +153,7 @@ function setArrow(id, change) {
 // ── MAIN SCORE RECALC ──
 function recalcMain() {
   const s = state.scores;
-  const weights = { assets: 0.16, residency: 0.10, medical: 0.08, comms: 0.11, mobility: 0.10, security: 0.13, military: 0.16, bizjet: 0.16 };
+  const weights = { assets: 0.14, residency: 0.09, medical: 0.07, comms: 0.10, mobility: 0.09, security: 0.12, military: 0.14, bizjet: 0.15, shipping: 0.10 };
   const total = Math.round(
     s.assets    * weights.assets +
     s.residency * weights.residency +
@@ -161,8 +161,9 @@ function recalcMain() {
     s.comms     * weights.comms +
     s.mobility  * weights.mobility +
     s.security  * weights.security +
-    (s.military || 40) * weights.military +
-    (s.bizjet   || 40) * weights.bizjet
+    (s.military  || 40) * weights.military +
+    (s.bizjet    || 40) * weights.bizjet +
+    (s.shipping  || 50) * weights.shipping
   );
 
   document.getElementById('mainScore').textContent = total;

@@ -491,6 +491,44 @@
       </div>
     </div>
 
+    <!-- 9. SHIPPING -->
+    <div class="panel panel-shipping-highlight" id="panel-shipping">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:var(--accent-blue)">⚓</span>
+        <span class="panel-title">海運指数監視 / Shipping Index</span>
+        <span class="panel-status" id="status-shipping">接続中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-shipping">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-shipping" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">Baltic Dry Index (BDI)</span>
+          <span class="ind-value" id="bdi-value">--</span>
+          <span class="ind-arrow" id="bdi-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">BDI 月次変化</span>
+          <span class="ind-value" id="bdi-change">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">Freightos Baltic (FBX)</span>
+          <span class="ind-value" id="fbx-value">--</span>
+          <span class="ind-value" id="fbx-source" style="font-size:9px;color:var(--text-dim);margin-left:4px"></span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">BDI 正常範囲</span>
+          <span class="ind-value" style="color:var(--text-secondary)">1,000 – 2,500</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">FBX 正常範囲</span>
+          <span class="ind-value" style="color:var(--text-secondary)">$1,500 – $3,000</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-shipping">Baltic Exchange / Yahoo Finance データ取得中...</div>
+    </div>
+
   </main>
 
   <!-- BIZJET ESCAPE MONITORING SECTION -->
@@ -673,6 +711,7 @@
   <script src="app.js"></script>
   <script src="military.js"></script>
   <script src="bizjet.js"></script>
+  <script src="shipping.js"></script>
   <script src="yt.js"></script>
 </body>
 </html>
