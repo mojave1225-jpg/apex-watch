@@ -929,10 +929,13 @@ html, body {
 }
 
 /* ── DEFCON / FPCON OVERLAY PANEL ── */
+/* デスクトップ: .map-section 左上にオーバーレイ */
+.map-section { position: relative; }
 #threat-status-panel {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  /* .map-section基準: 上部パディング16px + ヘッダー行(約32px) + margin-bottom14px + 内側8px */
+  top: 70px;
+  left: 28px;
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -1098,15 +1101,161 @@ html, body {
   color: var(--text-dim); letter-spacing: 0.5px;
 }
 
-/* ── RESPONSIVE ── */
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — タブレット (≤ 900px)
+   ═══════════════════════════════════════════════════ */
 @media (max-width: 900px) {
+  /* 上部2列→1列 */
   .top-row { grid-template-columns: 1fr; min-height: auto; }
-  .left-panel { border-right: none; border-bottom: 1px solid var(--border); min-height: 560px; }
-  .map-container { min-height: 260px; }
+
+  /* 左パネル: 横並び（メーター左 / YouTube右） */
+  .left-panel {
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    min-height: 240px;
+    max-height: 260px;
+  }
+  .threat-section  { flex: 1; border-bottom: none; border-right: 1px solid var(--border); }
+  .news-live-panel { flex: 1; }
+
+  /* マップ */
+  .map-container { min-height: 280px; }
+
+  /* DEFCONパネル: タブレットはそのまま左上に */
+  #threat-status-panel { width: 175px; top: 66px; left: 24px; }
 }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — スマートフォン (≤ 600px)
+   ═══════════════════════════════════════════════════ */
 @media (max-width: 600px) {
-  .header-left .subtitle { display: none; }
+  /* ── ヘッダー ── */
+  .site-header { padding: 10px 14px; }
+  .logo-text { font-size: 13px !important; letter-spacing: 1px !important; }
+  .subtitle { font-size: 8px; letter-spacing: 0.5px; }
+  .header-right { gap: 8px; }
+  .live-badge { padding: 3px 8px; font-size: 9px; letter-spacing: 1px; }
+  .timestamp { font-size: 10px; }
+
+  /* ── アラートバナー ── */
+  .alert-banner { padding: 6px 14px; }
+  .alert-text { font-size: 9px; }
+
+  /* ── 上部レイアウト ── */
+  .top-row { grid-template-columns: 1fr; min-height: auto; }
+  .left-panel {
+    flex-direction: column;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    min-height: auto;
+    max-height: none;
+  }
+  .threat-section {
+    flex: none;
+    padding: 12px 14px 8px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .arc-svg { max-width: 150px !important; }
+  .score-value { font-size: 36px; }
+  .score-label { font-size: 11px; letter-spacing: 1px; }
+  .threat-sublabels { font-size: 8px; }
+  .news-live-panel { flex: none; height: 220px; }
+
+  /* ── マップ ── */
+  .map-section { padding: 10px 12px 6px; }
+  .map-container { min-height: 210px; }
+  .map-header-row { margin-bottom: 8px; }
+  .map-header-row > span:first-child { font-size: 10px; letter-spacing: 1px; }
+
+  /* ── DEFCON/FPCON パネル: マップ下に横並び展開 ── */
+  #threat-status-panel {
+    position: static;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 8px;
+    gap: 6px;
+  }
+  .ts-block { flex: 1; padding: 7px 8px; }
+  .ts-header { font-size: 9px; letter-spacing: 1px; margin-bottom: 5px; }
+  .ts-box { height: 18px; font-size: 8px; }
+  .ts-level { font-size: 9px; }
+  .ts-desc { font-size: 7px; }
+  .ts-src { font-size: 6px; }
+
+  /* ── 凡例 ── */
+  .map-legend { margin-top: 6px; gap: 12px; font-size: 9px; }
+
+  /* ── ダッシュボードパネル ── */
   .dashboard-grid { grid-template-columns: 1fr; }
-  .score-value { font-size: 42px; }
+  .panel { padding: 12px 14px; }
+  .panel-score { font-size: 26px; }
+  .panel-title { font-size: 12px; }
+  .ind-label { font-size: 9px; }
+  .ind-value { font-size: 10px; }
+  .panel-note { font-size: 8px; }
+
+  /* ── ニュース ── */
+  .news-section { padding: 0; }
+  .news-header { padding: 10px 14px; }
+  .news-title { font-size: 10px; }
   .news-grid { grid-template-columns: 1fr; }
+  /* スマホはティッカースクロールを停止（スクロールジャンク防止） */
+  .news-ticker { animation: none; white-space: normal; flex-wrap: wrap; gap: 8px; padding: 6px 12px; }
+  .ticker-item { border-left: none; padding: 0; font-size: 10px; }
+  .news-card { padding: 12px; }
+  .news-card-title { font-size: 12px; }
+
+  /* ── タイムライン ── */
+  .timeline-section { padding: 16px 14px; }
+  .timeline-event { width: 130px; }
+  .timeline-text { font-size: 9px; }
+  .timeline-date { font-size: 8px; }
+
+  /* ── Bizjet セクション ── */
+  .bizjet-section { padding: 14px; }
+  .bj-section-header { flex-direction: column; align-items: flex-start; }
+  .bj-section-links { display: none; }
+  .bj-airport-grid { grid-template-columns: 1fr; }
+  .bj-ap-stats { grid-template-columns: repeat(2, 1fr); }
+  .bj-ops-list { grid-template-columns: 1fr; }
+  .bj-flow-visual { flex-direction: column; gap: 8px; }
+  .bj-flow-hub, .bj-flow-haven { min-width: auto; }
+  .bj-flow-arrow-track { width: 100%; }
+
+  /* ── 軍事セクション ── */
+  .military-section { padding: 14px; }
+  .mil-section-header { flex-direction: column; align-items: flex-start; }
+  .mil-section-links { display: none; }
+  .mil-zone-grid { grid-template-columns: 1fr; }
+  .mil-naval-grid { grid-template-columns: 1fr; }
+  .mil-aircraft-row { font-size: 9px; grid-template-columns: 1fr 1fr; }
+  .mil-alt { display: none; }
+
+  /* ── About ── */
+  .about-section { padding: 24px 16px; }
+  .about-tagline { font-size: 17px; letter-spacing: 1px; }
+  .about-body p { font-size: 13px; }
+  .about-mission { padding: 14px 16px; }
+  .about-mission-item { font-size: 12px; }
+
+  /* ── フッター ── */
+  .site-footer { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 14px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — 小型スマートフォン (≤ 400px)
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  .logo-text { font-size: 11px !important; }
+  .live-badge { display: none; }
+  .arc-svg { max-width: 130px !important; }
+  .score-value { font-size: 30px; }
+  .news-live-panel { height: 180px; }
+  .map-container { min-height: 180px; }
+  #threat-status-panel { gap: 4px; }
+  .ts-block { padding: 6px 7px; }
+  .ts-indicators { gap: 2px; }
+  .ts-box { height: 16px; font-size: 7px; }
 }

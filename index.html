@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Apocalypse Watch — 終末予兆監視システム | 超富裕層行動リアルタイム監視</title>
+  <title>World Apocalypse Watch — 終末予兆監視システム</title>
 
   <!-- ── SEO ── -->
   <meta name="description" content="超富裕層（UHNWI）の資産逃避・移住・軍事移動・ビジネスジェットの異常な動きをリアルタイムで監視する終末予兆アラートダッシュボード。World Apocalypse Watch は資産逃避・居住権・医療・通信・移動・警備・軍事・BizJetの8カテゴリの脅威指数を表示します。">
@@ -145,36 +145,37 @@
         <span>◈ グローバル脅威マップ — 戦争、紛争、緊張不安定地域</span>
         <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
       </div>
-      <div class="map-container" id="mapContainer">
-        <!-- DEFCON / FPCON overlay panel (top-left of map) -->
-        <div id="threat-status-panel">
+      <div class="map-container" id="mapContainer"></div>
 
-          <!-- DEFCON -->
-          <div class="ts-block">
-            <div class="ts-header">
-              <span class="ts-icon">⚡</span> DEFCON
-              <span class="ts-badge">推定</span>
-            </div>
-            <div class="ts-indicators" id="defcon-indicators"></div>
-            <div class="ts-level" id="defcon-level"></div>
-            <div class="ts-desc"  id="defcon-desc"></div>
-            <div class="ts-src"   id="defcon-src"></div>
+      <!-- DEFCON / FPCON panel: desktop=map左上オーバーレイ / mobile=マップ下に展開 -->
+      <div id="threat-status-panel">
+
+        <!-- DEFCON -->
+        <div class="ts-block">
+          <div class="ts-header">
+            <span class="ts-icon">⚡</span> DEFCON
+            <span class="ts-badge">推定</span>
           </div>
-
-          <!-- FPCON -->
-          <div class="ts-block">
-            <div class="ts-header">
-              <span class="ts-icon">🛡</span> FPCON
-              <span class="ts-sub">在日米軍</span>
-            </div>
-            <div class="ts-indicators" id="fpcon-indicators"></div>
-            <div class="ts-level" id="fpcon-level"></div>
-            <div class="ts-desc"  id="fpcon-desc"></div>
-            <div class="ts-src"   id="fpcon-src"></div>
-          </div>
-
+          <div class="ts-indicators" id="defcon-indicators"></div>
+          <div class="ts-level" id="defcon-level"></div>
+          <div class="ts-desc"  id="defcon-desc"></div>
+          <div class="ts-src"   id="defcon-src"></div>
         </div>
+
+        <!-- FPCON -->
+        <div class="ts-block">
+          <div class="ts-header">
+            <span class="ts-icon">🛡</span> FPCON
+            <span class="ts-sub">在日米軍</span>
+          </div>
+          <div class="ts-indicators" id="fpcon-indicators"></div>
+          <div class="ts-level" id="fpcon-level"></div>
+          <div class="ts-desc"  id="fpcon-desc"></div>
+          <div class="ts-src"   id="fpcon-src"></div>
+        </div>
+
       </div>
+
       <div class="map-legend">
         <span class="legend-item red">● 緊急</span>
         <span class="legend-item orange">● 危険</span>

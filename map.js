@@ -63,9 +63,11 @@ async function initWorldMap() {
     .style('height', 'auto');
 
   // Projection: Natural Earth 1 for aesthetic look
+  // モバイルでは右シフトなし（DEFCONパネルが地図の下に移動するため不要）
+  const shiftX = W >= 600 ? W * 0.10 : 0;
   const projection = d3.geoNaturalEarth1()
     .scale(W / 6.4)
-    .translate([W / 2 + W * 0.10, H / 2 + H * 0.05]);
+    .translate([W / 2 + shiftX, H / 2 + H * 0.05]);
 
   const pathGen = d3.geoPath().projection(projection);
 
