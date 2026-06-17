@@ -23,18 +23,11 @@ const INVIDIOUS_INSTANCES = [
 
 const YT_CHANNELS = [
   {
-    wrapperId:   'yt-wrap-fox',
-    handle:      'aljazeeraenglish',
-    searchQuery: 'Al Jazeera English live',
-    label:       '▶ Al Jazeera English',
-    youtubeUrl:  'https://www.youtube.com/@aljazeeraenglish/live',
-  },
-  {
     wrapperId:   'yt-wrap-cbs',
-    handle:      'dwnews',
-    searchQuery: 'DW News live stream',
-    label:       '▶ DW News',
-    youtubeUrl:  'https://www.youtube.com/@dwnews/live',
+    handle:      'CBSNews',
+    searchQuery: 'CBS News 24/7 live',
+    label:       '▶ CBS News 24/7',
+    youtubeUrl:  'https://www.youtube.com/@CBSNews/live',
   },
 ];
 
