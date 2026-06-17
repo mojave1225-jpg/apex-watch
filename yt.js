@@ -23,18 +23,20 @@ const INVIDIOUS_INSTANCES = [
 
 const YT_CHANNELS = [
   {
-    wrapperId:  'yt-wrap-fox',
-    handle:     'livenowfox',
-    searchQuery:'LiveNOW from FOX',
-    label:      '▶ LiveNOW from FOX',
-    youtubeUrl: 'https://www.youtube.com/@livenowfox/live',
+    wrapperId:   'yt-wrap-fox',
+    handle:      'livenowfox',
+    searchQuery: 'LiveNOW from FOX',
+    fallbackId:  'eOGN-0WLaiA', // updated 2026-06-17
+    label:       '▶ LiveNOW from FOX',
+    youtubeUrl:  'https://www.youtube.com/@livenowfox/live',
   },
   {
-    wrapperId:  'yt-wrap-cbs',
-    handle:     'CBSNews',
-    searchQuery:'CBS News 24/7',
-    label:      '▶ CBS News 24/7',
-    youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
+    wrapperId:   'yt-wrap-cbs',
+    handle:      'CBSNews',
+    searchQuery: 'CBS News 24/7',
+    fallbackId:  'ANRRMB446PQ', // stable 24/7 stream
+    label:       '▶ CBS News 24/7',
+    youtubeUrl:  'https://www.youtube.com/@CBSNews/live',
   },
 ];
 
@@ -93,7 +95,7 @@ async function strategySearch(searchQuery) {
   return live?.videoId || null;
 }
 
-// ── FIND LIVE VIDEO ID (tries all 3 strategies) ──
+// ── FIND LIVE VIDEO ID (tries all 3 strategies then fallback) ──
 async function findLiveVideoId(ch) {
   // Run strategy 1 and 3 in parallel first (fastest)
   const [s1, s3] = await Promise.all([
@@ -105,7 +107,10 @@ async function findLiveVideoId(ch) {
 
   // Strategy 2 as last resort (two-step, slower)
   const s2 = await strategyStreams(ch.handle).catch(() => null);
-  return s2 || null;
+  if (s2) return s2;
+
+  // Hardcoded fallback (used when all Invidious instances fail)
+  return ch.fallbackId || null;
 }
 
 // ── DOM HELPERS ──
