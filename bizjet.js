@@ -286,7 +286,7 @@ function updateBizjetUI() {
   if (level >= 2) {
     const msg = level >= 3
       ? `🚨 BIZJET CRITICAL — プライベートジェット緊急急増！ハブ空港 ${bjState.hubTotal}機・セーフヘイブン ${bjState.havenTotal}機。大規模逃避フェーズ突入の可能性`
-      : `⚠ BIZJET ALERT — プライベートジェット活動スパイク検出。逃避比率 ${bjState.escapeRatio}%。超富裕層の移動パターン異常`;
+      : `⚠ BIZJET ALERT — プライベートジェット活動スパイク検出。逃避比率 ${bjState.escapeRatio}%。富裕層の移動パターン異常`;
     const bannerEl = document.getElementById('alertText');
     if (bannerEl) bannerEl.textContent = msg;
   }

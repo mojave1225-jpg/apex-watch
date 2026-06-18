@@ -197,7 +197,7 @@ function recalcMain() {
 // ── ALERT BANNER ──
 function updateAlertBanner(score) {
   const messages = [
-    score >= 85 ? '⚠⚠⚠ CRITICAL — 超富裕層の緊急避難行動が検出されました。複数の主要指標が過去最高を記録しています' : null,
+    score >= 85 ? '⚠⚠⚠ CRITICAL — エリート層の緊急避難行動が検出されました。複数の主要指標が過去最高を記録しています' : null,
     score >= 70 ? '⚡ ELEVATED — 資産逃避・移住・バンカー建設の同時加速を確認。システム経営陣クラスの動きが顕著' : null,
     score >= 55 ? '▲ WATCH — 通常を超えた資産分散・居住権取得パターンを検出中。引き続き監視' : null,
     '◈ MONITOR — 全6カテゴリを継続監視中。次回データ更新: 60秒後',

@@ -7,7 +7,7 @@ const TIMELINE_EVENTS = [
   { date: '2020-03', text: 'ビリオネア\nバンカー注文\n+300%急増', level: 'red' },
   { date: '2021-06', text: 'ジェフ・ベゾス\nNZ永住権\n取得報道', level: 'orange' },
   { date: '2021-09', text: 'Vivos社\n地下都市\n完成 (SD)', level: 'orange' },
-  { date: '2022-01', text: '超富裕層\nプライベートジェット\n注文2年待ち', level: 'yellow' },
+  { date: '2022-01', text: '富裕層\nプライベートジェット\n注文2年待ち', level: 'yellow' },
   { date: '2022-04', text: 'メタ\nザッカーバーグ\nハワイ要塞建設', level: 'orange' },
   { date: '2022-08', text: 'Starlink\n衛星3000機\n突破', level: 'yellow' },
   { date: '2023-01', text: 'Altos Labs\n老化研究\n$3B調達', level: 'orange' },
@@ -50,12 +50,12 @@ const NEWS_ITEMS = [
   },
   {
     tag: '警備', tagClass: 'red',
-    title: '世界の民間軍事企業(PMC)雇用が+145% — 超富裕層の個人軍隊化が加速',
+    title: '世界の民間軍事企業(PMC)雇用が+145% — エリート層の個人警備・軍隊化が加速',
     meta: 'Jane\'s Defence, SIPRI 2025年報告',
   },
   {
     tag: '資産逃避', tagClass: '',
-    title: '金価格が$3,500/oz突破 — 中央銀行と超富裕層が同時大量購入',
+    title: '金価格が$3,500/oz突破 — 中央銀行と資産家層が同時大量購入',
     meta: 'World Gold Council Q1 2026',
   },
   {

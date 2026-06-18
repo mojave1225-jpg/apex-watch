@@ -261,8 +261,8 @@ html, body {
 }
 .yt-retry-btn:hover { background: rgba(255,136,0,0.15); }
 
-/* ── LOGO RESIZE for longer name ── */
-.logo-text { font-size: 17px !important; letter-spacing: 2px !important; }
+/* ── LOGO ── */
+.logo-text { font-size: 22px !important; letter-spacing: 4px !important; }
 
 /* ── DASHBOARD GRID ── */
 .dashboard-grid {
