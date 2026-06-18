@@ -547,6 +547,46 @@
       </div>
     </div>
 
+    <!-- 10. NEO -->
+    <div class="panel panel-neo-highlight" id="panel-neo">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:#ff6600">☄</span>
+        <span class="panel-title">地球接近天体 / NEO Alert</span>
+        <span class="panel-status" id="status-neo">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-neo">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-neo" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">7日間 接近数</span>
+          <span class="ind-value" id="neo-p-total">--</span>
+          <span class="ind-arrow">件</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">潜在危険小惑星 (PHA)</span>
+          <span class="ind-value" id="neo-p-pha">--</span>
+          <span class="ind-arrow" style="color:var(--accent-orange)">⚠</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最接近距離</span>
+          <span class="ind-value" id="neo-p-closest">--</span>
+          <span class="ind-arrow" style="color:var(--text-dim)">LD</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最接近天体</span>
+          <span class="ind-value" id="neo-p-name" style="font-size:9px;word-break:break-all">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最高速度</span>
+          <span class="ind-value" id="neo-p-speed">--</span>
+          <span class="ind-arrow" style="color:var(--text-dim)">km/s</span>
+        </div>
+      </div>
+      <div class="panel-note" id="note-neo">NASA NeoWs API / JPL CNEOS</div>
+    </div>
+
     <!-- 9. SHIPPING -->
     <div class="panel panel-shipping-highlight" id="panel-shipping">
       <div class="panel-header">
@@ -725,6 +765,68 @@
     </div>
   </section>
 
+  <!-- NEO MONITORING SECTION -->
+  <section class="neo-section">
+    <div class="neo-section-header">
+      <div class="neo-section-title">
+        <span class="neo-blink">☄</span>
+        地球接近天体（NEO）監視 — NEAR-EARTH OBJECT ALERT SYSTEM
+      </div>
+      <div class="neo-section-links">
+        <a href="https://cneos.jpl.nasa.gov/ca/" target="_blank" rel="noopener" class="neo-ext-link">◈ JPL CNEOS</a>
+        <a href="https://www.minorplanetcenter.net/iau/lists/PHAs.html" target="_blank" rel="noopener" class="neo-ext-link">◈ PHA リスト</a>
+        <a href="https://api.nasa.gov/" target="_blank" rel="noopener" class="neo-ext-link">◈ NASA API</a>
+      </div>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="neo-stats-row">
+      <div class="neo-stat">
+        <div class="neo-stat-val" id="neo-stat-total">--</div>
+        <div class="neo-stat-label">7日間 接近数</div>
+      </div>
+      <div class="neo-stat neo-stat-danger">
+        <div class="neo-stat-val" id="neo-stat-pha">--</div>
+        <div class="neo-stat-label">潜在危険小惑星 (PHA)</div>
+      </div>
+      <div class="neo-stat">
+        <div class="neo-stat-val" id="neo-stat-closest-ld">--</div>
+        <div class="neo-stat-label">最接近距離 (LD)</div>
+      </div>
+      <div class="neo-stat">
+        <div class="neo-stat-val neo-stat-name" id="neo-stat-closest-name">--</div>
+        <div class="neo-stat-label">最接近天体</div>
+      </div>
+      <div class="neo-stat">
+        <div class="neo-stat-val" id="neo-stat-fastest">--</div>
+        <div class="neo-stat-label">最高速度</div>
+      </div>
+    </div>
+
+    <!-- Column headers -->
+    <div class="neo-list">
+      <div class="neo-list-header">
+        <span>天体名称</span>
+        <span>接近日時 (UTC)</span>
+        <span>距離 (LD)</span>
+        <span>距離 (km)</span>
+        <span>推定直径</span>
+        <span>速度 (km/s)</span>
+        <span>PHA</span>
+        <span>脅威レベル</span>
+      </div>
+      <div class="neo-list-body" id="neoListBody">
+        <div class="neo-empty">NASA NeoWs API からデータ取得中...</div>
+      </div>
+    </div>
+
+    <div class="neo-datasource">
+      データ: NASA NeoWs API (Near Earth Object Web Service) ／ JPL CNEOS (Center for Near Earth Object Studies)
+      ｜ 1 LD = 月軌道半径 384,400 km ｜ PHA = 軌道が地球0.05AU以内かつ直径140m超の潜在危険小惑星
+      ｜ <span id="neo-last-update" style="color:var(--accent-green)">更新待機中</span>
+    </div>
+  </section>
+
   <!-- NEWS FEED -->
   <section class="news-section">
     <div class="news-header">
@@ -789,6 +891,7 @@
   <script src="shipping.js"></script>
   <script src="cyber.js"></script>
   <script src="defcon.js"></script>
+  <script src="neo.js"></script>
   <script src="yt.js"></script>
 </body>
 </html>
