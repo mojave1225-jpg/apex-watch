@@ -71,13 +71,25 @@
     </div>
   </header>
 
+  <!-- SECTION NAV (sticky below header) -->
+  <nav class="section-nav" id="sectionNav">
+    <span class="snav-label">JUMP:</span>
+    <a href="#s-map"      class="snav-btn">◈ マップ</a>
+    <a href="#s-panels"   class="snav-btn">◈ パネル</a>
+    <a href="#s-bizjet"   class="snav-btn">✈ BizJet</a>
+    <a href="#s-military" class="snav-btn">⚡ 軍事</a>
+    <a href="#s-neo"      class="snav-btn">☄ NEO</a>
+    <a href="#s-news"     class="snav-btn">◈ ニュース</a>
+    <a href="#s-timeline" class="snav-btn">◈ 年表</a>
+  </nav>
+
   <!-- ALERT BANNER -->
   <div class="alert-banner" id="alertBanner">
     <div class="alert-text" id="alertText">システム起動中... データ取得開始...</div>
   </div>
 
   <!-- TOP ROW: THREAT METER + WORLD MAP (1:3) -->
-  <div class="top-row">
+  <div class="top-row" id="s-map">
 
     <!-- LEFT PANEL: METER (top 50%) + YOUTUBE LIVE (bottom 50%) -->
     <div class="left-panel">
@@ -213,7 +225,7 @@
   </div>
 
   <!-- CATEGORY GRID -->
-  <main class="dashboard-grid">
+  <main class="dashboard-grid" id="s-panels">
 
     <!-- 1. ASSETS -->
     <div class="panel" id="panel-assets">
@@ -628,11 +640,12 @@
   </main>
 
   <!-- BIZJET ESCAPE MONITORING SECTION -->
-  <section class="bizjet-section">
+  <section class="bizjet-section sec-collapsed" id="s-bizjet">
     <div class="bj-section-header">
       <div class="bj-section-title">
         ✈ プライベートジェット逃避監視 — HNWI ESCAPE FLIGHT INTELLIGENCE
       </div>
+      <div class="bj-section-links-wrap">
       <div class="bj-section-links">
         <a href="https://www.flightradar24.com/data/aircraft" target="_blank" class="bj-ext-link fr24">
           ✈ Flightradar24
@@ -643,6 +656,8 @@
         <a href="https://opensky-network.org/network/explorer" target="_blank" class="bj-ext-link osk">
           ⊛ OpenSky Explorer
         </a>
+      </div>
+      <button class="sec-toggle" title="展開">▶ 展開</button>
       </div>
     </div>
 
@@ -693,11 +708,12 @@
   </section>
 
   <!-- MILITARY MONITORING SECTION -->
-  <section class="military-section">
+  <section class="military-section sec-collapsed" id="s-military">
     <div class="mil-section-header">
       <div class="mil-section-title">
         <span class="mil-blink">⚡</span> 軍事活動リアルタイム監視 — STRATEGIC MILITARY INTELLIGENCE
       </div>
+      <div class="mil-links-wrap">
       <div class="mil-section-links">
         <a href="https://www.flightradar24.com/?layer=military" target="_blank" class="mil-ext-link fr24">
           ✈ Flightradar24 軍用フィルタ
@@ -708,6 +724,8 @@
         <a href="https://globe.adsbexchange.com/?mil=1" target="_blank" class="mil-ext-link adsbx">
           ◈ ADS-B Exchange 軍用専用
         </a>
+      </div>
+      <button class="sec-toggle" title="展開">▶ 展開</button>
       </div>
     </div>
 
@@ -766,16 +784,19 @@
   </section>
 
   <!-- NEO MONITORING SECTION -->
-  <section class="neo-section">
+  <section class="neo-section" id="s-neo">
     <div class="neo-section-header">
       <div class="neo-section-title">
         <span class="neo-blink">☄</span>
         地球接近天体（NEO）監視 — NEAR-EARTH OBJECT ALERT SYSTEM
       </div>
+      <div class="neo-links-wrap">
       <div class="neo-section-links">
         <a href="https://cneos.jpl.nasa.gov/ca/" target="_blank" rel="noopener" class="neo-ext-link">◈ JPL CNEOS</a>
         <a href="https://www.minorplanetcenter.net/iau/lists/PHAs.html" target="_blank" rel="noopener" class="neo-ext-link">◈ PHA リスト</a>
         <a href="https://api.nasa.gov/" target="_blank" rel="noopener" class="neo-ext-link">◈ NASA API</a>
+      </div>
+      <button class="sec-toggle" title="折畳">▼ 折畳</button>
       </div>
     </div>
 
@@ -828,10 +849,11 @@
   </section>
 
   <!-- NEWS FEED -->
-  <section class="news-section">
+  <section class="news-section" id="s-news">
     <div class="news-header">
       <span class="news-title">◈ SIGNAL INTELLIGENCE FEED — リアルタイムシグナル</span>
       <span class="news-refresh" id="newsRefresh">更新中...</span>
+      <button class="sec-toggle" title="折畳">▼ 折畳</button>
     </div>
     <div class="news-ticker-wrap">
       <div class="news-ticker" id="newsTicker">
@@ -845,8 +867,11 @@
 
 
   <!-- TIMELINE -->
-  <section class="timeline-section">
-    <div class="timeline-header">◈ APEX EVENT TIMELINE — 直近シグナル年表</div>
+  <section class="timeline-section" id="s-timeline">
+    <div class="timeline-header">
+      ◈ APEX EVENT TIMELINE — 直近シグナル年表
+      <button class="sec-toggle" title="折畳">▼ 折畳</button>
+    </div>
     <div class="timeline-scroll">
       <div class="timeline-track" id="timelineTrack"></div>
     </div>
@@ -893,5 +918,39 @@
   <script src="defcon.js"></script>
   <script src="neo.js"></script>
   <script src="yt.js"></script>
+
+  <!-- Floating TOP button -->
+  <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
+
+  <script>
+  // ── Section collapse toggles ──
+  document.querySelectorAll('.sec-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const section = btn.closest('section');
+      if (!section) return;
+      const isNowCollapsed = section.classList.toggle('sec-collapsed');
+      btn.textContent = isNowCollapsed ? '▶ 展開' : '▼ 折畳';
+      btn.title       = isNowCollapsed ? '展開'   : '折畳';
+    });
+  });
+
+  // ── Section nav: highlight active section on scroll ──
+  (function() {
+    const links = document.querySelectorAll('.snav-btn[href^="#"]');
+    const ids   = [...links].map(l => l.getAttribute('href').slice(1));
+    const els   = ids.map(id => document.getElementById(id)).filter(Boolean);
+
+    function onScroll() {
+      const y = window.scrollY + 130;
+      let active = ids[0];
+      els.forEach((el, i) => { if (el.offsetTop <= y) active = ids[i]; });
+      links.forEach(l => l.classList.toggle('snav-active', l.getAttribute('href') === '#' + active));
+      // floating TOP button visibility
+      document.getElementById('topBtn').classList.toggle('topBtn-visible', window.scrollY > 300);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
 </body>
 </html>

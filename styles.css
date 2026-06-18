@@ -1117,6 +1117,143 @@ html, body {
 }
 
 /* ============================================================
+   NAVIGATION & COLLAPSE UX
+   ============================================================ */
+
+/* ── Sticky section nav bar ── */
+.section-nav {
+  position: sticky;
+  top: 58px;           /* below .site-header */
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 12px;
+  background: rgba(4,6,16,0.97);
+  border-bottom: 1px solid var(--border-bright);
+  overflow-x: auto;
+  scrollbar-width: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.section-nav::-webkit-scrollbar { display: none; }
+
+.snav-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  padding: 0 10px 0 4px;
+  border-right: 1px solid var(--border);
+  margin-right: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.snav-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 9px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+.snav-btn:hover { color: var(--text-primary); border-bottom-color: var(--border-bright); }
+.snav-btn.snav-active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+/* ── Section collapse toggle button ── */
+.sec-toggle {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+.sec-toggle:hover {
+  background: rgba(0,204,255,0.08);
+  border-color: rgba(0,204,255,0.3);
+  color: var(--accent-blue);
+}
+
+/* Wrapper to hold links + toggle on same row */
+.bj-section-links-wrap,
+.mil-links-wrap,
+.neo-links-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+/* ── Collapsed section: hide everything below its header ── */
+.bizjet-section.sec-collapsed   > *:not(.bj-section-header)  { display: none; }
+.military-section.sec-collapsed > *:not(.mil-section-header) { display: none; }
+.neo-section.sec-collapsed      > *:not(.neo-section-header) { display: none; }
+.news-section.sec-collapsed     > *:not(.news-header)        { display: none; }
+.timeline-section.sec-collapsed > *:not(.timeline-header)    { display: none; }
+
+/* Section headers look "closed" when collapsed */
+.bizjet-section.sec-collapsed   .bj-section-header  { opacity: 0.7; }
+.military-section.sec-collapsed .mil-section-header { opacity: 0.7; }
+.neo-section.sec-collapsed      .neo-section-header { opacity: 0.7; }
+.news-section.sec-collapsed     .news-header        { opacity: 0.7; }
+.timeline-section.sec-collapsed .timeline-header    { opacity: 0.7; }
+
+/* ── Floating ▲ TOP button ── */
+#topBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 200;
+  background: rgba(0,204,255,0.12);
+  border: 1px solid rgba(0,204,255,0.35);
+  color: var(--accent-blue);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  width: 38px;
+  height: 38px;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s, transform 0.3s, background 0.2s;
+  pointer-events: none;
+}
+#topBtn.topBtn-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#topBtn:hover {
+  background: rgba(0,204,255,0.22);
+  border-color: var(--accent-blue);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .section-nav { top: 52px; padding: 0 6px; }
+  .snav-btn    { font-size: 9px; padding: 8px 9px; }
+  .snav-label  { display: none; }
+  #topBtn      { bottom: 14px; right: 12px; width: 34px; height: 34px; font-size: 12px; }
+}
+
+/* Fix: news-header flex alignment with the toggle btn */
+.news-header { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.timeline-header { display: flex; align-items: center; justify-content: space-between; }
+
+/* ============================================================
    NEO — Near-Earth Object Alert System
    ============================================================ */
 
