@@ -1029,6 +1029,93 @@ html, body {
   margin-top: 2px;
 }
 
+/* ── CYBER THREAT STATUS BAR ── */
+#cyber-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding: 7px 12px;
+  background: rgba(2,6,18,0.80);
+  border: 1px solid rgba(255,0,68,0.25);
+  border-radius: 3px;
+  backdrop-filter: blur(4px);
+}
+.cyber-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.cyber-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+.cyber-label-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.cyber-val {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-red);
+  text-shadow: 0 0 10px rgba(255,0,68,0.6);
+  min-width: 55px;
+  text-align: right;
+  animation: cyberCountGlow 2s ease-in-out infinite;
+}
+@keyframes cyberCountGlow {
+  0%,100% { text-shadow: 0 0 8px rgba(255,0,68,0.5); }
+  50%      { text-shadow: 0 0 20px rgba(255,0,68,0.9); }
+}
+.cyber-last-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.cyber-last-val {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-red);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cyber-type-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid rgba(255,0,68,0.4);
+  border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+.cyber-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+/* mobile: cyber-bar stacks */
+@media (max-width: 600px) {
+  #cyber-bar { gap: 10px; padding: 6px 10px; }
+  .cyber-legend { gap: 6px; font-size: 8px; }
+  .cyber-val { font-size: 15px; }
+  .cyber-last-val { font-size: 9px; }
+}
+
 /* ── ABOUT SECTION ── */
 .about-section {
   background: var(--bg-secondary);

@@ -207,6 +207,14 @@ async function initWorldMap() {
   });
 
 
+  // Cyber threat arc layer — inserted before scanlines so arcs sit under the overlay
+  svg.append('g').attr('id', 'cyber-layer');
+
+  // Notify cyber.js that the map is ready
+  document.dispatchEvent(new CustomEvent('apexMapReady', {
+    detail: { svg, projection, W, H }
+  }));
+
   // Scan-line overlay for atmosphere
   const defs = svg.append('defs');
   const pattern = defs.append('pattern')

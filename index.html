@@ -185,6 +185,28 @@
         <span class="legend-item orange">● 危険</span>
         <span class="legend-item yellow">● 警戒</span>
       </div>
+
+      <!-- CYBER THREAT STATUS BAR -->
+      <div id="cyber-bar">
+        <div class="cyber-counter">
+          <span class="cyber-label">⚡ 検出攻撃数</span>
+          <span class="cyber-val" id="cyber-count">0</span>
+          <span class="cyber-label-sub">件</span>
+        </div>
+        <div class="cyber-last-wrap">
+          <span class="cyber-label">最新</span>
+          <span id="cyber-last" class="cyber-last-val">---</span>
+          <span id="cyber-type" class="cyber-type-badge">---</span>
+        </div>
+        <div class="cyber-legend">
+          <span style="color:#ff0044">● DDoS</span>
+          <span style="color:#ff8800">● Malware</span>
+          <span style="color:#ffdd00">● Phishing</span>
+          <span style="color:#cc00ff">● Ransomware</span>
+          <span style="color:#00ccff">● Exploit</span>
+        </div>
+      </div>
+
       <div class="map-tooltip" id="mapTooltip"></div>
     </section>
 
@@ -765,6 +787,7 @@
   <script src="military.js"></script>
   <script src="bizjet.js"></script>
   <script src="shipping.js"></script>
+  <script src="cyber.js"></script>
   <script src="defcon.js"></script>
   <script src="yt.js"></script>
 </body>
