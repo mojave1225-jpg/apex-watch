@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>免責事項・方法論 — APEX WATCH</title>
+<meta name="description" content="APEX WATCHの免責事項およびDOOMSDAY INDEX™の算出方法論・指標の定義・重み付け・限界について。">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#03040d">
+<style>
+  :root {
+    --bg:           #03040d;
+    --bg2:          #07090f;
+    --panel:        #0a0d18;
+    --border:       #1a2040;
+    --border2:      #243060;
+    --text:         #b8c4e0;
+    --text-dim:     #5a6a90;
+    --text-bright:  #dce8ff;
+    --accent:       #3a7bd5;
+    --accent2:      #5a9bff;
+    --accent-dim:   #1a3560;
+    --green:        #1db954;
+    --green-dim:    #0a4020;
+    --amber:        #e0a020;
+    --amber-dim:    #3a2800;
+    --red:          #e04040;
+    --red-dim:      #3a0f0f;
+    --cyan:         #00d4ff;
+    --purple:       #cc00ff;
+    --mono: 'Courier New', 'Lucida Console', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.75; }
+  body { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ─── ヘッダー ─── */
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0 12px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .site-logo { font-size: 13px; color: var(--text-dim); text-decoration: none; letter-spacing: 0.08em; }
+  .site-logo span { color: var(--accent2); }
+  .back-link {
+    font-size: 12px; color: var(--accent); text-decoration: none;
+    border: 1px solid var(--accent-dim); padding: 4px 12px; border-radius: 2px;
+    letter-spacing: 0.05em; transition: background 0.15s;
+  }
+  .back-link:hover { background: var(--accent-dim); }
+
+  /* ─── ヒーロー ─── */
+  .page-hero { padding: 48px 0 32px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-size: 11px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+  .page-title { font-size: clamp(20px, 4vw, 30px); color: var(--text-bright); letter-spacing: 0.04em; line-height: 1.3; margin-bottom: 16px; }
+  .page-title span { color: var(--accent2); }
+  .page-meta { font-size: 12px; color: var(--text-dim); display: flex; gap: 24px; flex-wrap: wrap; }
+  .page-meta strong { color: var(--text); }
+
+  /* ─── セクション ─── */
+  .section { padding: 36px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .section-num { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; min-width: 32px; }
+  .section-title { font-size: 15px; color: var(--text-bright); letter-spacing: 0.06em; }
+  .section-title .sym { color: var(--accent2); margin-right: 6px; }
+
+  p { color: var(--text); line-height: 1.85; margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text-bright); }
+
+  /* ─── バッジ ─── */
+  .badge {
+    display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 2px; vertical-align: middle; margin-left: 6px;
+  }
+  .badge-green  { background: var(--green-dim);   color: var(--green);   border: 1px solid #1db95440; }
+  .badge-amber  { background: var(--amber-dim);   color: var(--amber);   border: 1px solid #e0a02040; }
+  .badge-red    { background: var(--red-dim);      color: var(--red);     border: 1px solid #e0404040; }
+  .badge-blue   { background: var(--accent-dim);   color: var(--accent2); border: 1px solid #3a7bd540; }
+  .badge-cyan   { background: #001a2a;             color: var(--cyan);    border: 1px solid #00d4ff40; }
+  .badge-purple { background: #1a002a;             color: var(--purple);  border: 1px solid #cc00ff40; }
+  .badge-new    { background: #1a2800; color: #88ff44; border: 1px solid #88ff4440; }
+
+  /* ─── ハイライトブロック ─── */
+  .hl { background: var(--panel); border-left: 3px solid var(--accent); padding: 14px 18px; margin: 20px 0; font-size: 13px; line-height: 1.8; }
+  .hl.amber  { border-color: var(--amber); }
+  .hl.red    { border-color: var(--red);   background: #0d0608; }
+  .hl.green  { border-color: var(--green); }
+  .hl.cyan   { border-color: var(--cyan);  background: #020d12; }
+
+  /* ─── 構成要素テーブル ─── */
+  .index-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+  .index-table th {
+    text-align: left; font-size: 11px; color: var(--text-dim);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 12px; border-bottom: 1px solid var(--border2); font-weight: normal;
+  }
+  .index-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .index-table tr:hover td { background: var(--panel); }
+  .col-name { color: var(--text-bright); font-weight: bold; }
+  .col-src  { color: var(--text-dim); font-size: 12px; }
+  .col-wt   { color: var(--amber); font-size: 14px; font-weight: bold; text-align: right; white-space: nowrap; }
+  .col-fresh { font-size: 11px; text-align: center; }
+  .col-desc  { color: var(--text); font-size: 12px; line-height: 1.65; }
+
+  /* ─── ゲージ可視化 ─── */
+  .gauge-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+  @media (max-width: 580px) { .gauge-row { grid-template-columns: 1fr; } }
+  .gauge-card { background: var(--panel); border: 1px solid var(--border); border-radius: 3px; padding: 14px 16px; }
+  .gauge-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .gauge-name  { font-size: 13px; color: var(--text-bright); margin-bottom: 8px; }
+  .gauge-bar   { height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .gauge-fill  { height: 100%; border-radius: 3px; }
+  .gauge-meta  { font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; }
+
+  /* ─── アルゴリズム表示 ─── */
+  .algo-block { background: var(--panel); border: 1px solid var(--border2); padding: 20px 24px; margin: 20px 0; border-radius: 3px; }
+  .algo-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  .algo-formula {
+    font-size: 14px; color: var(--accent2); letter-spacing: 0.04em; line-height: 2.2;
+    border-left: 2px solid var(--accent-dim); padding-left: 16px; margin-bottom: 14px;
+    overflow-x: auto;
+  }
+  .algo-formula em { color: var(--amber); font-style: normal; }
+  .algo-formula sub { font-size: 0.75em; }
+  .algo-note { font-size: 12px; color: var(--text-dim); line-height: 1.75; }
+
+  /* ─── スコアゾーン ─── */
+  .zone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; }
+  @media (max-width: 500px) { .zone-grid { grid-template-columns: 1fr 1fr; } }
+  .zone-card { border: 1px solid; border-radius: 3px; padding: 14px; text-align: center; }
+  .zone-card.z-n { border-color: #1db95430; background: #0a40201a; }
+  .zone-card.z-c { border-color: #e0a02030; background: #3a28001a; }
+  .zone-card.z-d { border-color: #e8820030; background: #3a20001a; }
+  .zone-card.z-x { border-color: #e0404030; background: #3a0f0f1a; }
+  .zone-score { font-size: 20px; font-weight: bold; margin-bottom: 4px; }
+  .zone-label { font-size: 11px; letter-spacing: 0.08em; line-height: 1.4; }
+  .z-n .zone-score, .z-n .zone-label { color: var(--green); }
+  .z-c .zone-score, .z-c .zone-label { color: var(--amber); }
+  .z-d .zone-score, .z-d .zone-label { color: #e08020; }
+  .z-x .zone-score, .z-x .zone-label { color: var(--red); }
+
+  /* ─── 更新頻度テーブル ─── */
+  .freq-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+  .freq-table th { font-size: 11px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--border2); font-weight: normal; text-align: left; }
+  .freq-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); }
+  .freq-table tr:hover td { background: var(--panel); }
+  .freq-source { color: var(--text-bright); }
+  .freq-rate   { color: var(--cyan); font-weight: bold; }
+  .freq-lag    { color: var(--text-dim); }
+  .freq-mode   { font-size: 11px; }
+
+  /* ─── バイアス・限界リスト ─── */
+  .limit-list { list-style: none; margin-top: 16px; }
+  .limit-list li {
+    padding: 10px 0 10px 28px; border-bottom: 1px solid var(--border);
+    position: relative; font-size: 13px; color: var(--text); line-height: 1.75;
+  }
+  .limit-list li:last-child { border-bottom: none; }
+  .limit-list li::before { content: '▸'; position: absolute; left: 0; color: var(--text-dim); }
+  .limit-list li .em { color: var(--amber); }
+
+  /* ─── 改訂履歴 ─── */
+  .changelog { margin-top: 16px; }
+  .cl-item { display: grid; grid-template-columns: 120px 80px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: start; }
+  .cl-item:last-child { border-bottom: none; }
+  .cl-date  { color: var(--text-dim); font-size: 12px; }
+  .cl-ver   { color: var(--accent2); font-size: 12px; font-weight: bold; }
+  .cl-notes { color: var(--text); }
+  @media (max-width: 580px) { .cl-item { grid-template-columns: 100px 1fr; } .cl-ver { display: none; } }
+
+  /* ─── データソースグリッド ─── */
+  .ds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 16px; }
+  .ds-card { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: 3px; }
+  .ds-cat  { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .ds-name { font-size: 13px; color: var(--text-bright); }
+  .ds-sub  { font-size: 11px; color: var(--text-dim); }
+
+  code { background: var(--panel); border: 1px solid var(--border); color: var(--accent2); font-family: var(--mono); font-size: 12px; padding: 1px 6px; border-radius: 2px; }
+
+  /* ─── フッター ─── */
+  .page-footer {
+    margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent2); text-decoration: underline; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="./index.html"><span>◈</span> APEX WATCH</a>
+  <a class="back-link" href="./index.html">← メインダッシュボードへ</a>
+</header>
+
+<section class="page-hero">
+  <p class="page-eyebrow">◈ LEGAL &amp; METHODOLOGY — APEX WATCH</p>
+  <h1 class="page-title">
+    <span>⚡</span> 免責事項<br>
+    <span style="font-size:0.75em;">+ DOOMSDAY INDEX™ 方法論</span><br>
+    <span style="font-size:0.48em; color:var(--text-dim);">Disclaimer &amp; Methodology</span>
+  </h1>
+  <div class="page-meta">
+    <span>制定日：<strong>2025年1月1日</strong></span>
+    <span>最終更新：<strong>2026年6月19日</strong></span>
+    <span>バージョン：<strong>v2.7.0</strong></span>
+  </div>
+</section>
+
+<!-- 01 免責事項 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title"><span class="sym">⚡</span>免責事項（Disclaimer）</h2>
+  </div>
+
+  <div class="hl red">
+    ⚠ APEX WATCHが提供するすべての情報・指標・スコアは、教育・情報提供を目的としたものであり、投資助言・軍事情報・医療助言・法律助言を構成するものではありません。
+  </div>
+
+  <p><strong>1. 情報の正確性について</strong></p>
+  <p>本サイトが表示するデータは、公開APIおよびOSINT（公開情報）ソースから自動取得します。データの欠損・遅延・誤りが含まれる可能性があり、本サイトはその正確性・安全性・最新性を保証しません。</p>
+
+  <p><strong>2. 投資・財産判断への不使用</strong></p>
+  <p>BTC・ETH価格・貴金属価格・海運指数（BDI・FBX）その他の市場データは参考情報に限ります。これらに基づく投資・財産判断を行った結果について、本サイトは一切の責任を負いません。</p>
+
+  <p><strong>3. 軍事・安全保障情報について</strong></p>
+  <p>軍用機位置・軍艦追跡情報はUSNI News・Jane's Defence・ADS-B Exchangeなどの公開情報をもとにしており、リアルタイムの作戦情報ではありません。表示される位置情報は実際の展開と異なる場合があります。DEFCONおよびFPCON推定値は公式機関による発表ではなく、本サイトが公開情報から推定したものです。</p>
+
+  <p><strong>4. サイバー脅威データについて</strong></p>
+  <p>サイバー攻撃ビジュアライゼーションは、abuse.ch Feodo Trackerの公開ボットネットC2（コマンド&コントロール）インフラデータに基づいています。C2サーバーの所在地は攻撃者自身の国籍ではなく、使用インフラのホスティング先を示します。個々のサイバーアークは演出的な可視化であり、特定の攻撃を即時再現するものではありません。</p>
+
+  <p><strong>5. 悪意ある利用の否定</strong></p>
+  <p>本サイトは特定の人物・企業・国家・組織を攻撃・誹謗・標的にする意図を持ちません。表示されるすべての情報は公開情報の集計です。</p>
+
+  <p><strong>6. 損害賠償の免責</strong></p>
+  <p>本サイトの情報を参照したことによる直接的・間接的損害について、本サイト運営者は一切の責任を負いません。利用者自身の判断と責任において情報をご活用ください。</p>
+</section>
+
+<!-- 02 DOOMSDAY INDEX™ とは -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title"><span class="sym">◈</span>DOOMSDAY INDEX™ とは</h2>
+  </div>
+  <p>DOOMSDAY INDEX™（以下「DI」）は、APEX WATCHが独自に定義した複合リスク指標です。世界の複数のドメインから取得したデータを正規化・重み付けして合算し、0〜100のスコアとして算出します。</p>
+  <div class="hl">
+    DIは「世界崩壊の確率」を示すものではありません。観測可能な複数のシグナルが、過去の平均からどの程度乖離しているかを示す<strong>相対的な緊張指標</strong>です。スコアが高いほど、複数のリスクシグナルが同時に高まっていることを意味します。
+  </div>
+  <p>DIは5分間隔でAPIデータを再取得・再計算します。未取得のカテゴリは直前値を使用し、全カテゴリが未取得の場合は「計算中」を表示します。</p>
+</section>
+
+<!-- 03 構成要素と重み付け -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title"><span class="sym">◈</span>構成要素と重み付け</h2>
+  </div>
+  <p>DIは以下の7カテゴリから構成されます。各カテゴリの重み（Weight）の合計は100%になります。</p>
+
+  <table class="index-table">
+    <thead>
+      <tr>
+        <th>カテゴリ</th>
+        <th>主要指標</th>
+        <th>データソース</th>
+        <th>更新</th>
+        <th style="text-align:right;">重み</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-name">軍事活動<br><span class="badge badge-red">Military</span></td>
+        <td class="col-desc">軍用機検出数（ADS-B）、台湾/ペルシャ湾/バルト海ゾーン別スパイク、DEFCON推定値</td>
+        <td class="col-src">OpenSky Network<br>USNI News, ADS-B Exchange</td>
+        <td class="col-fresh"><span class="badge badge-green">8分</span></td>
+        <td class="col-wt">28%</td>
+      </tr>
+      <tr>
+        <td class="col-name">資産逃避<br><span class="badge badge-amber">Asset Flight</span></td>
+        <td class="col-desc">BizJet逃避比率（セーフヘイブン/拠点）、恐怖&強欲指数、BTC/貴金属の対ローリング平均乖離率</td>
+        <td class="col-src">OpenSky Network API<br>CoinGecko, Alternative.me</td>
+        <td class="col-fresh"><span class="badge badge-green">5分</span></td>
+        <td class="col-wt">20%</td>
+      </tr>
+      <tr>
+        <td class="col-name">地政学リスク<br><span class="badge badge-red">Geopolitical</span></td>
+        <td class="col-desc">アクティブ紛争地域数、新規紛争発生イベント、FPCON水準（在米軍公開情報）</td>
+        <td class="col-src">Armed Conflict Location<br>&amp; Event Data (ACLED)</td>
+        <td class="col-fresh"><span class="badge badge-amber">24時間</span></td>
+        <td class="col-wt">18%</td>
+      </tr>
+      <tr>
+        <td class="col-name">サイバー脅威<br><span class="badge badge-cyan">Cyber</span><span class="badge badge-new">NEW</span></td>
+        <td class="col-desc">活動中ボットネットC2サーバー数・主要マルウェアファミリー、攻撃源国家分布（Feodo Tracker実データ）</td>
+        <td class="col-src">abuse.ch Feodo Tracker<br>リアルタイムボットネット脅威フィード</td>
+        <td class="col-fresh"><span class="badge badge-green">30分</span></td>
+        <td class="col-wt">15%</td>
+      </tr>
+      <tr>
+        <td class="col-name">海運・物流<br><span class="badge badge-blue">Shipping</span></td>
+        <td class="col-desc">Baltic Dry Index（BDI）の正常範囲（1,000〜2,500）からの乖離率、Freightos Baltic Index</td>
+        <td class="col-src">Baltic Exchange<br>Yahoo Finance</td>
+        <td class="col-fresh"><span class="badge badge-amber">日次</span></td>
+        <td class="col-wt">12%</td>
+      </tr>
+      <tr>
+        <td class="col-name">居住権逃避<br><span class="badge badge-amber">Residency Flight</span></td>
+        <td class="col-desc">CBI（投資による市民権）申請数の前年比、富裕層移住先の集中度</td>
+        <td class="col-src">Henley &amp; Partners<br>Arton Capital 年次報告</td>
+        <td class="col-fresh"><span class="badge badge-red">年次</span></td>
+        <td class="col-wt">4%</td>
+      </tr>
+      <tr>
+        <td class="col-name">NEO脅威<br><span class="badge badge-blue">NEO</span></td>
+        <td class="col-desc">7日以内接近PHA（潜在危険小惑星）数、最接近距離（5LD以下でスコア上昇）</td>
+        <td class="col-src">NASA NeoWs API<br>JPL CNEOS</td>
+        <td class="col-fresh"><span class="badge badge-green">60分</span></td>
+        <td class="col-wt">3%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="gauge-row" style="margin-top:24px;">
+    <div class="gauge-card">
+      <p class="gauge-label">最大ウェイト</p>
+      <p class="gauge-name">軍事活動</p>
+      <div class="gauge-bar"><div class="gauge-fill" style="width:28%; background:#e04040;"></div></div>
+      <div class="gauge-meta"><span>0</span><span style="color:#e04040; font-weight:bold;">28%</span><span>100</span></div>
+    </div>
+    <div class="gauge-card">
+      <p class="gauge-label">第2ウェイト</p>
+      <p class="gauge-name">資産逃避</p>
+      <div class="gauge-bar"><div class="gauge-fill" style="width:20%; background:#e0a020;"></div></div>
+      <div class="gauge-meta"><span>0</span><span style="color:#e0a020; font-weight:bold;">20%</span><span>100</span></div>
+    </div>
+    <div class="gauge-card">
+      <p class="gauge-label">第3ウェイト</p>
+      <p class="gauge-name">地政学リスク</p>
+      <div class="gauge-bar"><div class="gauge-fill" style="width:18%; background:#e07030;"></div></div>
+      <div class="gauge-meta"><span>0</span><span style="color:#e07030; font-weight:bold;">18%</span><span>100</span></div>
+    </div>
+    <div class="gauge-card">
+      <p class="gauge-label">第4ウェイト（新設）</p>
+      <p class="gauge-name">サイバー脅威</p>
+      <div class="gauge-bar"><div class="gauge-fill" style="width:15%; background:#00d4ff;"></div></div>
+      <div class="gauge-meta"><span>0</span><span style="color:#00d4ff; font-weight:bold;">15%</span><span>100</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 サイバーコンポーネント詳説 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title"><span class="sym">◈</span>サイバー脅威コンポーネント詳説</h2>
+  </div>
+  <p>サイバー脅威スコアは<strong>abuse.ch Feodo Tracker</strong>が公開するボットネットC2（コマンド&コントロール）サーバーの実データをもとに算出します。</p>
+
+  <div class="hl cyan">
+    ◈ Feodo Trackerは、Emotet・QakBot・TrickBot・LockBit等の主要マルウェアファミリーのC2インフラを追跡する非営利セキュリティ研究プロジェクトです。本データは認証不要で公開されており、30分ごとに更新されます。
+  </div>
+
+  <p><strong>スコア算出ロジック：</strong></p>
+  <p>① 活動中（status: online）のC2サーバー総数を過去90日ローリング平均と比較<br>
+  ② マルウェアファミリーをDDoS / Ransomware / Malware / Phishing / Exploit に分類<br>
+  ③ ランサムウェア系（QakBot, LockBit等）が多い場合は危険度スコアを1.3倍に増幅<br>
+  ④ 攻撃源の上位国がCN/RU/KP/IR に集中している場合は追加スコア</p>
+
+  <p><strong>可視化とデータの関係：</strong></p>
+  <p>マップ上の攻撃弧は実際のC2インフラの国別分布から重み付けされた確率的シミュレーションです。個々の弧が「今この瞬間の攻撃」を1対1で再現するものではありませんが、どの国のインフラが脅威の中心にあるかを現実のデータで反映しています。</p>
+
+  <table class="freq-table" style="margin-top:16px;">
+    <thead>
+      <tr>
+        <th>マルウェアカテゴリ</th>
+        <th>主なファミリー</th>
+        <th>可視化色</th>
+        <th>スコア係数</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:#ff1a4e; font-weight:bold;">DDoS</td>
+        <td style="color:var(--text-dim); font-size:12px;">Mirai, Gafgyt, BotenaGo</td>
+        <td><span style="color:#ff1a4e;">●</span> 赤</td>
+        <td style="color:var(--text);">×1.0</td>
+      </tr>
+      <tr>
+        <td style="color:#cc00ff; font-weight:bold;">Ransomware</td>
+        <td style="color:var(--text-dim); font-size:12px;">QakBot, LockBit, Conti, BlackCat</td>
+        <td><span style="color:#cc00ff;">●</span> 紫</td>
+        <td style="color:var(--amber); font-weight:bold;">×1.3</td>
+      </tr>
+      <tr>
+        <td style="color:#ff8c00; font-weight:bold;">Malware</td>
+        <td style="color:var(--text-dim); font-size:12px;">Emotet, TrickBot, AsyncRAT, PlugX</td>
+        <td><span style="color:#ff8c00;">●</span> オレンジ</td>
+        <td style="color:var(--text);">×1.0</td>
+      </tr>
+      <tr>
+        <td style="color:#ffe600; font-weight:bold;">Phishing</td>
+        <td style="color:var(--text-dim); font-size:12px;">Agent Tesla, FormBook, RedLine, Vidar</td>
+        <td><span style="color:#ffe600;">●</span> 黄</td>
+        <td style="color:var(--text);">×0.8</td>
+      </tr>
+      <tr>
+        <td style="color:#00d4ff; font-weight:bold;">Exploit</td>
+        <td style="color:var(--text-dim); font-size:12px;">Cobalt Strike, Sliver, Havoc</td>
+        <td><span style="color:#00d4ff;">●</span> シアン</td>
+        <td style="color:var(--amber); font-weight:bold;">×1.2</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 05 算出アルゴリズム -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title"><span class="sym">▶</span>算出アルゴリズム</h2>
+  </div>
+  <p>各カテゴリスコアは、対象指標の現在値を過去90日間のローリング平均と比較し、偏差を0〜100に正規化します。その後、重み付け平均を計算します。</p>
+
+  <div class="algo-block">
+    <p class="algo-label">正規化スコア（各カテゴリ）</p>
+    <div class="algo-formula">
+      S<sub>i</sub> = clamp( (V<sub>i</sub> − μ<sub>90</sub>) / σ<sub>90</sub> × <em>k</em>, 0, 100 )
+    </div>
+    <p class="algo-note">
+      V<sub>i</sub> = 現在値 　μ<sub>90</sub> = 90日ローリング平均 　σ<sub>90</sub> = 90日標準偏差<br>
+      k = カテゴリ別スケーリング定数（軍事: 12, 資産: 15, 地政: 10, サイバー: 11, 海運: 8, 居住権: 20, NEO: 25）
+    </p>
+  </div>
+
+  <div class="algo-block" style="margin-top:12px;">
+    <p class="algo-label">DOOMSDAY INDEX™ 最終スコア（v2.7.0）</p>
+    <div class="algo-formula">
+      DI = <em>0.28</em>×S<sub>mil</sub> + <em>0.20</em>×S<sub>asset</sub> + <em>0.18</em>×S<sub>geo</sub> + <em>0.15</em>×S<sub>cyber</sub><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <em>0.12</em>×S<sub>ship</sub> + <em>0.04</em>×S<sub>res</sub> + <em>0.03</em>×S<sub>neo</sub>
+    </div>
+    <p class="algo-note">算出は5分間隔。APIデータが未取得のカテゴリは直前値を使用。全カテゴリ未取得の場合は「計算中」を表示。</p>
+  </div>
+
+  <div class="algo-block" style="margin-top:12px;">
+    <p class="algo-label">計算例（例: 緊張期）</p>
+    <div class="algo-formula" style="font-size:12px; line-height:2;">
+      S<sub>mil</sub>=72, S<sub>asset</sub>=60, S<sub>geo</sub>=55, S<sub>cyber</sub>=48, S<sub>ship</sub>=30, S<sub>res</sub>=40, S<sub>neo</sub>=8<br>
+      DI = 0.28×72 + 0.20×60 + 0.18×55 + 0.15×48 + 0.12×30 + 0.04×40 + 0.03×8<br>
+      &nbsp;&nbsp;&nbsp;= 20.2 + 12.0 + 9.9 + 7.2 + 3.6 + 1.6 + 0.2 = <em>54.7</em>（CAUTION ゾーン）
+    </div>
+  </div>
+</section>
+
+<!-- 06 データ更新頻度 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title"><span class="sym">◈</span>データ更新頻度一覧</h2>
+  </div>
+  <p>各データソースの更新頻度・遅延・取得方式を以下に示します。</p>
+  <table class="freq-table">
+    <thead>
+      <tr><th>データソース</th><th>更新間隔</th><th>本サイト取得</th><th>遅延上限</th><th>取得方式</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="freq-source">OpenSky Network（軍用機）</td>
+        <td class="freq-rate">〜10秒</td>
+        <td class="freq-lag">8分ごと</td>
+        <td class="freq-lag">〜9分</td>
+        <td class="freq-mode"><span class="badge badge-green">REST API</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">CoinGecko（BTC/ETH/金）</td>
+        <td class="freq-rate">60秒</td>
+        <td class="freq-lag">5分ごと</td>
+        <td class="freq-lag">〜6分</td>
+        <td class="freq-mode"><span class="badge badge-green">REST API</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">Alternative.me（恐怖&強欲）</td>
+        <td class="freq-rate">日次</td>
+        <td class="freq-lag">5分ごと</td>
+        <td class="freq-lag">〜24時間</td>
+        <td class="freq-mode"><span class="badge badge-green">REST API</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">abuse.ch Feodo Tracker（C2）</td>
+        <td class="freq-rate">〜3時間</td>
+        <td class="freq-lag">30分ごと</td>
+        <td class="freq-lag">〜3.5時間</td>
+        <td class="freq-mode"><span class="badge badge-cyan">JSON Feed</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">NASA NeoWs（NEO）</td>
+        <td class="freq-rate">日次</td>
+        <td class="freq-lag">60分ごと</td>
+        <td class="freq-lag">〜25時間</td>
+        <td class="freq-mode"><span class="badge badge-green">REST API</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">Baltic Exchange（BDI/FBX）</td>
+        <td class="freq-rate">営業日次</td>
+        <td class="freq-lag">5分ごと</td>
+        <td class="freq-lag">〜26時間</td>
+        <td class="freq-mode"><span class="badge badge-amber">スクレイプ</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">ACLED（地政学）</td>
+        <td class="freq-rate">週次</td>
+        <td class="freq-lag">24時間ごと</td>
+        <td class="freq-lag">〜8日</td>
+        <td class="freq-mode"><span class="badge badge-amber">REST API</span></td>
+      </tr>
+      <tr>
+        <td class="freq-source">Henley &amp; Partners / Arton（居住権）</td>
+        <td class="freq-rate">年次</td>
+        <td class="freq-lag">固定値</td>
+        <td class="freq-lag">〜1年</td>
+        <td class="freq-mode"><span class="badge badge-red">手動入力</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 07 スコアゾーン定義 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title"><span class="sym">◈</span>スコアゾーン定義</h2>
+  </div>
+  <p>DIスコアは以下の4段階で区分されます。</p>
+  <div class="zone-grid">
+    <div class="zone-card z-n">
+      <div class="zone-score">0〜30</div>
+      <div class="zone-label">◈ 通常<br>NORMAL</div>
+    </div>
+    <div class="zone-card z-c">
+      <div class="zone-score">31〜55</div>
+      <div class="zone-label">⚡ 警戒<br>CAUTION</div>
+    </div>
+    <div class="zone-card z-d">
+      <div class="zone-score">56〜75</div>
+      <div class="zone-label">☢ 危険<br>DANGER</div>
+    </div>
+    <div class="zone-card z-x">
+      <div class="zone-score">76〜100</div>
+      <div class="zone-label">☄ 緊急<br>CRITICAL</div>
+    </div>
+  </div>
+  <p style="margin-top:16px; font-size:12px; color:var(--text-dim);">
+    「通常」ゾーンであっても局所的な危機が発生している可能性を否定するものではありません。DIは複数シグナルの複合値であり、特定の地域・事象のリスクを個別に反映するものではありません。
+  </p>
+</section>
+
+<!-- 08 既知のバイアスと限界 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title"><span class="sym">▸</span>既知のバイアスと限界</h2>
+  </div>
+  <div class="hl amber">
+    ⚡ 以下のバイアスは本指標に構造的に内在します。利用者はこれらを理解した上でDIを参照してください。
+  </div>
+  <ul class="limit-list">
+    <li><span class="em">ADS-B未搭載機：</span>軍用機の一部はADS-Bトランスポンダを停止または未搭載で飛行します。検出数が少ない＝活動が少ないとは限りません。逆に検出増加は意図的な「見せる示威行動」の可能性もあります。</li>
+    <li><span class="em">C2サーバー所在地≠攻撃者の国籍：</span>Feodo TrackerはC2インフラのホスティング場所を示します。米国・ドイツのAWS/GCPインスタンスが多く登場するのは、脅威アクターがこれらのクラウド事業者を悪用するためです。サイバー攻撃の発信源国ではない点に注意が必要です。</li>
+    <li><span class="em">BDIの平時バイアス：</span>90日ローリング平均は、長期的な高緊張期が続く場合に感度が低下します。構造的な高騰期においてスコアが過小評価される性質があります。</li>
+    <li><span class="em">居住権データの年次遅延：</span>Henley &amp; Partners・Arton Capitalのデータは年次報告が多く、直近のラッシュを反映できません。このカテゴリの重みは4%に抑えています。</li>
+    <li><span class="em">DEFCONおよびFPCON推定値：</span>本サイトの推定値は公式機関による発表ではありません。公式の安全保障ステータスと異なる場合があります。</li>
+    <li><span class="em">スケーリング定数（k値）の主観性：</span>DIのkパラメータおよび重み付けは本サイトが経験的に設定したものであり、学術的な検証を受けたものではありません。</li>
+    <li><span class="em">NEOデータの不確実性：</span>新しい小惑星の発見・軌道改定により数値は随時変化します。LD距離の精度は観測データの質に依存します。</li>
+  </ul>
+</section>
+
+<!-- 09 データソース一覧 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2 class="section-title"><span class="sym">◈</span>データソース一覧</h2>
+  </div>
+  <p>本サイトが参照するすべての一次ソースを示します。</p>
+  <div class="ds-grid">
+    <div class="ds-card"><p class="ds-cat">航空追跡</p><p class="ds-name">OpenSky Network</p><p class="ds-sub">ADS-B Exchange</p></div>
+    <div class="ds-card"><p class="ds-cat">天体（NEO）</p><p class="ds-name">NASA NeoWs API</p><p class="ds-sub">JPL CNEOS</p></div>
+    <div class="ds-card"><p class="ds-cat">金融</p><p class="ds-name">CoinGecko API</p><p class="ds-sub">Alternative.me</p></div>
+    <div class="ds-card"><p class="ds-cat">海運</p><p class="ds-name">Baltic Exchange</p><p class="ds-sub">Yahoo Finance</p></div>
+    <div class="ds-card"><p class="ds-cat">軍事・安保</p><p class="ds-name">USNI News</p><p class="ds-sub">Jane's Defence Weekly</p></div>
+    <div class="ds-card"><p class="ds-cat">移住・居住権</p><p class="ds-name">Henley &amp; Partners</p><p class="ds-sub">Arton Capital</p></div>
+    <div class="ds-card"><p class="ds-cat">サイバー脅威</p><p class="ds-name">abuse.ch Feodo Tracker</p><p class="ds-sub">ボットネットC2インフラ</p></div>
+    <div class="ds-card"><p class="ds-cat">地政学</p><p class="ds-name">ACLED</p><p class="ds-sub">Armed Conflict Location &amp; Event Data</p></div>
+    <div class="ds-card"><p class="ds-cat">航空産業</p><p class="ds-name">GAMA</p><p class="ds-sub">SuperYacht Times</p></div>
+    <div class="ds-card"><p class="ds-cat">通信・防衛産業</p><p class="ds-name">SpaceX 公開データ</p><p class="ds-sub">Allied Market Research</p></div>
+  </div>
+</section>
+
+<!-- 10 改訂履歴 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2 class="section-title"><span class="sym">◈</span>改訂履歴</h2>
+  </div>
+  <div class="changelog">
+    <div class="cl-item">
+      <span class="cl-date">2026-06-19</span>
+      <span class="cl-ver">v2.7.0</span>
+      <span class="cl-notes">サイバー脅威をDIの第4コンポーネントとして追加（重み15%）。Feodo Tracker実データ統合。重み再調整（軍事28%, 資産20%, 地政18%, 海運12%, 居住権4%, NEO3%）。方法論ページ全面改訂。</span>
+    </div>
+    <div class="cl-item">
+      <span class="cl-date">2025-12-01</span>
+      <span class="cl-ver">v2.6.14</span>
+      <span class="cl-notes">NEO 3D天体図追加（Three.js）。サイバー攻撃アニメーション大幅改善（Canvas/foreignObject）。アンチメリディアンバグ修正。セクションナビ・折畳み機能追加。</span>
+    </div>
+    <div class="cl-item">
+      <span class="cl-date">2025-06-01</span>
+      <span class="cl-ver">v2.5.0</span>
+      <span class="cl-notes">NEOアラートシステム追加（NASA NeoWs API）。BizJet逃避追跡強化。DEFCON推定ロジック改訂。</span>
+    </div>
+    <div class="cl-item">
+      <span class="cl-date">2025-01-01</span>
+      <span class="cl-ver">v1.0.0</span>
+      <span class="cl-notes">初版公開。6カテゴリ構成のDOOMSDAY INDEX™ v1設計。軍事・資産・地政・海運・居住権・NEO。</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 お問い合わせ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2 class="section-title"><span class="sym">◈</span>お問い合わせ・フィードバック</h2>
+  </div>
+  <p>方法論への疑問・データソースの誤り・改善提案は <a href="https://github.com/mojave1225-jpg/apex-watch/issues" target="_blank" rel="noopener">GitHub Issues</a> よりお寄せください。本サイトはコミュニティによる改善を歓迎します。</p>
+</section>
+
+<footer class="page-footer">
+  <span>APEX WATCH v2.7.0 | Disclaimer &amp; Methodology</span>
+  <span>最終更新: 2026-06-19 | <a href="./privacy.html">プライバシーポリシー</a> | <a href="./index.html">◈ ダッシュボード</a></span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プライバシーポリシー — APEX WATCH</title>
+<meta name="description" content="APEX WATCHのプライバシーポリシー。閲覧者データの取扱い・外部サービス連携・Cookieに関する説明。">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#03040d">
+<style>
+  :root {
+    --bg:           #03040d;
+    --panel:        #0a0d18;
+    --border:       #1a2040;
+    --border2:      #243060;
+    --text:         #b8c4e0;
+    --text-dim:     #5a6a90;
+    --text-bright:  #dce8ff;
+    --accent:       #3a7bd5;
+    --accent2:      #5a9bff;
+    --accent-dim:   #1a3560;
+    --green:        #1db954;
+    --green-dim:    #0a4020;
+    --amber:        #e0a020;
+    --amber-dim:    #3a2800;
+    --red:          #e04040;
+    --red-dim:      #3a0f0f;
+    --cyan:         #00d4ff;
+    --mono: 'Courier New', 'Lucida Console', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.75; }
+  body { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0 12px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .site-logo { font-size: 13px; color: var(--text-dim); text-decoration: none; letter-spacing: 0.08em; }
+  .site-logo span { color: var(--accent2); }
+  .back-link {
+    font-size: 12px; color: var(--accent); text-decoration: none;
+    border: 1px solid var(--accent-dim); padding: 4px 12px; border-radius: 2px;
+    letter-spacing: 0.05em; transition: background 0.15s;
+  }
+  .back-link:hover { background: var(--accent-dim); }
+
+  .page-hero { padding: 48px 0 32px; border-bottom: 1px solid var(--border); }
+  .page-eyebrow { font-size: 11px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+  .page-title { font-size: clamp(20px, 4vw, 30px); color: var(--text-bright); letter-spacing: 0.04em; line-height: 1.3; margin-bottom: 16px; }
+  .page-title span { color: var(--accent2); }
+  .page-meta { font-size: 12px; color: var(--text-dim); display: flex; gap: 24px; flex-wrap: wrap; }
+  .page-meta strong { color: var(--text); }
+
+  .section { padding: 36px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .section-num { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; min-width: 32px; }
+  .section-title { font-size: 15px; color: var(--text-bright); letter-spacing: 0.06em; }
+  .section-title .sym { color: var(--accent2); margin-right: 6px; }
+
+  p { color: var(--text); line-height: 1.85; margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text-bright); }
+
+  .badge {
+    display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 2px; vertical-align: middle; margin-left: 6px;
+  }
+  .badge-green  { background: var(--green-dim); color: var(--green); border: 1px solid #1db95440; }
+  .badge-amber  { background: var(--amber-dim); color: var(--amber); border: 1px solid #e0a02040; }
+  .badge-red    { background: var(--red-dim);   color: var(--red);   border: 1px solid #e0404040; }
+  .badge-blue   { background: var(--accent-dim); color: var(--accent2); border: 1px solid #3a7bd540; }
+  .badge-cyan   { background: #001a2a; color: var(--cyan); border: 1px solid #00d4ff40; }
+
+  .hl { background: var(--panel); border-left: 3px solid var(--accent); padding: 14px 18px; margin: 20px 0; font-size: 13px; line-height: 1.8; }
+  .hl.amber { border-color: var(--amber); }
+  .hl.red   { border-color: var(--red);   background: #0d0608; }
+  .hl.green { border-color: var(--green); }
+
+  /* カードグリッド（収集しないもの） */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 3px; padding: 16px 18px; }
+  .card-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  .card-title { font-size: 13px; color: var(--text-bright); margin-bottom: 6px; font-weight: bold; }
+  .card-body  { font-size: 12px; color: var(--text-dim); line-height: 1.7; margin-bottom: 0; }
+
+  /* サービス一覧テーブル */
+  .svc-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+  .svc-table th { font-size: 11px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--border2); font-weight: normal; text-align: left; }
+  .svc-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .svc-table tr:hover td { background: var(--panel); }
+  .svc-num  { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
+  .svc-name { color: var(--text-bright); font-weight: bold; }
+  .svc-sub  { font-size: 11px; color: var(--text-dim); }
+  .svc-desc { color: var(--text); font-size: 12px; line-height: 1.65; }
+  .svc-data { color: var(--text-dim); font-size: 12px; }
+  .svc-risk { white-space: nowrap; }
+
+  /* データフロー */
+  .flow-block {
+    background: var(--panel); border: 1px solid var(--border2); border-radius: 3px;
+    padding: 20px 24px; margin: 20px 0; font-family: var(--mono); font-size: 12px;
+    line-height: 2; color: var(--text-dim);
+    overflow-x: auto;
+  }
+  .flow-block .arrow { color: var(--accent2); }
+  .flow-block .node  { color: var(--text-bright); }
+  .flow-block .note  { color: var(--text-dim); font-size: 11px; }
+
+  /* Cookie説明 */
+  .cookie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media (max-width: 560px) { .cookie-grid { grid-template-columns: 1fr; } }
+  .cookie-card { background: var(--panel); border: 1px solid var(--border); border-radius: 3px; padding: 14px 16px; }
+  .cookie-name { font-size: 13px; color: var(--text-bright); margin-bottom: 6px; font-weight: bold; }
+  .cookie-body { font-size: 12px; color: var(--text-dim); line-height: 1.65; }
+  .cookie-who  { font-size: 11px; color: var(--accent2); margin-top: 6px; }
+
+  code { background: var(--panel); border: 1px solid var(--border); color: var(--accent2); font-family: var(--mono); font-size: 12px; padding: 1px 6px; border-radius: 2px; }
+
+  .page-footer {
+    margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--text-dim); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent2); text-decoration: underline; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="./index.html"><span>◈</span> APEX WATCH</a>
+  <a class="back-link" href="./index.html">← メインダッシュボードへ</a>
+</header>
+
+<section class="page-hero">
+  <p class="page-eyebrow">◈ LEGAL DOCUMENT — APEX WATCH</p>
+  <h1 class="page-title">
+    <span>◈</span> プライバシーポリシー<br>
+    <span style="font-size:0.55em; color:var(--text-dim);">Privacy Policy</span>
+  </h1>
+  <div class="page-meta">
+    <span>制定日：<strong>2025年1月1日</strong></span>
+    <span>最終更新：<strong>2026年6月19日</strong></span>
+    <span>バージョン：<strong>v2.7.0 対応</strong></span>
+  </div>
+</section>
+
+<!-- 00 基本方針 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">00</span>
+    <h2 class="section-title"><span class="sym">▶</span>基本方針</h2>
+  </div>
+  <div class="hl green">
+    APEX WATCH（以下「本サイト」）は、公開情報（OSINT）の集計・可視化を目的とした教育的ダッシュボードです。本サイトは閲覧者の個人情報を能動的に収集・販売・共有することはありません。
+  </div>
+  <p>本ポリシーは、本サイトを閲覧することで発生する情報の扱い、ならびに技術的な仕組みとして発生する第三者サービスへの情報送信について、透明性を確保するために作成されました。</p>
+  <p>「能動的な収集なし」の原則に基づきながらも、HTTPリクエストの技術的な性質として閲覧者のIPアドレスが以下に記載する複数の外部サーバーに送信されます。本ポリシーでは、その詳細を正確にお伝えします。</p>
+</section>
+
+<!-- 01 収集しないもの -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title"><span class="sym">⚡</span>本サイトが収集しないもの</h2>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <p class="card-label">アカウント情報</p>
+      <p class="card-title">氏名・メールアドレス・パスワード</p>
+      <p class="card-body">本サイトにはログイン・会員登録機能が存在しません。</p>
+    </div>
+    <div class="card">
+      <p class="card-label">入力フォーム</p>
+      <p class="card-title">ユーザーが入力したデータ</p>
+      <p class="card-body">本サイトに入力フォームは設置されていません。</p>
+    </div>
+    <div class="card">
+      <p class="card-label">決済情報</p>
+      <p class="card-title">クレジットカード・銀行口座</p>
+      <p class="card-body">本サイトは無料公開であり、課金機能は存在しません。</p>
+    </div>
+    <div class="card">
+      <p class="card-label">位置情報</p>
+      <p class="card-title">GPS・精密位置データ</p>
+      <p class="card-body">ブラウザの位置情報APIへのアクセスは行っていません。</p>
+    </div>
+    <div class="card">
+      <p class="card-label">トラッキング</p>
+      <p class="card-title">Google Analytics・広告Pixel</p>
+      <p class="card-body">広告追跡・分析ツールは一切使用していません。</p>
+    </div>
+    <div class="card">
+      <p class="card-label">マイク・カメラ</p>
+      <p class="card-title">メディアデバイスアクセス</p>
+      <p class="card-body">マイク・カメラ等のデバイスAPIへのアクセスはしません。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 技術的に発生する情報送信 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title"><span class="sym">◈</span>技術的に発生する情報送信</h2>
+  </div>
+  <div class="hl amber">
+    ⚡ 本サイトは複数の外部APIおよびサービスをブラウザから直接呼び出します。この過程で閲覧者のIPアドレスが以下の第三者サーバーに送信されます。これはHTTPリクエストの技術的な性質によるもので、本サイトがデータを仲介したり収集したりするわけではありません。
+  </div>
+
+  <table class="svc-table">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>サービス名</th>
+        <th>用途・送信データ</th>
+        <th>リスク</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="svc-num">01</td>
+        <td>
+          <div class="svc-name">GitHub Pages <span class="badge badge-blue">ホスト</span></div>
+          <div class="svc-sub">github.io</div>
+        </td>
+        <td class="svc-desc">本サイトのホスティング。アクセスログ（IP・UA）はGitHubに記録されます。<br><a href="https://docs.github.com/ja/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener" style="font-size:11px;">GitHub プライバシー声明 →</a></td>
+        <td class="svc-risk"><span class="badge badge-amber">低〜中</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">02</td>
+        <td>
+          <div class="svc-name">YouTube / Google <span class="badge badge-amber">埋込み</span></div>
+          <div class="svc-sub">youtube-nocookie.com</div>
+        </td>
+        <td class="svc-desc">CBSニュースのライブ配信埋込み。閲覧時にGoogleのCookieが発行されます。プライバシー強化モード（nocookie）を使用しています。<br><a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener" style="font-size:11px;">Google プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-amber">中</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">03</td>
+        <td>
+          <div class="svc-name">OpenSky Network <span class="badge badge-green">API</span></div>
+          <div class="svc-sub">opensky-network.org</div>
+        </td>
+        <td class="svc-desc">ADS-B航空機追跡データを8分ごとにAPIリクエスト。IPアドレスのみ送信。<br><a href="https://opensky-network.org/about/privacy-policy" target="_blank" rel="noopener" style="font-size:11px;">OpenSky プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">04</td>
+        <td>
+          <div class="svc-name">NASA NeoWs API <span class="badge badge-green">API</span></div>
+          <div class="svc-sub">api.nasa.gov</div>
+        </td>
+        <td class="svc-desc">地球接近天体データを60分ごとにAPIリクエスト。DEMO_KEY使用（IPごとのクォータ管理）。<br><a href="https://www.nasa.gov/privacy/" target="_blank" rel="noopener" style="font-size:11px;">NASA プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">05</td>
+        <td>
+          <div class="svc-name">CoinGecko <span class="badge badge-green">API</span></div>
+          <div class="svc-sub">api.coingecko.com</div>
+        </td>
+        <td class="svc-desc">BTC/ETH価格データを5分ごとにAPIリクエスト。無認証パブリックエンドポイントを使用。<br><a href="https://www.coingecko.com/en/privacy" target="_blank" rel="noopener" style="font-size:11px;">CoinGecko プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">06</td>
+        <td>
+          <div class="svc-name">Alternative.me <span class="badge badge-green">API</span></div>
+          <div class="svc-sub">api.alternative.me</div>
+        </td>
+        <td class="svc-desc">恐怖&強欲指数を5分ごとにAPIリクエスト。パブリックエンドポイント。</td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">07</td>
+        <td>
+          <div class="svc-name">abuse.ch Feodo Tracker <span class="badge badge-cyan">脅威フィード</span></div>
+          <div class="svc-sub">feodotracker.abuse.ch</div>
+        </td>
+        <td class="svc-desc">ボットネットC2サーバーリスト（JSON）を30分ごとに取得。サイバー脅威可視化のための実データ。認証不要の公開フィード。<br><a href="https://abuse.ch/privacy-policy/" target="_blank" rel="noopener" style="font-size:11px;">abuse.ch プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">08</td>
+        <td>
+          <div class="svc-name">allorigins.win <span class="badge badge-amber">CORSプロキシ</span></div>
+          <div class="svc-sub">api.allorigins.win</div>
+        </td>
+        <td class="svc-desc">Feodo Trackerへの直接アクセスがCORS制限でブロックされた場合のフォールバックプロキシ。リクエストURLのみが送信されます。<br><span style="font-size:11px; color:var(--text-dim);">※ Feodo Trackerへの直接接続が成功した場合は使用されません</span></td>
+        <td class="svc-risk"><span class="badge badge-amber">低〜中</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">09</td>
+        <td>
+          <div class="svc-name">Yahoo Finance / Baltic Exchange <span class="badge badge-green">データ</span></div>
+          <div class="svc-sub">query1.finance.yahoo.com</div>
+        </td>
+        <td class="svc-desc">海運指数（BDI・FBX）データを5分ごとに取得。パブリックエンドポイント。<br><a href="https://legal.yahoo.com/us/en/yahoo/privacy/" target="_blank" rel="noopener" style="font-size:11px;">Yahoo プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">10</td>
+        <td>
+          <div class="svc-name">各種ニュースフィード <span class="badge badge-green">RSS/API</span></div>
+          <div class="svc-sub">複数のニュースソース</div>
+        </td>
+        <td class="svc-desc">シグナルインテリジェンスフィード・ニュースソースへのリクエスト。</td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin-top:16px; font-size:12px; color:var(--text-dim);">各外部サービスのプライバシーポリシーについては、それぞれの運営者のウェブサイトをご参照ください。本サイトは各サービスのデータ取扱いに責任を負いません。</p>
+</section>
+
+<!-- 03 データフロー概要 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title"><span class="sym">◈</span>データフロー概要</h2>
+  </div>
+  <p>本サイトのデータフローを示します。本サイトにはバックエンドサーバーが存在しません。すべての処理はブラウザ（クライアントサイド）で実行されます。</p>
+  <div class="flow-block">
+<span class="node">閲覧者のブラウザ</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">GitHub Pages</span>  <span class="note">← index.html/styles.css/js を取得</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">OpenSky Network API</span>  <span class="note">← 軍用機ADS-Bデータ（8分ごと）</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">CoinGecko API</span>  <span class="note">← BTC/ETH/金価格（5分ごと）</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">NASA NeoWs API</span>  <span class="note">← 地球接近天体データ（60分ごと）</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">abuse.ch Feodo Tracker</span>  <span class="note">← C2ボットネットデータ（30分ごと）</span>
+  │    └─<span class="arrow">→</span> <span class="node">allorigins.win</span>  <span class="note">← CORS失敗時のフォールバックのみ</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">Alternative.me API</span>  <span class="note">← 恐怖&強欲指数（5分ごと）</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">YouTube (nocookie)</span>  <span class="note">← CBSニュースライブ埋込み</span>
+  │
+  └─<span class="arrow">→</span> <span class="node">Yahoo Finance</span>  <span class="note">← BDI/FBX海運指数（5分ごと）</span>
+
+<span class="note">※ 本サイト独自のバックエンドサーバーは存在しません</span>
+<span class="note">※ 取得したデータは閲覧者のブラウザ内で処理・表示されるのみです</span>
+<span class="note">※ 本サイトはいかなるデータも独自サーバーに保存しません</span>
+  </div>
+</section>
+
+<!-- 04 Cookie・ローカルストレージ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title"><span class="sym">◈</span>Cookie・ローカルストレージ</h2>
+  </div>
+  <div class="cookie-grid">
+    <div class="cookie-card">
+      <p class="cookie-name">本サイト独自のCookie</p>
+      <p class="cookie-body">本サイト自身はCookieを発行しません。設定・状態の保存が必要な場合は <code>localStorage</code> を使用します。</p>
+      <p class="cookie-who">発行元: なし</p>
+    </div>
+    <div class="cookie-card">
+      <p class="cookie-name">localStorage（ローカルのみ）</p>
+      <p class="cookie-body">表示設定・折畳み状態の保存に <code>localStorage</code> を使用することがあります。このデータはブラウザ内にのみ存在し、外部に送信されません。</p>
+      <p class="cookie-who">発行元: 本サイト（外部送信なし）</p>
+    </div>
+    <div class="cookie-card">
+      <p class="cookie-name">YouTubeCookie</p>
+      <p class="cookie-body">YouTubeの埋込み動画を再生すると、Googleのトラッキングを最小化した <code>youtube-nocookie.com</code> ドメインからCookieが発行されます。</p>
+      <p class="cookie-who">発行元: Google LLC</p>
+    </div>
+    <div class="cookie-card">
+      <p class="cookie-name">GitHub Pages Cookie</p>
+      <p class="cookie-body">GitHubが静的サイトのセッション管理のためにCookieを発行する場合があります。詳細はGitHubのプライバシー声明をご参照ください。</p>
+      <p class="cookie-who">発行元: GitHub, Inc.</p>
+    </div>
+  </div>
+  <p style="margin-top:20px; font-size:12px; color:var(--text-dim);">
+    YouTubeの埋込みを回避したい場合は、ブラウザの拡張機能（uBlock OriginやPrivacyBadger）またはJavaScriptの無効化をご検討ください。本サイトの主要機能（マップ・パネル・NEO・サイバー）はYouTubeなしでも動作します。
+  </p>
+</section>
+
+<!-- 05 CDNライブラリ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title"><span class="sym">◈</span>CDNライブラリ</h2>
+  </div>
+  <p>本サイトは以下のJavaScriptライブラリをCDNから読み込みます。これらのCDNサーバーへのリクエスト時にIPアドレスが送信されます。</p>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:8px; margin-top:16px; font-size:12px;">
+    <div style="background:var(--panel); border:1px solid var(--border); padding:10px 14px; border-radius:3px;">
+      <div style="color:var(--text-dim); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">3D可視化</div>
+      <div style="color:var(--text-bright);">Three.js 0.155.0</div>
+      <div style="color:var(--text-dim);">cdn.jsdelivr.net</div>
+    </div>
+    <div style="background:var(--panel); border:1px solid var(--border); padding:10px 14px; border-radius:3px;">
+      <div style="color:var(--text-dim); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">地図・投影</div>
+      <div style="color:var(--text-bright);">D3.js v7</div>
+      <div style="color:var(--text-dim);">cdn.jsdelivr.net</div>
+    </div>
+    <div style="background:var(--panel); border:1px solid var(--border); padding:10px 14px; border-radius:3px;">
+      <div style="color:var(--text-dim); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">地図データ</div>
+      <div style="color:var(--text-bright);">TopoJSON</div>
+      <div style="color:var(--text-dim);">cdn.jsdelivr.net</div>
+    </div>
+  </div>
+  <p style="margin-top:12px; font-size:12px; color:var(--text-dim);">これらのライブラリはいずれもオープンソースであり、CDNプロバイダー（jsDelivr）のプライバシーポリシーが適用されます。</p>
+</section>
+
+<!-- 06 未成年者について -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title"><span class="sym">◈</span>未成年者について</h2>
+  </div>
+  <p>本サイトは13歳未満の方を対象としておらず、未成年者の個人情報を意図的に収集することはありません。本サイトの内容（地政学的緊張・軍事活動・サイバー脅威等）は保護者の指導のもとで閲覧されることを推奨します。</p>
+</section>
+
+<!-- 07 ポリシーの変更 -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title"><span class="sym">◈</span>ポリシーの変更</h2>
+  </div>
+  <p>本ポリシーは、サイトの機能追加・外部APIの変更に応じて更新されることがあります。重要な変更が行われた場合は、ページ上部の「最終更新」日付に反映されます。継続的な閲覧は最新のポリシーへの同意とみなされます。</p>
+  <p style="font-size:12px; color:var(--text-dim);">v2.7.0（2026年6月19日）での変更点：abuse.ch Feodo Tracker および allorigins.win CORS プロキシを外部サービス一覧に追加。データフロー図を追加。CDNライブラリセクションを新設。</p>
+</section>
+
+<!-- 08 お問い合わせ -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title"><span class="sym">◈</span>お問い合わせ</h2>
+  </div>
+  <p>本ポリシーに関するご質問・ご意見は <a href="https://github.com/mojave1225-jpg/apex-watch/issues" target="_blank" rel="noopener">GitHub Issues</a> よりお寄せください。</p>
+</section>
+
+<footer class="page-footer">
+  <span>APEX WATCH v2.7.0 | Privacy Policy</span>
+  <span>最終更新: 2026-06-19 | <a href="./disclaimer.html">免責事項・方法論</a> | <a href="./index.html">◈ ダッシュボード</a></span>
+</footer>
+
+</body>
+</html>
