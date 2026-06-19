@@ -51,6 +51,131 @@ const CYBER_TARGETS = [
   'IL','SA','PL','CA','IN','SG','TR','SE','CH',
 ];
 
+/* ============================================================
+   THREAT INTELLIGENCE — Feodo Tracker (abuse.ch)
+   Real botnet C&C server data, updated every ~3h by abuse.ch.
+   We count active C2 servers per country to drive source weights,
+   and tally malware families to drive attack-type distribution.
+   ============================================================ */
+
+const FEODO_URL   = 'https://feodotracker.abuse.ch/downloads/ipblocklist.json';
+const FEODO_PROXY = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(FEODO_URL);
+const INTEL_TTL   = 30 * 60 * 1000;   // re-fetch every 30 min
+
+// Runtime overrides; null = keep using the static defaults above
+let _rtSources = null;
+let _rtTypes   = null;
+
+// Map malware family names → CYBER_TYPES names
+const MW_TYPE = {
+  // DDoS botnets
+  'mirai':'DDoS', 'gafgyt':'DDoS', 'botena':'DDoS', 'bashlite':'DDoS', 'moobot':'DDoS',
+  // Ransomware / loaders
+  'qakbot':'Ransomware', 'qbot':'Ransomware', 'bazarloader':'Ransomware',
+  'lockbit':'Ransomware', 'conti':'Ransomware', 'blackcat':'Ransomware',
+  'ryuk':'Ransomware', 'darkside':'Ransomware',
+  // Banking / generic malware
+  'emotet':'Malware', 'trickbot':'Malware', 'dridex':'Malware',
+  'icedid':'Malware', 'systembc':'Malware', 'bumblebee':'Malware',
+  'plugx':'Malware',  'asyncrat':'Malware',  'njrat':'Malware',
+  'bitrat':'Malware', 'remcos':'Malware',    'xworm':'Malware',
+  'darkcomet':'Malware', 'nanocore':'Malware',
+  // Stealers / phishing
+  'agenttsla':'Phishing', 'agent tesla':'Phishing', 'formbook':'Phishing',
+  'redline':'Phishing', 'vidar':'Phishing', 'raccoon':'Phishing',
+  'lumma':'Phishing', 'snake keylogger':'Phishing', 'lokibot':'Phishing',
+  // C2 / exploit frameworks
+  'cobalt strike':'Exploit', 'cobaltstrike':'Exploit', 'sliver':'Exploit',
+  'metasploit':'Exploit', 'brute ratel':'Exploit', 'havoc':'Exploit',
+};
+
+function mwToType(name) {
+  if (!name) return 'Exploit';
+  const n = name.toLowerCase();
+  for (const [k, v] of Object.entries(MW_TYPE)) {
+    if (n.includes(k)) return v;
+  }
+  return 'Exploit';
+}
+
+async function timedFetch(url, ms) {
+  const ac  = new AbortController();
+  const tid = setTimeout(() => ac.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ac.signal });
+    clearTimeout(tid);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (e) {
+    clearTimeout(tid);
+    throw e;
+  }
+}
+
+async function loadThreatIntel() {
+  let data = null;
+
+  // Try direct first (abuse.ch may allow CORS)
+  try { data = await timedFetch(FEODO_URL, 5000); } catch (_) {}
+
+  // Fallback: public CORS proxy
+  if (!data) {
+    try { data = await timedFetch(FEODO_PROXY, 9000); } catch (_) {}
+  }
+
+  if (!Array.isArray(data) || !data.length) return false;
+
+  // Aggregate: only count records with a known country
+  const byCountry = {};
+  const byMalware = {};
+
+  data.forEach(r => {
+    const cc = r.country;
+    if (cc && cc !== '--') byCountry[cc] = (byCountry[cc] || 0) + 1;
+    if (r.malware)         byMalware[r.malware] = (byMalware[r.malware] || 0) + 1;
+  });
+
+  // Build weighted source list from countries that have CYBER_NODES entries
+  const total = Object.values(byCountry).reduce((a, b) => a + b, 0) || 1;
+  const newSrc = Object.entries(byCountry)
+    .filter(([cc]) => CYBER_NODES[cc])
+    .map(([cc, n]) => ({ k: cc, w: Math.max(1, Math.round(n / total * 200)) }))
+    .sort((a, b) => b.w - a.w);
+
+  if (newSrc.length >= 2) _rtSources = newSrc;
+
+  // Build type weights from real malware family distribution
+  const typeAgg = {};
+  Object.entries(byMalware).forEach(([mw, n]) => {
+    const t = mwToType(mw);
+    typeAgg[t] = (typeAgg[t] || 0) + n;
+  });
+  if (Object.keys(typeAgg).length > 0) {
+    _rtTypes = CYBER_TYPES.map(t => ({ ...t, weight: typeAgg[t.name] || 1 }));
+  }
+
+  // Update the status bar
+  const top3 = (_rtSources || CYBER_SOURCES).slice(0, 3)
+    .map(s => CYBER_NODES[s.k]?.name || s.k).join('・');
+  const onlineCnt = data.filter(r => r.status === 'online').length;
+  const el = document.getElementById('cyber-intel-src');
+  if (el) {
+    el.textContent = `◈ Feodo Tracker: C2 ${data.length}件 (活動中 ${onlineCnt}件) ｜ 主要発信源: ${top3}`;
+    el.title = `データソース: abuse.ch Feodo Tracker — ${new Date().toLocaleTimeString('ja-JP')} 更新`;
+  }
+
+  return true;
+}
+
+async function refreshThreatIntel() {
+  const ok = await loadThreatIntel();
+  if (!ok) {
+    const el = document.getElementById('cyber-intel-src');
+    if (el) el.textContent = '◈ 脅威インテリジェンス: 静的データ使用中 (API接続失敗)';
+  }
+  setTimeout(refreshThreatIntel, INTEL_TTL);
+}
+
 // ── Utilities ──
 function cyWrand(arr) {
   let r = Math.random() * arr.reduce((s, i) => s + i.w, 0);
@@ -59,9 +184,10 @@ function cyWrand(arr) {
 }
 function cyPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function cyPickType() {
-  let r = Math.random() * CYBER_TYPES.reduce((s, t) => s + t.weight, 0);
-  for (const t of CYBER_TYPES) { r -= t.weight; if (r <= 0) return t; }
-  return CYBER_TYPES[0];
+  const types = _rtTypes || CYBER_TYPES;
+  let r = Math.random() * types.reduce((s, t) => s + t.weight, 0);
+  for (const t of types) { r -= t.weight; if (r <= 0) return t; }
+  return types[0];
 }
 
 // ── Module state ──
@@ -279,7 +405,8 @@ function cyFrame(ts) {
 function cySpawnRandom() {
   const traveling = _attacks.filter(a => a.phase === 'travel').length;
   if (traveling >= MAX_TRAVEL) return;
-  const sk = cyWrand(CYBER_SOURCES);
+  const sources = _rtSources || CYBER_SOURCES;
+  const sk = cyWrand(sources);
   let tk = cyPick(CYBER_TARGETS);
   let g  = 0;
   while (tk === sk && ++g < 8) tk = cyPick(CYBER_TARGETS);
@@ -316,6 +443,11 @@ function initCyberViz({ svg, projection, W, H }) {
   for (let i = 0; i < 6; i++) setTimeout(cySpawnRandom, i * 160);
   cySchedule();
   requestAnimationFrame(cyFrame);
+
+  // Load real threat intel (async; visualization runs immediately with static weights)
+  const el = document.getElementById('cyber-intel-src');
+  if (el) el.textContent = '◈ 脅威インテリジェンス: Feodo Tracker 接続中...';
+  refreshThreatIntel();
 }
 
 document.addEventListener('apexMapReady', ({ detail }) => initCyberViz(detail));
