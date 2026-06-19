@@ -26,30 +26,170 @@
     return 'nominal';
   }
 
-  // ── Earth canvas texture (cyberpunk grid) ─────────────────
-  function makeEarthTex() {
+  // ── Earth: real textures from Three.js CDN ─────────────────
+  // Uses the same jsDelivr CDN already serving three.min.js,
+  // so no new CDN dependency is introduced.
+  // Textures: day (atmos), normal map, specular (ocean shine),
+  // and city-lights emissive for the dark side.
+  // Falls back to a canvas-drawn Earth if any load fails.
+
+  const TEX_BASE = 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/textures/planets/';
+
+  function makeFallbackTex() {
+    const W = 1024, H = 512;
     const c = document.createElement('canvas');
-    c.width = 512; c.height = 256;
-    const x = c.getContext('2d');
-    x.fillStyle = '#05111f'; x.fillRect(0, 0, 512, 256);
-    // latitude lines
-    x.strokeStyle = 'rgba(30,120,255,0.20)'; x.lineWidth = 0.8;
-    for (let y = 0; y <= 256; y += 21) { x.beginPath(); x.moveTo(0, y); x.lineTo(512, y); x.stroke(); }
-    // longitude lines
-    for (let v = 0; v <= 512; v += 43) { x.beginPath(); x.moveTo(v, 0); x.lineTo(v, 256); x.stroke(); }
-    // equator + prime meridian highlight
-    x.strokeStyle = 'rgba(0,160,255,0.55)'; x.lineWidth = 1.2;
-    x.beginPath(); x.moveTo(0, 128);   x.lineTo(512, 128); x.stroke();
-    x.beginPath(); x.moveTo(256, 0);   x.lineTo(256, 256); x.stroke();
-    // bright glow spots (fake continent outlines)
-    const spots = [[60,80],[200,110],[360,95],[430,140],[150,160],[300,165],[490,80]];
-    spots.forEach(([sx, sy]) => {
-      const g = x.createRadialGradient(sx, sy, 0, sx, sy, 30);
-      g.addColorStop(0, 'rgba(0,180,255,0.18)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-      x.fillStyle = g; x.fillRect(sx - 35, sy - 35, 70, 70);
-    });
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+
+    // Ocean background — deep blue gradient
+    const seaGrad = ctx.createLinearGradient(0, 0, 0, H);
+    seaGrad.addColorStop(0,    '#06203d');
+    seaGrad.addColorStop(0.45, '#0b2f55');
+    seaGrad.addColorStop(1,    '#071a30');
+    ctx.fillStyle = seaGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Helper: lon/lat → pixel (equirectangular)
+    const px = (lon, lat) => [(lon + 180) / 360 * W, (90 - lat) / 180 * H];
+
+    // Draw a land polygon from [lon,lat] pairs
+    function land(pts, fill) {
+      ctx.beginPath();
+      pts.forEach(([lon, lat], i) => {
+        const [x, y] = px(lon, lat);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = fill; ctx.fill();
+    }
+
+    const LAND  = '#2a5c2a';
+    const LAND2 = '#244e20';
+    const LAND3 = '#3a6830';
+
+    // ─ North America ─
+    land([[-168,60],[-165,54],[-130,54],[-124,49],[-124,40],[-117,32],[-105,20],[-88,15],[-82,9],[-77,8],[-77,9],[-80,14],[-80,24],[-72,41],[-66,44],[-55,47],[-55,52],[-59,60],[-65,65],[-70,68],[-83,74],[-100,75],[-120,72],[-141,70],[-155,68],[-168,65]], LAND);
+    // Alaska bump
+    land([[-168,60],[-165,54],[-163,58],[-152,59],[-150,61],[-145,62],[-141,60],[-141,70],[-155,68],[-163,65],[-168,66]], LAND2);
+    // Greenland
+    land([[-73,83],[-25,83],[-17,70],[-24,60],[-42,58],[-54,61],[-58,69],[-68,76],[-73,83]], '#3a6a50');
+
+    // ─ South America ─
+    land([[-80,12],[-75,12],[-62,11],[-52,5],[-35,5],[-34,-5],[-36,-10],[-35,-20],[-40,-22],[-43,-23],[-44,-30],[-52,-32],[-52,-33],[-58,-34],[-62,-38],[-65,-42],[-65,-52],[-68,-54],[-72,-50],[-75,-40],[-77,-22],[-81,-2],[-80,0],[-78,2],[-80,8],[-77,8],[-80,12]], LAND);
+
+    // ─ Europe ─
+    land([[-10,36],[-5,36],[0,38],[3,43],[7,44],[12,44],[15,38],[20,38],[26,37],[30,40],[30,46],[24,48],[22,54],[18,55],[12,56],[8,58],[5,58],[0,61],[-3,58],[-5,56],[-5,48],[-8,44],[-10,36]], LAND2);
+    // Iberia
+    land([[-9,37],[-9,44],[-1,43],[3,43],[0,38],[-6,36],[-9,37]], LAND3);
+    // UK
+    land([[-5,50],[0,51],[2,53],[0,58],[-3,57],[-5,58],[-5,50]], LAND2);
+    // Scandinavia
+    land([[4,57],[5,58],[6,62],[14,67],[19,70],[28,71],[31,70],[28,62],[22,55],[14,55],[8,58],[4,57]], LAND2);
+
+    // ─ Africa ─
+    land([[-17,15],[-15,10],[-10,5],[-3,5],[2,5],[10,5],[14,4],[18,1],[20,-5],[22,-15],[26,-20],[32,-26],[30,-30],[26,-34],[20,-35],[17,-30],[14,-18],[10,-10],[8,4],[4,6],[0,6],[-2,5],[-5,5],[-8,6],[-15,12],[-17,15]], LAND);
+    // Horn of Africa
+    land([[38,12],[44,12],[50,12],[44,9],[40,4],[38,3],[35,2],[38,9],[38,12]], LAND2);
+    // Madagascar
+    land([[44,-13],[50,-13],[50,-25],[44,-25],[44,-13]], LAND2);
+
+    // ─ Middle East / Arabian Peninsula ─
+    land([[26,37],[36,37],[42,37],[44,38],[48,30],[56,24],[58,22],[55,18],[44,12],[38,12],[34,18],[34,26],[28,31],[26,37]], LAND2);
+
+    // ─ Asia (main) ─
+    land([[26,37],[44,38],[48,30],[50,22],[56,24],[60,22],[62,23],[70,22],[80,18],[80,12],[80,8],[78,10],[74,18],[70,24],[66,28],[60,28],[54,32],[48,38],[44,38],[42,37],[36,37],[30,40],[30,46],[36,48],[42,50],[48,46],[52,48],[56,52],[54,58],[58,60],[60,62],[65,66],[72,68],[80,72],[90,72],[100,70],[110,68],[120,72],[140,72],[140,58],[138,46],[138,36],[135,34],[120,28],[110,20],[105,12],[100,4],[104,1],[106,-4],[110,-8],[114,-6],[115,2],[120,6],[125,12],[120,20],[115,24],[110,18],[104,1],[100,4],[95,5],[90,22],[84,28],[80,30],[76,22],[72,22],[70,26],[66,28],[60,28],[54,32],[48,46],[42,50],[36,48],[30,46],[26,46],[22,54],[30,60],[36,62],[40,62],[44,60],[48,60],[54,58],[58,60],[60,62],[65,66],[72,68],[80,72],[90,72],[100,70],[110,68],[120,72],[140,72]], LAND);
+
+    // ─ Southeast Asia islands ─
+    land([[95,22],[100,24],[100,18],[96,15],[100,8],[104,2],[110,-2],[114,-4],[118,-2],[120,2],[124,4],[122,10],[118,16],[112,22],[108,20],[104,12],[102,4],[100,1],[96,5],[92,20],[95,22]], LAND2);
+    land([[100,0],[104,-4],[108,-6],[112,-7],[115,-5],[118,-6],[120,-8],[114,-8],[110,-8],[106,-6],[104,-4],[100,0]], LAND3);
+
+    // ─ Japan ─
+    land([[129,31],[130,33],[131,34],[133,34],[135,35],[137,37],[138,38],[136,36],[133,32],[130,31],[129,31]], LAND2);
+    land([[139,36],[140,38],[141,40],[142,42],[141,44],[140,44],[140,40],[139,36]], LAND2);
+    land([[141,42],[141,44],[143,44],[145,43],[144,42],[143,42],[141,42]], LAND2);
+
+    // ─ Australia ─
+    land([[114,-22],[116,-20],[120,-18],[124,-16],[130,-12],[136,-12],[140,-14],[148,-18],[152,-24],[154,-28],[152,-32],[148,-38],[144,-38],[140,-35],[136,-34],[132,-32],[128,-32],[122,-34],[116,-32],[114,-28],[114,-22]], LAND);
+    // Tasmania
+    land([[144,-40],[148,-40],[148,-44],[144,-44],[144,-40]], LAND2);
+    // New Zealand (N island)
+    land([[172,-36],[176,-36],[178,-38],[176,-40],[172,-40],[172,-36]], LAND2);
+    // New Zealand (S island)
+    land([[168,-44],[174,-44],[172,-46],[168,-46],[168,-44]], LAND2);
+
+    // ─ Polar ice caps ─
+    const iceGrad = ctx.createLinearGradient(0, 0, 0, H);
+    iceGrad.addColorStop(0,   'rgba(220,235,255,0.95)');
+    iceGrad.addColorStop(0.08,'rgba(200,220,255,0.7)');
+    iceGrad.addColorStop(0.12,'rgba(180,210,255,0)');
+    ctx.fillStyle = iceGrad;
+    ctx.fillRect(0, 0, W, H * 0.12);
+
+    const iceGrad2 = ctx.createLinearGradient(0, H * 0.88, 0, H);
+    iceGrad2.addColorStop(0,   'rgba(180,210,255,0)');
+    iceGrad2.addColorStop(0.06,'rgba(210,228,255,0.7)');
+    iceGrad2.addColorStop(1,   'rgba(230,240,255,0.95)');
+    ctx.fillStyle = iceGrad2;
+    ctx.fillRect(0, H * 0.88, W, H * 0.12);
+
+    // Ocean subtle speculars (white scatter lines)
+    ctx.strokeStyle = 'rgba(120,170,220,0.06)';
+    ctx.lineWidth = 1;
+    for (let gy = H * 0.15; gy < H * 0.85; gy += 28) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
     return new THREE.CanvasTexture(c);
+  }
+
+  function buildEarth(scene) {
+    const mat = new THREE.MeshPhongMaterial({
+      map:       makeFallbackTex(),   // immediately visible while CDN loads
+      color:     0xffffff,
+      specular:  new THREE.Color(0x3366aa),
+      shininess: 40,
+    });
+
+    const earthMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 64, 64),
+      mat
+    );
+    scene.add(earthMesh);
+
+    // Async-load real textures; each updates the material independently
+    const L = new THREE.TextureLoader();
+    L.load(TEX_BASE + 'earth_atmos_2048.jpg',
+      tex => { mat.map = tex; mat.needsUpdate = true; });
+    L.load(TEX_BASE + 'earth_normal_2048.jpg',
+      tex => { mat.normalMap = tex; mat.normalScale = new THREE.Vector2(1.8, 1.8); mat.needsUpdate = true; });
+    L.load(TEX_BASE + 'earth_specular_2048.jpg',
+      tex => { mat.specularMap = tex; mat.needsUpdate = true; });
+    // City lights visible on the dark (night) side
+    L.load(TEX_BASE + 'earth_lights_2048.png',
+      tex => {
+        mat.emissiveMap       = tex;
+        mat.emissive          = new THREE.Color(0xffaa44);
+        mat.emissiveIntensity = 0.85;
+        mat.needsUpdate = true;
+      });
+
+    // Thin surface atmosphere haze (front face, very subtle)
+    scene.add(new THREE.Mesh(
+      new THREE.SphereGeometry(1.015, 32, 32),
+      new THREE.MeshBasicMaterial({ color: 0x88bbff, transparent: true, opacity: 0.04, side: THREE.FrontSide })
+    ));
+    // Limb glow — inner
+    scene.add(new THREE.Mesh(
+      new THREE.SphereGeometry(1.25, 32, 32),
+      new THREE.MeshBasicMaterial({ color: 0x1166ee, transparent: true, opacity: 0.13, side: THREE.BackSide })
+    ));
+    // Limb glow — outer halo
+    scene.add(new THREE.Mesh(
+      new THREE.SphereGeometry(1.48, 32, 32),
+      new THREE.MeshBasicMaterial({ color: 0x0033aa, transparent: true, opacity: 0.05, side: THREE.BackSide })
+    ));
+
+    return earthMesh;
   }
 
   // ── Main scene init ───────────────────────────────────────
@@ -93,14 +233,16 @@
     }
     syncCamera();
 
-    // ── Lighting ──
-    scene.add(new THREE.AmbientLight(0x223366, 1.2));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.4);
-    sun.position.set(40, 25, 50);
+    // ── Lighting (tuned for realistic Earth) ──
+    // Low ambient so the night side stays dark enough for city-light emissive
+    scene.add(new THREE.AmbientLight(0x0d1a33, 0.9));
+    // Warm directional sun
+    const sun = new THREE.DirectionalLight(0xfff6e0, 2.2);
+    sun.position.set(50, 28, 35);
     scene.add(sun);
-    // Rim light for Earth glow
-    const rim = new THREE.PointLight(0x0044aa, 0.8, 80);
-    rim.position.set(-20, 10, -15);
+    // Cool atmospheric back-scatter (blue rim)
+    const rim = new THREE.PointLight(0x1144cc, 1.0, 90);
+    rim.position.set(-28, 8, -20);
     scene.add(rim);
 
     // ── Star field ──
@@ -121,26 +263,8 @@
     grid.material.transparent = true; grid.material.opacity = 0.55;
     scene.add(grid);
 
-    // ── Earth ──
-    const earthMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1, 48, 48),
-      new THREE.MeshPhongMaterial({
-        map: makeEarthTex(),
-        color: 0x1a5276, emissive: 0x041522,
-        specular: 0x224488, shininess: 40,
-      })
-    );
-    scene.add(earthMesh);
-
-    // Earth outer atmosphere glow (rendered from inside)
-    scene.add(new THREE.Mesh(
-      new THREE.SphereGeometry(1.18, 32, 32),
-      new THREE.MeshBasicMaterial({ color: 0x1155cc, transparent: true, opacity: 0.07, side: THREE.BackSide })
-    ));
-    scene.add(new THREE.Mesh(
-      new THREE.SphereGeometry(1.35, 32, 32),
-      new THREE.MeshBasicMaterial({ color: 0x0033aa, transparent: true, opacity: 0.03, side: THREE.BackSide })
-    ));
+    // ── Earth (realistic textures + atmosphere) ──
+    const earthMesh = buildEarth(scene);
 
     // ── Orbital distance rings ──
     const RINGS = [
