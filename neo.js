@@ -208,6 +208,9 @@ async function initNeoMonitor() {
     updateStats(neos);
     renderList(neos);
 
+    // Share data with 3D visualization
+    document.dispatchEvent(new CustomEvent('neoDataReady', { detail: { neos } }));
+
     if (statusEl) { statusEl.textContent = 'LIVE'; statusEl.style.color = 'var(--accent-green)'; }
 
     const updEl = document.getElementById('neo-last-update');

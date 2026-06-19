@@ -800,6 +800,30 @@
       </div>
     </div>
 
+    <!-- 3D Orbital Visualization -->
+    <div class="neo-3d-panel">
+      <div class="neo-3d-header">
+        <span class="neo-3d-title">◈ 地球近傍 3D 軌道図</span>
+        <div class="neo-3d-controls">
+          <span class="neo-3d-hint">ドラッグ：回転 ／ ホイール：ズーム ／ ダブルクリック：リセット</span>
+          <button id="neo3dToggleBtn" class="neo-3d-toggle">▼ 3D図 非表示</button>
+        </div>
+      </div>
+      <div class="neo-3d-wrap" id="neo3dWrap">
+        <div class="neo-3d-container" id="neo3d-container">
+          <div class="neo-3d-loading">☄ NASA データ取得後に3D図を生成します...</div>
+        </div>
+        <div class="neo-3d-legend">
+          <span><span class="neo-3d-dot" style="background:#ff1133"></span> CRITICAL &lt;1LD</span>
+          <span><span class="neo-3d-dot" style="background:#ff5500"></span> WARNING &lt;5LD</span>
+          <span><span class="neo-3d-dot" style="background:#ffaa00"></span> CAUTION &lt;10LD</span>
+          <span><span class="neo-3d-dot" style="background:#0088ff"></span> MONITOR &lt;20LD</span>
+          <span><span class="neo-3d-dot" style="background:#1e3a5f"></span> NOMINAL ≥20LD</span>
+          <span style="margin-left:auto;color:var(--text-dim)">球体サイズ = 推定直径</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Summary stats -->
     <div class="neo-stats-row">
       <div class="neo-stat">
@@ -906,6 +930,7 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
   <script src="data.js"></script>
@@ -917,6 +942,7 @@
   <script src="cyber.js"></script>
   <script src="defcon.js"></script>
   <script src="neo.js"></script>
+  <script src="neo3d.js"></script>
   <script src="yt.js"></script>
 
   <!-- Floating TOP button -->
