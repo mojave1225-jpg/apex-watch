@@ -103,11 +103,21 @@ function makeAttack(sk, tk, type) {
 }
 
 // ── Canvas drawing ──
+// JUMP_X: when consecutive projected x-coords differ by more than 40% of the
+// canvas width, the arc has crossed the anti-meridian (±180° date line).
+// Use moveTo instead of lineTo so no line is drawn "through the globe".
 function polyline(pts, lw, alpha) {
   if (pts.length < 2) return;
+  const jumpX = _cv ? _cv.width * 0.40 : 400;
   _cx.beginPath();
   _cx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) _cx.lineTo(pts[i][0], pts[i][1]);
+  for (let i = 1; i < pts.length; i++) {
+    if (Math.abs(pts[i][0] - pts[i - 1][0]) > jumpX) {
+      _cx.moveTo(pts[i][0], pts[i][1]);   // break path at date-line crossing
+    } else {
+      _cx.lineTo(pts[i][0], pts[i][1]);
+    }
+  }
   _cx.lineWidth   = lw;
   _cx.globalAlpha = alpha;
   _cx.stroke();
