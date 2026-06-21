@@ -1016,39 +1016,75 @@
       </div>
     </div>
 
+    <!-- SUMMARY STATS BAR -->
+    <div class="earth-summary-bar">
+      <div class="earth-sum-block">
+        <div class="earth-sum-val" id="eq-total" style="color:#ff8800">--</div>
+        <div class="earth-sum-lbl">地震 M4.5以上<br><span style="color:var(--text-dim);font-size:8px">過去7日間</span></div>
+      </div>
+      <div class="earth-sum-sep"></div>
+      <div class="earth-sum-block">
+        <div class="earth-sum-val" id="eq-m6plus" style="color:#ff5500">--</div>
+        <div class="earth-sum-lbl">M6.0以上<br><span style="color:var(--text-dim);font-size:8px">要注意レベル</span></div>
+      </div>
+      <div class="earth-sum-sep"></div>
+      <div class="earth-sum-block">
+        <div class="earth-sum-val" id="eq-m7plus" style="color:#ff0044">--</div>
+        <div class="earth-sum-lbl">M7.0以上<br><span style="color:var(--text-dim);font-size:8px">危険レベル</span></div>
+      </div>
+      <div class="earth-sum-sep"></div>
+      <div class="earth-sum-block">
+        <div class="earth-sum-val" id="vol-warn-count" style="color:#ff5500">--</div>
+        <div class="earth-sum-lbl">火山 WARNING<br><span style="color:var(--text-dim);font-size:8px">噴火中</span></div>
+      </div>
+      <div class="earth-sum-sep"></div>
+      <div class="earth-sum-block">
+        <div class="earth-sum-val" id="vol-count" style="color:#ff8800">--</div>
+        <div class="earth-sum-lbl">火山 活動報告<br><span style="color:var(--text-dim);font-size:8px">GVP週次</span></div>
+      </div>
+    </div>
+
     <div class="earth-grid">
 
-      <!-- 地震リスト -->
+      <!-- ∿ 地震リスト -->
       <div class="earth-col">
         <div class="earth-col-header">
-          <span style="color:#ff8800">∿</span> 地震活動 — USGS リアルタイム (M4.5以上 / 7日間)
+          <span style="color:#ff8800">∿</span> 地震活動リアルタイム
+          <span class="earth-col-src">USGS — M4.5以上 / 7日間</span>
         </div>
-        <div class="es-eq-header-row">
-          <span>マグニチュード</span>
-          <span>震源地</span>
-          <span>深さ</span>
-          <span>発生時刻 (UTC)</span>
+
+        <!-- 活動レベルメーター -->
+        <div class="es-meter-wrap">
+          <div class="es-meter-track">
+            <div class="es-meter-fill" id="eq-meter-fill" style="width:0%"></div>
+          </div>
+          <span class="es-meter-label" id="eq-meter-label">取得中...</span>
         </div>
+
         <div class="es-list-body" id="eq-list-body">
           <div class="es-no-data">USGS データ取得中...</div>
         </div>
-        <div class="earth-datasrc">USGS Earthquake Hazards Program — GeoJSON Feed | 更新: 20分毎</div>
+        <div class="earth-datasrc">USGS Earthquake Hazards Program | GeoJSON Feed | 更新: 20分毎</div>
       </div>
 
-      <!-- 火山リスト -->
+      <!-- ▲ 火山リスト -->
       <div class="earth-col">
         <div class="earth-col-header">
-          <span style="color:#ff4400">▲</span> 火山活動 — Smithsonian GVP 週次レポート
+          <span style="color:#ff4400">▲</span> 火山活動監視
+          <span class="earth-col-src">Smithsonian GVP — 週次レポート</span>
         </div>
-        <div class="es-vol-header-row">
-          <span>警戒レベル</span>
-          <span>火山名</span>
-          <span>場所 / 日付</span>
+
+        <!-- 警戒レベル凡例 -->
+        <div class="es-vol-legend">
+          <span class="es-vol-leg-item" style="color:#ff5500">■ WARNING 噴火中</span>
+          <span class="es-vol-leg-item" style="color:#ff8800">■ WATCH 活発化</span>
+          <span class="es-vol-leg-item" style="color:#ffdd00">■ ADVISORY 上昇</span>
         </div>
+
         <div class="es-list-body" id="vol-list-body">
           <div class="es-no-data">GVP データ取得中...</div>
         </div>
-        <div class="earth-datasrc">Smithsonian Global Volcanism Program (GVP) | 更新: 週次</div>
+        <div class="earth-datasrc">Smithsonian Global Volcanism Program (GVP) | 更新: 週次 / CORS proxy経由</div>
       </div>
 
     </div>

@@ -2036,109 +2036,273 @@ html, body {
   border-top: 1px solid var(--border);
 }
 
-/* ── 地震リスト ── */
-.es-eq-header-row {
-  display: grid;
-  grid-template-columns: 56px 1fr 52px 120px;
-  gap: 6px;
-  padding: 4px 0;
+/* ── Earth Summary Bar ── */
+.earth-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 14px 20px;
+  background: rgba(4,6,16,0.9);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 0;
+}
+.earth-sum-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+.earth-sum-val {
   font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  min-width: 48px;
+  text-align: center;
+}
+.earth-sum-lbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.earth-sum-sep {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Earth Grid Columns ── */
+.earth-col-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.earth-col-src {
+  margin-left: auto;
   font-size: 8px;
   color: var(--text-dim);
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
 }
-.es-list-body { display: flex; flex-direction: column; gap: 2px; }
-.es-eq-row {
-  display: grid;
-  grid-template-columns: 56px 1fr 52px 120px;
-  gap: 6px;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+
+/* ── Seismic Activity Meter ── */
+.es-meter-wrap {
+  display: flex;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
 }
-.es-eq-mag {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
+.es-meter-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
 }
-.es-eq-place {
+.es-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease, background 0.5s ease;
+  box-shadow: 0 0 6px currentColor;
+}
+.es-meter-label {
   font-family: var(--font-mono);
   font-size: 9px;
+  white-space: nowrap;
+  min-width: 160px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── Earthquake Cards ── */
+.es-list-body { display: flex; flex-direction: column; gap: 5px; }
+
+.es-eq-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.es-eq-card:hover { background: rgba(255,255,255,0.04); }
+.es-eq-card.es-eq-new {
+  animation: eqNewPulse 2s ease-in-out 3;
+}
+@keyframes eqNewPulse {
+  0%,100% { border-color: rgba(255,255,255,0.04); }
+  50%      { border-color: rgba(255,136,0,0.5); box-shadow: 0 0 8px rgba(255,136,0,0.2); }
+}
+
+.es-eq-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid;
+  flex-shrink: 0;
+}
+.es-eq-badge-m {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+.es-eq-badge-v {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.es-eq-info { flex: 1; min-width: 0; }
+.es-eq-place {
+  font-family: var(--font-mono);
+  font-size: 10px;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.es-eq-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
 }
 .es-eq-depth {
   font-family: var(--font-mono);
   font-size: 9px;
   color: var(--text-secondary);
-  text-align: right;
 }
-.es-eq-time {
+.es-eq-ago {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 9px;
   color: var(--text-dim);
+}
+.es-eq-new-badge {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  background: rgba(255,136,0,0.2);
+  color: #ff8800;
+  border: 1px solid rgba(255,136,0,0.5);
+  padding: 1px 4px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+.es-eq-bar-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.es-eq-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
 }
 
-/* ── 火山リスト ── */
-.es-vol-header-row {
-  display: grid;
-  grid-template-columns: 72px 1fr 1fr;
-  gap: 6px;
-  padding: 4px 0;
+/* ── Volcano Legend ── */
+.es-vol-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.es-vol-leg-item {
   font-family: var(--font-mono);
   font-size: 8px;
-  color: var(--text-dim);
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
+  letter-spacing: 0.5px;
 }
-.es-vol-row {
-  display: grid;
-  grid-template-columns: 72px 1fr 1fr;
-  gap: 6px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  align-items: center;
+
+/* ── Volcano Cards ── */
+.es-vol-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-left: 4px solid;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 5px;
+  transition: opacity 0.2s;
 }
-.es-vol-lv {
+.es-vol-card:hover { opacity: 0.9; }
+.es-vol-card-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 76px;
+}
+.es-vol-alert-lv {
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border: 1px solid;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.es-vol-jp {
+  font-family: var(--font-mono);
+  font-size: 9px;
   letter-spacing: 0.5px;
 }
-.es-vol-name {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-primary);
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.es-vol-name:hover { color: #ff8800; }
-.es-vol-desc {
+.es-vol-date {
   font-family: var(--font-mono);
   font-size: 8px;
-  color: var(--text-secondary);
+  color: var(--text-dim);
+}
+.es-vol-card-body { flex: 1; min-width: 0; }
+.es-vol-card-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.es-vol-loc {
+.es-vol-card-loc {
   font-family: var(--font-mono);
   font-size: 9px;
   color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+.es-vol-card-desc {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .es-no-data {
   font-family: var(--font-mono);
   font-size: 9px;
   color: var(--text-dim);
-  padding: 12px 0;
+  padding: 16px 0;
   text-align: center;
 }
 .es-vol-notice {
@@ -2147,7 +2311,7 @@ html, body {
   color: var(--text-dim);
   padding: 6px 0 8px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 /* ═══════════════════════════════════════════════════
