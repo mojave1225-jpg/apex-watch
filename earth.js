@@ -190,6 +190,9 @@ function renderEarthquakes() {
   esSet('eq-total',  all.length+'件');
   esSet('eq-m6plus', m6+'件');  esCss('eq-m6plus','color', m6>0?'#ff8800':'#00ff88');
   esSet('eq-m7plus', m7+'件');  esCss('eq-m7plus','color', m7>0?'#ff0044':'#00ff88');
+  esSet('sum-eq-total', all.length+'件');
+  esSet('sum-eq-m6', m6+'件');  esCss('sum-eq-m6','color', m6>0?'#ff8800':'#00ff88');
+  esSet('sum-eq-m7', m7+'件');  esCss('sum-eq-m7','color', m7>0?'#ff0044':'#00ff88');
 
   if (top) {
     esSet('eq-top-mag',   'M'+(top.properties.mag||0).toFixed(1));
@@ -263,8 +266,11 @@ const LV_CONFIG = {
 async function loadVolcanoes() {
   try {
     const url  = ES_PROXY + encodeURIComponent(VOL_RSS);
-    const res  = await esFetch(url, 12000);
+    const res  = await esFetch(url, 8000);
     const text = await res.text();
+    if (!text.includes('<item') || text.startsWith('error') || text.includes('error code:')) {
+      throw new Error('proxy error: ' + text.slice(0,40));
+    }
     const doc  = new DOMParser().parseFromString(text, 'text/xml');
     const items = Array.from(doc.querySelectorAll('item'));
     if (items.length === 0) throw new Error('empty RSS');
@@ -286,7 +292,8 @@ function renderVolcanoes() {
   esSet('score-volcanic', score);
   esCss('bar-volcanic','width',      score+'%');
   esCss('bar-volcanic','background', warnCount>3?'#ff5500':'#ff8800');
-  esSet('vol-count',   count+'件');
+  esSet('vol-count',      count+'件');
+  esSet('sum-vol-count',  count+'件');
   esSet('vol-warn-count', warnCount+'');
   esSet('status-volcanic', fallback?'参照データ':'LIVE');
   esSet('vol-latest', fallback ? VOL_KNOWN[0].name :
