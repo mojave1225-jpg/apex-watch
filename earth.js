@@ -113,6 +113,11 @@ async function loadSpaceWeather() {
   } catch(e) {
     console.warn('[SW]', e.message);
     esSet('status-spaceweather', 'エラー');
+    esSet('sw-bar-flare',     'N/A');
+    esSet('sw-bar-flare-lbl', 'NOAA 接続失敗');
+    esSet('sw-bar-kp',        '--');
+    esSet('sw-bar-kp-lbl',    'データなし');
+    esHtml('sw-alert-list', '<div class="es-no-data">NOAA SWPC に接続できません</div>');
   }
 }
 

@@ -481,12 +481,21 @@
   }
 
   // ── Entry point ──────────────────────────────────────────
-  // Wait for neo.js to dispatch neoDataReady
+  let _sceneReady = false;
+
   document.addEventListener('neoDataReady', ({ detail: { neos } }) => {
+    _sceneReady = true;
     wire3DToggle();
-    // Defer to next frame so the container is laid out
     requestAnimationFrame(() => requestAnimationFrame(() => initScene(neos)));
   });
+
+  // Fallback: show Earth globe without asteroid data if NEO fetch fails
+  setTimeout(() => {
+    if (_sceneReady) return;
+    if (typeof THREE === 'undefined') return;
+    wire3DToggle();
+    requestAnimationFrame(() => requestAnimationFrame(() => initScene([])));
+  }, 15000);
 
   // Fallback: if Three.js didn't load
   window.addEventListener('load', () => {

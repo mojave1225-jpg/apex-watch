@@ -1,12 +1,11 @@
 /* ============================================================
    APEX WATCH — Near-Earth Object (NEO) Alert System
-   Data: NASA NeoWs API (api.nasa.gov) — DEMO_KEY
-         Requests are made per-visitor from their browser,
-         so each IP has its own 30 req/hr quota.
+   Data: JPL SSD Close Approach Data API (ssd-api.jpl.nasa.gov)
+         Key-free, CORS-enabled, no rate limit for public use.
    Update interval: 60 minutes
    ============================================================ */
 
-const NEO_API_KEY     = 'DEMO_KEY';
+const NEO_CAD_API    = 'https://ssd-api.jpl.nasa.gov/cad.api';
 const NEO_REFRESH_MS  = 60 * 60 * 1000;
 const NEO_WINDOW_DAYS = 7;
 
@@ -24,40 +23,70 @@ function neoLevel(ld) {
   return NEO_LEVELS.find(l => ld < l.max) || NEO_LEVELS.at(-1);
 }
 
+// Month abbreviation → zero-padded number (for YYYY-MM-DD sorting)
+const _NEO_MO = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+                 Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+
 // ── Fetch + normalise ──────────────────────────────────────
 async function fetchNeos() {
-  const fmt  = d => d.toISOString().slice(0, 10);
-  const start = fmt(new Date());
-  const end   = fmt(new Date(Date.now() + NEO_WINDOW_DAYS * 86400000));
-  const url   = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${start}&end_date=${end}&api_key=${NEO_API_KEY}`;
+  const fmt    = d => d.toISOString().slice(0, 10);
+  const today  = fmt(new Date());
+  const endDay = fmt(new Date(Date.now() + NEO_WINDOW_DAYS * 86400000));
+  const url    = `${NEO_CAD_API}?date-min=${today}&date-max=${endDay}&dist-max=0.2&sort=dist&limit=60`;
 
-  const res  = await fetch(url);
+  const res  = await fetch(url, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
 
-  const neos = [];
-  for (const list of Object.values(json.near_earth_objects)) {
-    for (const n of list) {
-      const ca  = n.close_approach_data[0];
-      const ld  = parseFloat(ca.miss_distance.lunar);
-      const km  = parseFloat(ca.miss_distance.kilometers);
-      const vel = parseFloat(ca.relative_velocity.kilometers_per_second);
-      const dMin = Math.round(n.estimated_diameter.meters.estimated_diameter_min);
-      const dMax = Math.round(n.estimated_diameter.meters.estimated_diameter_max);
-
-      neos.push({
-        id:       n.id,
-        name:     n.name.replace(/[()]/g, '').trim(),
-        dateStr:  ca.close_approach_date,
-        dateTime: ca.close_approach_date_full,  // e.g. "2026-Jun-20 14:32"
-        ld, km, vel,
-        dMin, dMax,
-        mag:      n.absolute_magnitude_h,
-        pha:      n.is_potentially_hazardous_asteroid,
-        jplUrl:   n.nasa_jpl_url,
-      });
-    }
+  if (!Array.isArray(json.fields) || !Array.isArray(json.data)) {
+    throw new Error('Invalid JPL response');
   }
+
+  // Field index map: "des"→0, "cd"→3, "dist"→4, "v_rel"→7, "h"→10 etc.
+  const fi = {};
+  json.fields.forEach((f, i) => fi[f] = i);
+
+  const AU_TO_LD = 1 / 0.00256955529;   // 1 AU ÷ LD_AU = LD count
+  const AU_TO_KM = 149597870.7;
+
+  const neos = json.data.map(row => {
+    const des    = (row[fi['des']] || '').trim();
+    const cd     = (row[fi['cd']]  || '');       // "2026-Jun-21 11:07"
+    const distAU = parseFloat(row[fi['dist']]);
+    const vRel   = parseFloat(row[fi['v_rel']]);
+    const h      = parseFloat(row[fi['h']]);
+
+    if (isNaN(distAU) || isNaN(vRel)) return null;
+
+    const ld = distAU * AU_TO_LD;
+    const km = distAU * AU_TO_KM;
+
+    // Estimate diameter from H magnitude (albedo 0.15): D(m) ≈ 1329000/√0.15 × 10^(-H/5)
+    const dM   = isNaN(h) ? 0 : (1329000 / Math.sqrt(0.15)) * Math.pow(10, -h / 5);
+    const dMin = Math.round(dM * 0.7);
+    const dMax = Math.round(dM * 1.3);
+
+    // Convert "2026-Jun-21 11:07" → "2026-06-21" for sorting
+    const cdParts = cd.slice(0, 11).split('-');
+    const mm      = _NEO_MO[cdParts[1]] || '00';
+    const dateStr = `${cdParts[0]}-${mm}-${(cdParts[2] || '').padStart(2, '0')}`;
+
+    // PHA: H < 22 (diameter ≥ ~140 m) AND approach within 0.05 AU (~19.5 LD)
+    const pha = !isNaN(h) && h < 22.0 && distAU < 0.05;
+
+    return {
+      id:       des,
+      name:     des,
+      dateStr,
+      dateTime: cd,
+      ld, km,
+      vel: vRel,
+      dMin, dMax,
+      mag: h,
+      pha,
+      jplUrl: `https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=${encodeURIComponent(des)}`,
+    };
+  }).filter(Boolean);
 
   // Sort: soonest first, then closest
   neos.sort((a, b) => {
@@ -181,7 +210,7 @@ function updateStats(neos) {
       noteEl.textContent = `⚠ PHA検出: ${cp.name} — ${cp.ld.toFixed(2)} LD (${cp.dateStr})`;
       noteEl.style.color = 'var(--accent-orange)';
     } else {
-      noteEl.textContent = 'NASA NeoWs API / JPL CNEOS';
+      noteEl.textContent = 'JPL SSD CAD API / CNEOS';
       noteEl.style.color = '';
     }
   }
