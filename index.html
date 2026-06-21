@@ -704,7 +704,7 @@
           <span class="ind-arrow" style="color:var(--text-dim)">km/s</span>
         </div>
       </div>
-      <div class="panel-note" id="note-neo">NASA NeoWs API / JPL CNEOS</div>
+      <div class="panel-note" id="note-neo">JPL SSD CAD API / CNEOS</div>
     </div>
 
     <!-- 9. SHIPPING -->
@@ -989,12 +989,12 @@
         <span>脅威レベル</span>
       </div>
       <div class="neo-list-body" id="neoListBody">
-        <div class="neo-empty">NASA NeoWs API からデータ取得中...</div>
+        <div class="neo-empty">JPL SSD CAD API からデータ取得中...</div>
       </div>
     </div>
 
     <div class="neo-datasource">
-      データ: NASA NeoWs API (Near Earth Object Web Service) ／ JPL CNEOS (Center for Near Earth Object Studies)
+      データ: JPL SSD Close Approach Data API (ssd-api.jpl.nasa.gov) ／ JPL CNEOS (Center for Near Earth Object Studies)
       ｜ 1 LD = 月軌道半径 384,400 km ｜ PHA = 軌道が地球0.05AU以内かつ直径140m超の潜在危険小惑星
       ｜ <span id="neo-last-update" style="color:var(--accent-green)">更新待機中</span>
     </div>
@@ -1141,7 +1141,7 @@
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-left">
-      APEX WATCH v2.8.1 | データソース: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
+      APEX WATCH v2.8.3 | データソース: CoinGecko API, Alternative.me, OpenSky Network, JPL SSD CAD API, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
     </div>
     <div class="footer-right">
       <a href="./disclaimer.html" style="color:inherit; text-decoration:none; opacity:0.7; margin-right:14px;">免責事項・方法論</a>
@@ -1152,18 +1152,18 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-  <script src="data.js"></script>
-  <script src="map.js"></script>
-  <script src="app.js"></script>
-  <script src="military.js"></script>
-  <script src="bizjet.js"></script>
-  <script src="shipping.js"></script>
-  <script src="cyber.js"></script>
-  <script src="defcon.js"></script>
-  <script src="neo.js"></script>
-  <script src="neo3d.js"></script>
-  <script src="earth.js"></script>
-  <script src="yt.js"></script>
+  <script src="data.js?v=283"></script>
+  <script src="map.js?v=283"></script>
+  <script src="app.js?v=283"></script>
+  <script src="military.js?v=283"></script>
+  <script src="bizjet.js?v=283"></script>
+  <script src="shipping.js?v=283"></script>
+  <script src="cyber.js?v=283"></script>
+  <script src="defcon.js?v=283"></script>
+  <script src="neo.js?v=283"></script>
+  <script src="neo3d.js?v=283"></script>
+  <script src="earth.js?v=283"></script>
+  <script src="yt.js?v=283"></script>
 
   <!-- Floating TOP button -->
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
