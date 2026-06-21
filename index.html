@@ -78,7 +78,8 @@
     <a href="#s-panels"   class="snav-btn">◈ パネル</a>
     <a href="#s-bizjet"   class="snav-btn">✈ BizJet</a>
     <a href="#s-military" class="snav-btn">⚡ 軍事</a>
-    <a href="#s-neo"      class="snav-btn">☄ NEO</a>
+    <a href="#s-neo"      class="snav-btn">☄ 宇宙脅威</a>
+    <a href="#s-earth"    class="snav-btn">∿ 地球活動</a>
     <a href="#s-news"     class="snav-btn">◈ ニュース</a>
     <a href="#s-timeline" class="snav-btn">◈ 年表</a>
   </nav>
@@ -560,6 +561,112 @@
       </div>
     </div>
 
+    <!-- SW: SPACE WEATHER -->
+    <div class="panel panel-sw-highlight" id="panel-spaceweather">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:#ffaa00">☀</span>
+        <span class="panel-title">宇宙天気 / Space Weather</span>
+        <span class="panel-status" id="status-spaceweather">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-spaceweather">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-spaceweather" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">太陽フレア</span>
+          <span class="ind-value" id="sw-flare-cls" style="font-size:20px;font-weight:700">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">フレア種別</span>
+          <span class="ind-value" id="sw-flare-lbl" style="font-size:9px">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">Kp指数</span>
+          <span class="ind-value" id="sw-kp-val" style="font-size:18px;font-weight:700">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">磁気嵐レベル</span>
+          <span class="ind-value" id="sw-kp-lbl" style="font-size:9px">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">データ</span>
+          <span class="ind-value" style="color:var(--accent-green);font-size:9px">NOAA SWPC / GOES</span>
+        </div>
+      </div>
+      <div class="panel-note">GOES衛星 X線フラックス + Kp指数 リアルタイム</div>
+    </div>
+
+    <!-- EQ: SEISMIC -->
+    <div class="panel panel-eq-highlight" id="panel-seismic">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:#ff8800">∿</span>
+        <span class="panel-title">地震活動 / Seismic Activity</span>
+        <span class="panel-status" id="status-seismic">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-seismic">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-seismic" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">M4.5以上 (7日間)</span>
+          <span class="ind-value" id="eq-total">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">M6.0以上</span>
+          <span class="ind-value" id="eq-m6plus">--</span>
+          <span class="ind-arrow" style="color:var(--accent-orange)">⚠</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">M7.0以上</span>
+          <span class="ind-value" id="eq-m7plus">--</span>
+          <span class="ind-arrow" style="color:var(--accent-red)">!</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最大規模</span>
+          <span class="ind-value" id="eq-top-mag" style="font-size:16px;font-weight:700">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">震源地</span>
+          <span class="ind-value" id="eq-top-place" style="font-size:9px">--</span>
+        </div>
+      </div>
+      <div class="panel-note">USGS GeoJSON Feed — M4.5+ / 7日間</div>
+    </div>
+
+    <!-- VOL: VOLCANIC -->
+    <div class="panel panel-vol-highlight" id="panel-volcanic">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:#ff4400">▲</span>
+        <span class="panel-title">火山活動 / Volcanic Activity</span>
+        <span class="panel-status" id="status-volcanic">取得中</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-volcanic">--</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" id="bar-volcanic" style="width:0%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">活動レポート数</span>
+          <span class="ind-value" id="vol-count">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">注目火山</span>
+          <span class="ind-value" id="vol-latest" style="font-size:9px">--</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">常時活動火山</span>
+          <span class="ind-value" style="color:var(--accent-orange)">桜島 · エトナ · キラウエア</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">データ</span>
+          <span class="ind-value" style="color:var(--accent-green);font-size:9px">Smithsonian GVP</span>
+        </div>
+      </div>
+      <div class="panel-note">Smithsonian Global Volcanism Program 週次レポート</div>
+    </div>
+
     <!-- 10. NEO -->
     <div class="panel panel-neo-highlight" id="panel-neo">
       <div class="panel-header">
@@ -784,12 +891,12 @@
     </div>
   </section>
 
-  <!-- NEO MONITORING SECTION -->
+  <!-- NEO + SPACE WEATHER SECTION -->
   <section class="neo-section" id="s-neo">
     <div class="neo-section-header">
       <div class="neo-section-title">
         <span class="neo-blink">☄</span>
-        地球接近天体（NEO）監視 — NEAR-EARTH OBJECT ALERT SYSTEM
+        宇宙起源の脅威監視 — SPACE THREAT ALERT SYSTEM / NEO &amp; SPACE WEATHER
       </div>
       <div class="neo-links-wrap">
       <div class="neo-section-links">
@@ -799,6 +906,26 @@
       </div>
       <button class="sec-toggle" title="折畳">▼ 折畳</button>
       </div>
+    </div>
+
+    <!-- ☀ 宇宙天気ステータスバー (NEOセクション内) -->
+    <div id="sw-bar">
+      <div class="sw-bar-block">
+        <span class="sw-bar-label">☀ 太陽フレア</span>
+        <span class="sw-bar-val" id="sw-bar-flare">--</span>
+        <span class="sw-bar-sub" id="sw-bar-flare-lbl">読込中...</span>
+      </div>
+      <div class="sw-bar-divider"></div>
+      <div class="sw-bar-block">
+        <span class="sw-bar-label">⚡ Kp指数</span>
+        <span class="sw-bar-val" id="sw-bar-kp">--</span>
+        <span class="sw-bar-sub" id="sw-bar-kp-lbl">磁気嵐レベル</span>
+      </div>
+      <div class="sw-bar-divider"></div>
+      <div class="sw-bar-alerts" id="sw-alert-list">
+        <span class="sw-bar-label">NOAA SWPCアラート読込中...</span>
+      </div>
+      <div class="sw-bar-src">NOAA SWPC / GOES衛星</div>
     </div>
 
     <!-- 3D Orbital Visualization -->
@@ -873,6 +1000,60 @@
     </div>
   </section>
 
+  <!-- EARTH SCIENCE SECTION -->
+  <section class="earth-section sec-collapsed" id="s-earth">
+    <div class="earth-section-header">
+      <div class="earth-section-title">
+        ∿ 地球物理活動監視 — GEOPHYSICAL ALERT SYSTEM / 地震 &amp; 火山
+      </div>
+      <div class="earth-links-wrap">
+        <div class="earth-section-links">
+          <a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" rel="noopener" class="earth-ext-link">∿ USGS 地震マップ</a>
+          <a href="https://volcano.si.edu/gvp_currenteruptions.cfm" target="_blank" rel="noopener" class="earth-ext-link">▲ GVP 活動火山</a>
+          <a href="https://www.volcanodiscovery.com/volcanic-activity.html" target="_blank" rel="noopener" class="earth-ext-link">▲ VolcanoDiscovery</a>
+        </div>
+        <button class="sec-toggle" title="展開">▶ 展開</button>
+      </div>
+    </div>
+
+    <div class="earth-grid">
+
+      <!-- 地震リスト -->
+      <div class="earth-col">
+        <div class="earth-col-header">
+          <span style="color:#ff8800">∿</span> 地震活動 — USGS リアルタイム (M4.5以上 / 7日間)
+        </div>
+        <div class="es-eq-header-row">
+          <span>マグニチュード</span>
+          <span>震源地</span>
+          <span>深さ</span>
+          <span>発生時刻 (UTC)</span>
+        </div>
+        <div class="es-list-body" id="eq-list-body">
+          <div class="es-no-data">USGS データ取得中...</div>
+        </div>
+        <div class="earth-datasrc">USGS Earthquake Hazards Program — GeoJSON Feed | 更新: 20分毎</div>
+      </div>
+
+      <!-- 火山リスト -->
+      <div class="earth-col">
+        <div class="earth-col-header">
+          <span style="color:#ff4400">▲</span> 火山活動 — Smithsonian GVP 週次レポート
+        </div>
+        <div class="es-vol-header-row">
+          <span>警戒レベル</span>
+          <span>火山名</span>
+          <span>場所 / 日付</span>
+        </div>
+        <div class="es-list-body" id="vol-list-body">
+          <div class="es-no-data">GVP データ取得中...</div>
+        </div>
+        <div class="earth-datasrc">Smithsonian Global Volcanism Program (GVP) | 更新: 週次</div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- NEWS FEED -->
   <section class="news-section" id="s-news">
     <div class="news-header">
@@ -924,7 +1105,7 @@
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-left">
-      APEX WATCH v2.7.0 | データソース: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, Henley &amp; Partners, GAMA, Baltic Exchange
+      APEX WATCH v2.8.0 | データソース: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
     </div>
     <div class="footer-right">
       <a href="./disclaimer.html" style="color:inherit; text-decoration:none; opacity:0.7; margin-right:14px;">免責事項・方法論</a>
@@ -945,6 +1126,7 @@
   <script src="defcon.js"></script>
   <script src="neo.js"></script>
   <script src="neo3d.js"></script>
+  <script src="earth.js"></script>
   <script src="yt.js"></script>
 
   <!-- Floating TOP button -->
