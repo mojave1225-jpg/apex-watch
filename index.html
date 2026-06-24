@@ -74,14 +74,14 @@
   <!-- SECTION NAV (sticky below header) -->
   <nav class="section-nav" id="sectionNav">
     <span class="snav-label">JUMP:</span>
-    <a href="#s-map"      class="snav-btn">◈ マップ</a>
-    <a href="#s-panels"   class="snav-btn">◈ パネル</a>
+    <a href="#s-map"      class="snav-btn">◈ マップ / Map</a>
+    <a href="#s-panels"   class="snav-btn">◈ パネル / Panels</a>
     <a href="#s-bizjet"   class="snav-btn">✈ BizJet</a>
-    <a href="#s-military" class="snav-btn">⚡ 軍事</a>
-    <a href="#s-neo"      class="snav-btn">☄ 宇宙脅威</a>
-    <a href="#s-earth"    class="snav-btn">∿ 地球活動</a>
-    <a href="#s-news"     class="snav-btn">◈ ニュース</a>
-    <a href="#s-timeline" class="snav-btn">◈ 年表</a>
+    <a href="#s-military" class="snav-btn">⚡ 軍事 / Military</a>
+    <a href="#s-neo"      class="snav-btn">☄ 宇宙脅威 / Space</a>
+    <a href="#s-earth"    class="snav-btn">∿ 地球活動 / Seismic</a>
+    <a href="#s-news"     class="snav-btn">◈ ニュース / News</a>
+    <a href="#s-timeline" class="snav-btn">◈ 年表 / Timeline</a>
   </nav>
 
   <!-- ALERT BANNER -->
@@ -127,10 +127,10 @@
             </div>
           </div>
           <div class="threat-sublabels">
-            <span class="sub-ok">通常</span>
-            <span class="sub-warn">警戒</span>
-            <span class="sub-danger">危険</span>
-            <span class="sub-critical">緊急</span>
+            <span class="sub-ok">通常<br><span class="sub-en">Normal</span></span>
+            <span class="sub-warn">警戒<br><span class="sub-en">Caution</span></span>
+            <span class="sub-danger">危険<br><span class="sub-en">Danger</span></span>
+            <span class="sub-critical">緊急<br><span class="sub-en">Critical</span></span>
           </div>
         </div>
       </section>
@@ -159,7 +159,7 @@
     <!-- WORLD MAP (moved here) -->
     <section class="map-section">
       <div class="map-header-row">
-        <span>◈ グローバル脅威マップ — 戦争、紛争、不安定地域、サイバー攻撃</span>
+        <span>◈ グローバル脅威マップ / Global Threat Map — 戦争・紛争・不安定地域・サイバー攻撃 / War · Conflict · Instability · Cyber</span>
         <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
       </div>
       <div class="map-container" id="mapContainer"></div>
@@ -183,7 +183,7 @@
         <div class="ts-block">
           <div class="ts-header">
             <span class="ts-icon">🛡</span> FPCON
-            <span class="ts-sub">在日米軍</span>
+            <span class="ts-sub">在日米軍 / US Forces Japan</span>
           </div>
           <div class="ts-indicators" id="fpcon-indicators"></div>
           <div class="ts-level" id="fpcon-level"></div>
@@ -194,20 +194,20 @@
       </div>
 
       <div class="map-legend">
-        <span class="legend-item red">● 緊急</span>
-        <span class="legend-item orange">● 危険</span>
-        <span class="legend-item yellow">● 警戒</span>
+        <span class="legend-item red">● 緊急 / Critical</span>
+        <span class="legend-item orange">● 危険 / Danger</span>
+        <span class="legend-item yellow">● 警戒 / Caution</span>
       </div>
 
       <!-- CYBER THREAT STATUS BAR -->
       <div id="cyber-bar">
         <div class="cyber-counter">
-          <span class="cyber-label">⚡ 検出攻撃数</span>
+          <span class="cyber-label">⚡ 検出攻撃数 / Detected Attacks</span>
           <span class="cyber-val" id="cyber-count">0</span>
           <span class="cyber-label-sub">件</span>
         </div>
         <div class="cyber-last-wrap">
-          <span class="cyber-label">最新</span>
+          <span class="cyber-label">最新 / Latest</span>
           <span id="cyber-last" class="cyber-last-val">---</span>
           <span id="cyber-type" class="cyber-type-badge">---</span>
         </div>
@@ -242,27 +242,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">BTC価格 (USD)</span>
+          <span class="ind-label">BTC価格 / BTC Price (USD)</span>
           <span class="ind-value" id="btc-price">--</span>
           <span class="ind-arrow" id="btc-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">ETH価格 (USD)</span>
+          <span class="ind-label">ETH価格 / ETH Price (USD)</span>
           <span class="ind-value" id="eth-price">--</span>
           <span class="ind-arrow" id="eth-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">金価格 (USD/oz)</span>
+          <span class="ind-label">金価格 / Gold Price (USD/oz)</span>
           <span class="ind-value" id="gold-price">--</span>
           <span class="ind-arrow" id="gold-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">恐怖&強欲指数</span>
+          <span class="ind-label">恐怖&強欲指数 / Fear &amp; Greed</span>
           <span class="ind-value" id="fear-greed">--</span>
           <span class="ind-arrow" id="fg-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">オフショア富 推定</span>
+          <span class="ind-label">オフショア富 / Est. Offshore Wealth</span>
           <span class="ind-value">$36.1T</span>
           <span class="ind-arrow up">↑</span>
         </div>
@@ -283,27 +283,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">CBI申請数 (年)</span>
+          <span class="ind-label">CBI申請数 / CBI Applications (yr)</span>
           <span class="ind-value">+38,000</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">マルタ黄金VISAキャンセル率</span>
+          <span class="ind-label">マルタ黄金VISA / Malta Golden VISA Cancel Rate</span>
           <span class="ind-value">0%</span>
           <span class="ind-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">ニュージーランドバンカー購入</span>
+          <span class="ind-label">NZバンカー / NZ Bunker Purchases</span>
           <span class="ind-value">+240%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">アラブ首長国連邦ゴールドカード</span>
+          <span class="ind-label">UAE ゴールドカード / UAE Gold Card</span>
           <span class="ind-value">+127%</span>
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">スイス永住権申請</span>
+          <span class="ind-label">スイス永住権 / Swiss Residency Apps</span>
           <span class="ind-value">+89%</span>
           <span class="ind-arrow up">↑</span>
         </div>
@@ -324,27 +324,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">長寿研究投資 (年間)</span>
+          <span class="ind-label">長寿研究投資 / Longevity R&amp;D (annual)</span>
           <span class="ind-value">$4.2B</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">老化リバーサル企業数</span>
+          <span class="ind-label">老化リバーサル / Anti-Aging Companies</span>
           <span class="ind-value">250+</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">個人用医療機材購入</span>
+          <span class="ind-label">個人用医療機材 / Personal Medical Equip.</span>
           <span class="ind-value">+320%</span>
           <span class="ind-arrow up">↑↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">プライベートICU施設</span>
+          <span class="ind-label">プライベートICU / Private ICU Facilities</span>
           <span class="ind-value">+45%</span>
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">冷凍保存契約 (Alcor)</span>
+          <span class="ind-label">冷凍保存 / Cryopreservation (Alcor)</span>
           <span class="ind-value">+1,800</span>
           <span class="ind-arrow up">↑</span>
         </div>
@@ -365,27 +365,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">Starlink衛星軌道数</span>
+          <span class="ind-label">Starlink衛星 / Starlink Satellites</span>
           <span class="ind-value" id="starlink-count">7,000+</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">私設衛星端末契約</span>
+          <span class="ind-label">私設衛星端末 / Private Satellite Terminals</span>
           <span class="ind-value">+890%</span>
           <span class="ind-arrow up">↑↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">ファラデーケージ施設</span>
+          <span class="ind-label">ファラデーケージ / Faraday Cage Facilities</span>
           <span class="ind-value">+156%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">暗号通信デバイス出荷</span>
+          <span class="ind-label">暗号通信デバイス / Encrypted Comm Devices</span>
           <span class="ind-value">+267%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">オフグリッド通信ノード</span>
+          <span class="ind-label">オフグリッド通信 / Off-Grid Comm Nodes</span>
           <span class="ind-value">+340%</span>
           <span class="ind-arrow up">↑↑↑</span>
         </div>
@@ -406,27 +406,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">プライベートジェット登録増加</span>
+          <span class="ind-label">プライベートジェット / Private Jet Registrations</span>
           <span class="ind-value" id="jet-count">+28%</span>
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">スーパーヨット発注数</span>
+          <span class="ind-label">スーパーヨット / Superyacht Orders</span>
           <span class="ind-value">+45%</span>
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">長距離ヘリコプター購入</span>
+          <span class="ind-label">長距離ヘリ / Long-Range Helicopters</span>
           <span class="ind-value">+67%</span>
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">地下バンカー移動用車両</span>
+          <span class="ind-label">バンカー移動車両 / Bunker Vehicles</span>
           <span class="ind-value">+190%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">防弾SUV注文 (G-class等)</span>
+          <span class="ind-label">防弾SUV / Armored SUV Orders (G-class)</span>
           <span class="ind-value">待機リスト 2年</span>
           <span class="ind-arrow danger">!</span>
         </div>
@@ -447,27 +447,27 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">民間警備市場規模</span>
+          <span class="ind-label">民間警備市場 / Private Security Market</span>
           <span class="ind-value">$376B</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">元特殊部隊雇用 (PMC)</span>
+          <span class="ind-label">元特殊部隊 / Former SF Hires (PMC)</span>
           <span class="ind-value">+145%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">バンカー建設会社受注</span>
+          <span class="ind-label">バンカー建設 / Bunker Construction Orders</span>
           <span class="ind-value">+500%</span>
           <span class="ind-arrow up">↑↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">AI監視システム導入</span>
+          <span class="ind-label">AI監視システム / AI Surveillance Systems</span>
           <span class="ind-value">+230%</span>
           <span class="ind-arrow up">↑↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">地下シェルター準備期間</span>
+          <span class="ind-label">地下シェルター / Underground Shelter Prep</span>
           <span class="ind-value">5年分備蓄</span>
           <span class="ind-arrow danger">!</span>
         </div>
@@ -488,7 +488,7 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">全監視ゾーン 軍用機検出</span>
+          <span class="ind-label">全監視ゾーン / All Zones Military Aircraft</span>
           <span class="ind-value" id="mil-total-aircraft">--</span>
           <span class="ind-arrow" id="mil-arrow">→</span>
         </div>
@@ -503,7 +503,7 @@
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">バルト海 / 東欧</span>
+          <span class="ind-label">バルト海 / Baltic · Eastern Europe</span>
           <span class="ind-value" id="mil-count-baltic">--</span>
           <span class="ind-arrow">→</span>
         </div>
@@ -531,17 +531,17 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">出発ハブ 総機数</span>
+          <span class="ind-label">出発ハブ / Departure Hub Total</span>
           <span class="ind-value" id="bj-hub-count">--</span>
           <span class="ind-arrow" id="bj-hub-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">セーフヘイブン 着陸数</span>
+          <span class="ind-label">セーフヘイブン / Safe Haven Landings</span>
           <span class="ind-value" id="bj-haven-count">--</span>
           <span class="ind-arrow" id="bj-haven-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">逃避比率 (避難地/拠点)</span>
+          <span class="ind-label">逃避比率 / Escape Ratio (havens/hubs)</span>
           <span class="ind-value" id="bj-escape-ratio">--</span>
           <span class="ind-arrow up">↑</span>
         </div>
@@ -551,7 +551,7 @@
           <span class="ind-arrow up">↑</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">最終更新</span>
+          <span class="ind-label">最終更新 / Last Update</span>
           <span class="ind-value" id="bj-last-update" style="font-size:10px">--</span>
           <span class="ind-arrow" style="color:var(--accent-green)">◈</span>
         </div>
@@ -574,19 +574,19 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">太陽フレア</span>
+          <span class="ind-label">太陽フレア / Solar Flare</span>
           <span class="ind-value" id="sw-flare-cls" style="font-size:20px;font-weight:700">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">フレア種別</span>
+          <span class="ind-label">フレア種別 / Flare Class</span>
           <span class="ind-value" id="sw-flare-lbl" style="font-size:9px">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">Kp指数</span>
+          <span class="ind-label">Kp指数 / Kp Index</span>
           <span class="ind-value" id="sw-kp-val" style="font-size:18px;font-weight:700">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">磁気嵐レベル</span>
+          <span class="ind-label">磁気嵐レベル / Geomagnetic Storm Level</span>
           <span class="ind-value" id="sw-kp-lbl" style="font-size:9px">--</span>
         </div>
         <div class="indicator-row">
@@ -610,25 +610,25 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">M4.5以上 (7日間)</span>
+          <span class="ind-label">M4.5以上 / M4.5+ (7 days)</span>
           <span class="ind-value" id="eq-total">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">M6.0以上</span>
+          <span class="ind-label">M6.0以上 / M6.0+</span>
           <span class="ind-value" id="eq-m6plus">--</span>
           <span class="ind-arrow" style="color:var(--accent-orange)">⚠</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">M7.0以上</span>
+          <span class="ind-label">M7.0以上 / M7.0+</span>
           <span class="ind-value" id="eq-m7plus">--</span>
           <span class="ind-arrow" style="color:var(--accent-red)">!</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">最大規模</span>
+          <span class="ind-label">最大規模 / Largest Magnitude</span>
           <span class="ind-value" id="eq-top-mag" style="font-size:16px;font-weight:700">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">震源地</span>
+          <span class="ind-label">震源地 / Epicenter</span>
           <span class="ind-value" id="eq-top-place" style="font-size:9px">--</span>
         </div>
       </div>
@@ -648,15 +648,15 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">活動レポート数</span>
+          <span class="ind-label">活動レポート数 / Activity Reports</span>
           <span class="ind-value" id="vol-count">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">注目火山</span>
+          <span class="ind-label">注目火山 / Notable Volcano</span>
           <span class="ind-value" id="vol-latest" style="font-size:9px">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">常時活動火山</span>
+          <span class="ind-label">常時活動火山 / Persistently Active</span>
           <span class="ind-value" style="color:var(--accent-orange)">桜島 · エトナ · キラウエア</span>
         </div>
         <div class="indicator-row">
@@ -680,7 +680,7 @@
       </div>
       <div class="panel-indicators">
         <div class="indicator-row">
-          <span class="ind-label">7日間 接近数</span>
+          <span class="ind-label">7日間 接近数 / 7-Day Approaches</span>
           <span class="ind-value" id="neo-p-total">--</span>
           <span class="ind-arrow">件</span>
         </div>
@@ -690,16 +690,16 @@
           <span class="ind-arrow" style="color:var(--accent-orange)">⚠</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">最接近距離</span>
+          <span class="ind-label">最接近距離 / Closest Approach</span>
           <span class="ind-value" id="neo-p-closest">--</span>
           <span class="ind-arrow" style="color:var(--text-dim)">LD</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">最接近天体</span>
+          <span class="ind-label">最接近天体 / Closest Object</span>
           <span class="ind-value" id="neo-p-name" style="font-size:9px;word-break:break-all">--</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">最高速度</span>
+          <span class="ind-label">最高速度 / Max Speed</span>
           <span class="ind-value" id="neo-p-speed">--</span>
           <span class="ind-arrow" style="color:var(--text-dim)">km/s</span>
         </div>
@@ -725,7 +725,7 @@
           <span class="ind-arrow" id="bdi-arrow">→</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">BDI 月次変化</span>
+          <span class="ind-label">BDI 月次変化 / BDI Monthly Change</span>
           <span class="ind-value" id="bdi-change">--</span>
         </div>
         <div class="indicator-row">
@@ -734,11 +734,11 @@
           <span class="ind-value" id="fbx-source" style="font-size:9px;color:var(--text-dim);margin-left:4px"></span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">BDI 正常範囲</span>
+          <span class="ind-label">BDI 正常範囲 / BDI Normal Range</span>
           <span class="ind-value" style="color:var(--text-secondary)">1,000 – 2,500</span>
         </div>
         <div class="indicator-row">
-          <span class="ind-label">FBX 正常範囲</span>
+          <span class="ind-label">FBX 正常範囲 / FBX Normal Range</span>
           <span class="ind-value" style="color:var(--text-secondary)">$1,500 – $3,000</span>
         </div>
       </div>
@@ -772,9 +772,9 @@
     <!-- ESCAPE RATIO BAR -->
     <div class="bj-escape-bar-section">
       <div class="bj-escape-label">
-        <span>出発ハブ活動</span>
-        <span class="bj-escape-title">逃避フローメーター</span>
-        <span>セーフヘイブン着陸</span>
+        <span>出発ハブ活動 / Departure Hub Activity</span>
+        <span class="bj-escape-title">逃避フローメーター / Escape Flow Meter</span>
+        <span>セーフヘイブン着陸 / Safe Haven Landings</span>
       </div>
       <div class="bj-flow-visual">
         <div class="bj-flow-hub">
@@ -956,7 +956,7 @@
     <div class="neo-stats-row">
       <div class="neo-stat">
         <div class="neo-stat-val" id="neo-stat-total">--</div>
-        <div class="neo-stat-label">7日間 接近数</div>
+        <div class="neo-stat-label">7日間 接近数 / 7-Day Approaches</div>
       </div>
       <div class="neo-stat neo-stat-danger">
         <div class="neo-stat-val" id="neo-stat-pha">--</div>
@@ -964,29 +964,29 @@
       </div>
       <div class="neo-stat">
         <div class="neo-stat-val" id="neo-stat-closest-ld">--</div>
-        <div class="neo-stat-label">最接近距離 (LD)</div>
+        <div class="neo-stat-label">最接近距離 / Closest Approach (LD)</div>
       </div>
       <div class="neo-stat">
         <div class="neo-stat-val neo-stat-name" id="neo-stat-closest-name">--</div>
-        <div class="neo-stat-label">最接近天体</div>
+        <div class="neo-stat-label">最接近天体 / Closest Object</div>
       </div>
       <div class="neo-stat">
         <div class="neo-stat-val" id="neo-stat-fastest">--</div>
-        <div class="neo-stat-label">最高速度</div>
+        <div class="neo-stat-label">最高速度 / Max Speed</div>
       </div>
     </div>
 
     <!-- Column headers -->
     <div class="neo-list">
       <div class="neo-list-header">
-        <span>天体名称</span>
-        <span>接近日時 (UTC)</span>
+        <span>天体名称 / Name</span>
+        <span>接近日時 / Date (UTC)</span>
         <span>距離 (LD)</span>
         <span>距離 (km)</span>
-        <span>推定直径</span>
+        <span>推定直径 / Diam.</span>
         <span>速度 (km/s)</span>
         <span>PHA</span>
-        <span>脅威レベル</span>
+        <span>脅威レベル / Level</span>
       </div>
       <div class="neo-list-body" id="neoListBody">
         <div class="neo-empty">NASA NeoWs API からデータ取得中...</div>
@@ -1020,27 +1020,27 @@
     <div class="earth-summary-bar">
       <div class="earth-sum-block">
         <div class="earth-sum-val" id="sum-eq-total" style="color:#ff8800">--</div>
-        <div class="earth-sum-lbl">地震 M4.5以上<br><span style="color:var(--text-dim);font-size:8px">過去7日間</span></div>
+        <div class="earth-sum-lbl">地震 M4.5以上<br><span style="color:var(--text-dim);font-size:8px">過去7日間 / Past 7 Days</span></div>
       </div>
       <div class="earth-sum-sep"></div>
       <div class="earth-sum-block">
         <div class="earth-sum-val" id="sum-eq-m6" style="color:#ff5500">--</div>
-        <div class="earth-sum-lbl">M6.0以上<br><span style="color:var(--text-dim);font-size:8px">要注意レベル</span></div>
+        <div class="earth-sum-lbl">M6.0以上 / M6.0+<br><span style="color:var(--text-dim);font-size:8px">要注意 / Watch Level</span></div>
       </div>
       <div class="earth-sum-sep"></div>
       <div class="earth-sum-block">
         <div class="earth-sum-val" id="sum-eq-m7" style="color:#ff0044">--</div>
-        <div class="earth-sum-lbl">M7.0以上<br><span style="color:var(--text-dim);font-size:8px">危険レベル</span></div>
+        <div class="earth-sum-lbl">M7.0以上 / M7.0+<br><span style="color:var(--text-dim);font-size:8px">危険 / Danger Level</span></div>
       </div>
       <div class="earth-sum-sep"></div>
       <div class="earth-sum-block">
         <div class="earth-sum-val" id="vol-warn-count" style="color:#ff5500">--</div>
-        <div class="earth-sum-lbl">火山 WARNING<br><span style="color:var(--text-dim);font-size:8px">噴火中</span></div>
+        <div class="earth-sum-lbl">火山 WARNING<br><span style="color:var(--text-dim);font-size:8px">噴火中 / Erupting</span></div>
       </div>
       <div class="earth-sum-sep"></div>
       <div class="earth-sum-block">
         <div class="earth-sum-val" id="sum-vol-count" style="color:#ff8800">--</div>
-        <div class="earth-sum-lbl">火山 活動報告<br><span style="color:var(--text-dim);font-size:8px">GVP週次</span></div>
+        <div class="earth-sum-lbl">火山 活動報告<br><span style="color:var(--text-dim);font-size:8px">GVP週次 / Weekly</span></div>
       </div>
     </div>
 
@@ -1123,16 +1123,26 @@
   <section class="about-section">
     <div class="about-inner">
       <div class="about-tagline">世界の変化を監視し、未来のリスクを可視化する。</div>
+      <div class="about-tagline-en">Monitoring the world's changes. Visualizing tomorrow's risks.</div>
       <div class="about-body">
         <p>APEX WATCHは、軍事活動、国際物流、エネルギー市場、金融市場、感染症動向、サイバー空間、そして富裕層の行動変化など、世界中の公開情報（OSINT）を統合し分析するリスク監視プラットフォームです。</p>
+        <p class="about-body-en">APEX WATCH is a risk monitoring platform that integrates and analyzes open-source intelligence (OSINT) from around the world — including military activity, international logistics, energy markets, financial markets, infectious disease trends, cyberspace, and behavioral shifts among high-net-worth individuals.</p>
         <p class="about-emphasis">私たちの目的は恐怖を煽ることではありません。</p>
+        <p class="about-emphasis-en">Our goal is not to incite fear.</p>
         <p>世界規模の危機は、ある日突然発生するのではなく、多くの場合、様々な分野で小さな兆候として現れます。APEX WATCHは、それらの兆候を客観的なデータとして収集し、複数の指標を横断的に監視することで、人類社会に影響を与える可能性のあるリスクの早期把握を目指しています。</p>
+        <p class="about-body-en">Global crises do not occur overnight. In most cases, they first appear as small signals across multiple domains. APEX WATCH collects these signals as objective data and monitors multiple indicators across disciplines, aiming for early awareness of risks that could affect human society.</p>
         <p>情報は常に不完全であり、未来を正確に予測することは誰にもできません。しかし、より多くの事実を観察し、冷静に分析することで、不確実性を減らすことは可能です。</p>
+        <p class="about-body-en">Information is always incomplete, and no one can accurately predict the future. However, by observing more facts and analyzing them calmly, it is possible to reduce uncertainty.</p>
         <div class="about-mission">
           <span class="about-mission-label">APEX WATCHは、</span>
           <span class="about-mission-item">「世界で何が起きているのか」</span>
           <span class="about-mission-item">「何が変化し始めているのか」</span>
           <span class="about-mission-label">を継続的に見つめるための観測所です。</span>
+        </div>
+        <div class="about-mission about-mission-en">
+          <span class="about-mission-label">APEX WATCH is an observatory for continuously asking —</span>
+          <span class="about-mission-item">"What is happening in the world?"</span>
+          <span class="about-mission-item">"What is beginning to change?"</span>
         </div>
       </div>
     </div>
@@ -1141,29 +1151,29 @@
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-left">
-      APEX WATCH v2.8.5 | データソース: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
+      APEX WATCH v2.8.6 | データソース / Data Sources: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
     </div>
     <div class="footer-right">
-      <a href="./disclaimer.html" style="color:inherit; text-decoration:none; opacity:0.7; margin-right:14px;">免責事項・方法論</a>
-      <a href="./privacy.html"    style="color:inherit; text-decoration:none; opacity:0.7;">プライバシーポリシー</a>
+      <a href="./disclaimer.html" style="color:inherit; text-decoration:none; opacity:0.7; margin-right:14px;">免責事項・方法論 / Disclaimer &amp; Methodology</a>
+      <a href="./privacy.html"    style="color:inherit; text-decoration:none; opacity:0.7;">プライバシーポリシー / Privacy Policy</a>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-  <script src="data.js?v=285"></script>
-  <script src="map.js?v=285"></script>
-  <script src="app.js?v=285"></script>
-  <script src="military.js?v=285"></script>
-  <script src="bizjet.js?v=285"></script>
-  <script src="shipping.js?v=285"></script>
-  <script src="cyber.js?v=285"></script>
-  <script src="defcon.js?v=285"></script>
-  <script src="neo.js?v=285"></script>
-  <script src="neo3d.js?v=285"></script>
-  <script src="earth.js?v=285"></script>
-  <script src="yt.js?v=285"></script>
+  <script src="data.js?v=286"></script>
+  <script src="map.js?v=286"></script>
+  <script src="app.js?v=286"></script>
+  <script src="military.js?v=286"></script>
+  <script src="bizjet.js?v=286"></script>
+  <script src="shipping.js?v=286"></script>
+  <script src="cyber.js?v=286"></script>
+  <script src="defcon.js?v=286"></script>
+  <script src="neo.js?v=286"></script>
+  <script src="neo3d.js?v=286"></script>
+  <script src="earth.js?v=286"></script>
+  <script src="yt.js?v=286"></script>
 
   <!-- Floating TOP button -->
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
