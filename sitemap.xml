@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://mojave1225-jpg.github.io/apex-watch/</loc>
-    <lastmod>2026-06-16</lastmod>
+    <loc>https://apex-watch.jp/</loc>
+    <lastmod>2026-06-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://apex-watch.jp/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://apex-watch.jp/"/>
+  </url>
+  <url>
+    <loc>https://apex-watch.jp/disclaimer.html</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://apex-watch.jp/privacy.html</loc>
+    <lastmod>2026-06-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>
