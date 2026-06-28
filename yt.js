@@ -8,7 +8,7 @@
 const YT_CHANNELS = [
   {
     wrapperId:  'yt-wrap-cbs',
-    channelId:  'UC8p1vwvWtl6T73JiExfWs1g',   // @CBSNews
+    videoId:    'uv5-ars3sAs',               // CBS News 24/7 live stream
     label:      '▶ CBS News 24/7',
     youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
   },
@@ -18,9 +18,8 @@ function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
   const src = [
-    'https://www.youtube.com/embed/live_stream',
-    `?channel=${ch.channelId}`,
-    '&autoplay=1&mute=1&rel=0&modestbranding=1',
+    `https://www.youtube.com/embed/${ch.videoId}`,
+    '?autoplay=1&mute=1&rel=0&modestbranding=1',
     '&origin=https://apex-watch.jp',
   ].join('');
 
