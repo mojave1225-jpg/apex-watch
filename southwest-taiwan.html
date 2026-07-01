@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -159,14 +159,13 @@
     border:1px solid var(--panel-border);
     border-radius:4px;
     height:360px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display:block;
     color:var(--text-dim);
     font-size:12px;
-    text-align:center;
-    padding:20px;
+    text-align:left;
+    padding:10px;
   }
+  #globalMap{height:100%;width:100%;border-radius:4px;overflow:hidden;}
 
   .zone-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
   .zone-tag{
@@ -186,7 +185,7 @@
 <header>
   <div class="eyebrow">APEX WATCH REGIONAL FOCUS</div>
   <h1>◈ 南西諸島・台湾海峡 緊張監視</h1>
-  <div class="sub">Nansei Islands &amp; Taiwan Strait Tension Monitor — Southwestern Theater Intelligence</div>
+  <div class="sub">Nansei Islands &amp; Taiwan Strait Tension Monitor — Southwestern Theater Intelligence | 最終更新: <span id="updateInfo">取得中...</span></div>
 </header>
 
 <nav>
@@ -204,12 +203,12 @@
   <section id="s-index">
     <div class="section-head">
       <h2>◈ 台湾海峡緊張度指数 / Strait Tension Index</h2>
-      <div class="links"><a href="#">算出方法</a></div>
+      <div class="links"><a href="#">算出方法</a> <span id="liveStatus" style="margin-left:10px;color:var(--text-dim);font-size:11px;">初期化中...</span></div>
     </div>
     <div class="tension-wrap">
       <div class="tension-gauge">
-        <div class="tension-num">62<small> / 100</small></div>
-        <div class="tension-bar"><div class="tension-bar-fill"></div></div>
+        <div class="tension-num"><span id="tensionScore">62</span><small> / 100</small></div>
+        <div class="tension-bar"><div class="tension-bar-fill" id="tensionBarFill"></div></div>
         <div class="tension-legend">
           <span>平常</span><span>警戒</span><span>高度警戒</span><span>危機的</span>
         </div>
@@ -219,9 +218,9 @@
         </div>
       </div>
       <div class="tension-breakdown">
-        <div class="tb-row"><span>中間線越え（7日）— 重み30%</span><span class="val">34 回</span></div>
-        <div class="tb-row"><span>ADIZ侵入機数（7日）— 重み25%</span><span class="val">128 機</span></div>
-        <div class="tb-row"><span>中国艦艇 南西方面確認 — 重み20%</span><span class="val">6 隻</span></div>
+        <div class="tb-row"><span>中間線越え（7日）— 重み30%</span><span class="val" id="metric-midline">34 回</span></div>
+        <div class="tb-row"><span>ADIZ侵入機数（7日）— 重み25%</span><span class="val" id="metric-adiz">128 機</span></div>
+        <div class="tb-row"><span>中国艦艇 南西方面確認 — 重み20%</span><span class="val" id="metric-ships">6 隻</span></div>
         <div class="tb-row"><span>グレーゾーン事案（拿捕・臨検等）— 重み10%</span><span class="val">なし</span></div>
         <div class="tb-row"><span>大規模演習フラグ — 該当時+15点固定加算</span><span class="val">非該当</span></div>
       </div>
@@ -243,8 +242,7 @@
       </div>
     </div>
     <div class="map-placeholder">
-      与那国島・台湾間バウンディングボックスでOpenSky Network ADS-Bをフィルタし、<br>
-      軍用機トラック＋中間線をオーバーレイした地図をここに実装（Leaflet + OpenSky REST想定）
+      <div id="globalMap" aria-label="南西諸島 / 台湾海峡 監視地図"></div>
     </div>
     <div class="zone-tags">
       <span class="zone-tag">与那国島</span>
@@ -266,17 +264,17 @@
     <div class="grid" style="margin-bottom:14px;">
       <div class="card">
         <div class="label">本日 ADIZ侵入機数</div>
-        <div class="value cn">-- 機</div>
+        <div class="value cn" id="daily-adiz">-- 機</div>
         <div class="foot">台湾国防部 即時軍事動態</div>
       </div>
       <div class="card">
         <div class="label">中間線越え</div>
-        <div class="value cn">-- 機</div>
+        <div class="value cn" id="daily-midline">-- 機</div>
         <div class="foot">同上</div>
       </div>
       <div class="card">
         <div class="label">確認艦艇数</div>
-        <div class="value cn">-- 隻</div>
+        <div class="value cn" id="daily-ships">-- 隻</div>
         <div class="foot">同上</div>
       </div>
     </div>
@@ -284,7 +282,7 @@
       <thead>
         <tr><th>日付</th><th>ADIZ侵入</th><th>中間線越え</th><th>艦艇</th><th>備考</th><th>水準</th></tr>
       </thead>
-      <tbody>
+      <tbody id="daily-activity-body">
         <tr><td>--/--</td><td>--</td><td>--</td><td>--</td><td>データ取得中</td><td><span class="badge mid">中</span></td></tr>
         <tr><td>--/--</td><td>--</td><td>--</td><td>--</td><td>データ取得中</td><td><span class="badge low">低</span></td></tr>
       </tbody>
@@ -395,6 +393,9 @@
   データソース: 防衛省統合幕僚監部, 中華民國國防部, OpenSky Network, ADS-B Exchange, MarineTraffic<br>
   本ページは公開情報(OSINT)の集約であり、特定の軍事行動を予測・扇動する意図はありません。
 </footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="southwest-taiwan.js?v=20260701c"></script>
 
 </body>
 </html>
