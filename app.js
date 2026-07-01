@@ -244,6 +244,112 @@ function renderTimeline() {
   `).join('');
 }
 
+function scoreFromDomOrState(domId, stateKey, fallback) {
+  const el = document.getElementById(domId);
+  if (el) {
+    const parsed = parseInt(String(el.textContent).replace(/[^0-9-]/g, ''), 10);
+    if (!Number.isNaN(parsed)) return parsed;
+  }
+  const stateVal = state.scores[stateKey];
+  return Number.isFinite(stateVal) ? stateVal : fallback;
+}
+
+function renderCommandDeck() {
+  const globalRisk = parseInt(document.getElementById('mainScore')?.textContent || '0', 10) || 0;
+  const military = scoreFromDomOrState('score-military', 'military', 40);
+  const bizjet = scoreFromDomOrState('score-bizjet', 'bizjet', 40);
+  const shipping = scoreFromDomOrState('score-shipping', 'shipping', 50);
+  const security = scoreFromDomOrState('score-security', 'security', 75);
+
+  const conflictClusters = Math.max(6, Math.round((globalRisk + military) / 14));
+  const mobilityAlerts = Math.max(4, Math.round((bizjet + military) / 18));
+  const infraStress = Math.max(10, Math.round((shipping + security + globalRisk) / 3));
+
+  const globalRiskEl = document.getElementById('cmd-global-risk');
+  if (globalRiskEl) globalRiskEl.textContent = globalRisk;
+
+  const conflictEl = document.getElementById('cmd-conflict-clusters');
+  if (conflictEl) conflictEl.textContent = conflictClusters;
+
+  const mobilityEl = document.getElementById('cmd-mobility-alerts');
+  if (mobilityEl) mobilityEl.textContent = mobilityAlerts;
+
+  const infraEl = document.getElementById('cmd-infra-stress');
+  if (infraEl) infraEl.textContent = `${infraStress}%`;
+
+  const syncEl = document.getElementById('cmd-sync-status');
+  if (syncEl) syncEl.textContent = state.apiReady ? 'synced' : 'syncing';
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const updatedEl = document.getElementById('cmd-last-update');
+  if (updatedEl) updatedEl.textContent = `updated ${hh}:${mm}`;
+
+  const defconLink = document.getElementById('cmd-defcon-link');
+  if (defconLink) {
+    defconLink.textContent = globalRisk >= 80 ? 'high lock' : globalRisk >= 60 ? 'elevated sync' : 'stable';
+  }
+
+  const maritimePressure = document.getElementById('cmd-maritime-pressure');
+  if (maritimePressure) {
+    maritimePressure.textContent = shipping >= 75 ? 'red lane stress' : shipping >= 55 ? 'watchlisted' : 'nominal';
+  }
+
+  const crossAnomaly = document.getElementById('cmd-cross-anomaly');
+  if (crossAnomaly) {
+    const anomaly = Math.round((military + bizjet + globalRisk) / 3);
+    crossAnomaly.textContent = `${anomaly}/100`;
+  }
+
+  const theaters = [
+    { name: 'Taiwan Strait / East China Sea', score: Math.round((military + globalRisk) / 2) },
+    { name: 'Persian Gulf / Hormuz', score: Math.round((military * 0.85) + (shipping * 0.15)) },
+    { name: 'Baltic / Eastern Europe', score: Math.round((military * 0.75) + (security * 0.25)) },
+    { name: 'Pacific Logistics Corridor', score: Math.round((shipping * 0.7) + (bizjet * 0.3)) },
+  ];
+
+  const theaterGrid = document.getElementById('cmd-theater-grid');
+  if (theaterGrid) {
+    theaterGrid.innerHTML = theaters.map((t) => {
+      const val = Math.max(0, Math.min(100, t.score));
+      return `
+        <div class="cmd-theater-row">
+          <div class="cmd-theater-top">
+            <span class="cmd-theater-name">${t.name}</span>
+            <span class="cmd-theater-score">${val}</span>
+          </div>
+          <div class="cmd-theater-bar"><div class="cmd-theater-fill" style="width:${val}%"></div></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const feed = document.getElementById('cmd-incident-feed');
+  if (feed) {
+    const feedItems = NEWS_ITEMS.slice(0, 6).map((item, i) => {
+      const severity = item.tagClass === 'red' ? 'critical' : item.tagClass === 'orange' ? 'warn' : 'info';
+      const minuteAgo = (i * 7) + 2;
+      return {
+        severity,
+        tag: item.tag,
+        title: item.title,
+        time: `${minuteAgo}m ago`,
+      };
+    });
+
+    feed.innerHTML = feedItems.map((item) => `
+      <article class="cmd-incident-item ${item.severity}">
+        <div class="cmd-incident-top">
+          <span class="cmd-incident-tag">${item.tag}</span>
+          <span class="cmd-incident-time">${item.time}</span>
+        </div>
+        <div class="cmd-incident-title">${item.title}</div>
+      </article>
+    `).join('');
+  }
+}
+
 // ── STATIC PANELS ──
 function initStaticPanels() {
   updatePanel('residency', 72, '監視中');
@@ -255,6 +361,7 @@ function initStaticPanels() {
 
 // ── INIT ──
 async function init() {
+  renderCommandDeck();
   renderNews();
   renderTicker();
   renderTimeline();
@@ -288,6 +395,7 @@ async function init() {
   );
   updatePanel('assets', state.scores.assets, 'LIVE');
   recalcMain();
+  renderCommandDeck();
   state.apiReady = true;
 }
 
@@ -296,6 +404,7 @@ async function refresh() {
   await Promise.allSettled([fetchCrypto(), fetchFearGreed(), fetchGold()]);
   renderTicker();
   recalcMain();
+  renderCommandDeck();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
