@@ -431,6 +431,43 @@ html, body {
   align-content: start;
 }
 
+.param-risk-legend {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(7, 13, 30, 0.92);
+  border-bottom: 1px solid var(--border);
+}
+
+.risk-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.risk-chip.high {
+  color: #ffd1dc;
+  border-color: rgba(255, 0, 68, 0.55);
+  background: rgba(255, 0, 68, 0.14);
+}
+
+.risk-chip.medium {
+  color: #ffe0bf;
+  border-color: rgba(255, 136, 0, 0.5);
+  background: rgba(255, 136, 0, 0.12);
+}
+
+.risk-chip.monitor {
+  color: #c8f2ff;
+  border-color: rgba(0, 204, 255, 0.5);
+  background: rgba(0, 204, 255, 0.12);
+}
+
 .top-params-grid .panel {
   min-height: 250px;
   display: flex;
