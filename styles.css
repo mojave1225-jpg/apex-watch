@@ -1292,7 +1292,7 @@ html, body {
   left: 28px;
   right: auto;
   z-index: 24;
-  width: 248px;
+  width: min(236px, calc(100% - 260px));
   background: rgba(2, 8, 20, 0.86);
   border: 1px solid rgba(58, 123, 213, 0.35);
   border-radius: 4px;
@@ -1956,6 +1956,17 @@ html, body {
   flex-direction: column;
   gap: 6px;
   width: 196px;
+}
+
+@media (max-width: 1280px) and (min-width: 901px) {
+  .map-hud {
+    width: min(218px, calc(100% - 238px));
+  }
+
+  #threat-status-panel {
+    right: 16px;
+    width: 178px;
+  }
 }
 .ts-block {
   background: rgba(2,6,18,0.90);
