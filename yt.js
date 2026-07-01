@@ -18,11 +18,11 @@ function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
   const src = [
-    `https://www.youtube.com/embed/live_stream?channel=${ch.channelId}`,
+    `https://www.youtube-nocookie.com/embed/live_stream?channel=${ch.channelId}`,
     '?autoplay=1&mute=1&rel=0&modestbranding=1',
+    '&playsinline=1',
     '&cc_load_policy=1',          // 字幕を有効にする
     '&hl=ja',                     // インターフェース言語を日本語に
-    '&origin=https://apex-watch.jp',
   ].join('');
 
   w.innerHTML = `
