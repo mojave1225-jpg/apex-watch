@@ -1095,9 +1095,11 @@ html, body {
   min-width: 0;
 }
 .command-map-top {
-  margin-bottom: 10px;
+  margin: 0 -22px 10px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
 }
 .map-header-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -1788,6 +1790,10 @@ html, body {
 
 /* mobile: cyber-bar stacks */
 @media (max-width: 600px) {
+  .command-map-top {
+    margin-left: -14px;
+    margin-right: -14px;
+  }
   #cyber-bar { gap: 10px; padding: 6px 10px; }
   .cyber-legend { gap: 6px; font-size: 8px; }
   .cyber-val { font-size: 15px; }
