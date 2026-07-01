@@ -14,6 +14,8 @@ const MAP_POINTS = [
 let globalMapInstance;
 let latestWeather = [];
 let latestQuakes = [];
+let latestPlaEntries = [];
+let trendMetric = 'adiz';
 
 const LEAFLET_CSS_CDNS = [
   'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
@@ -314,8 +316,83 @@ function calcLevel(entry) {
   return { key: 'low', label: '低' };
 }
 
+function trendMeta(metric) {
+  if (metric === 'midline') {
+    return {
+      title: '中間線越え 7日推移 / 7-day Midline-crossing trend',
+      label: '機',
+      fallback: 0,
+    };
+  }
+  if (metric === 'ships') {
+    return {
+      title: '共艦確認 7日推移 / 7-day Naval presence trend',
+      label: '隻',
+      fallback: 0,
+    };
+  }
+  return {
+    title: 'ADIZ侵入 7日推移 / 7-day ADIZ trend',
+    label: '機',
+    fallback: 0,
+  };
+}
+
+function renderDailyTrend(entries, metric = trendMetric) {
+  const trendWrap = document.getElementById('daily-trend-bars');
+  if (!trendWrap) return;
+
+  const meta = trendMeta(metric);
+  const titleEl = document.getElementById('daily-trend-title');
+  if (titleEl) titleEl.textContent = meta.title;
+
+  const trend = entries.slice(0, 7).reverse();
+  const values = trend.map((item) => {
+    const val = item[metric];
+    return Number.isFinite(val) ? val : meta.fallback;
+  });
+  const maxVal = Math.max(...values, 1);
+
+  trendWrap.innerHTML = trend.map((item, idx) => {
+    const value = values[idx];
+    const h = Math.max(6, Math.round((value / maxVal) * 70));
+    const dateLabel = item.date.includes('.') ? item.date.split('.').slice(1).join('/') : item.date;
+    return `
+      <div class="trend-col">
+        <div class="trend-val">${value}${meta.label}</div>
+        <div class="trend-bar" style="height:${h}px"></div>
+        <div class="trend-date">${dateLabel}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function initTrendMetricToggle() {
+  const wrap = document.getElementById('trend-metric-toggle');
+  if (!wrap || wrap.dataset.bound === '1') return;
+
+  wrap.addEventListener('click', (event) => {
+    const btn = event.target.closest('.trend-toggle-btn');
+    if (!btn) return;
+    const metric = btn.dataset.metric;
+    if (!metric) return;
+
+    trendMetric = metric;
+    wrap.querySelectorAll('.trend-toggle-btn').forEach((node) => {
+      node.classList.toggle('active', node.dataset.metric === metric);
+    });
+
+    if (latestPlaEntries.length) {
+      renderDailyTrend(latestPlaEntries, trendMetric);
+    }
+  });
+
+  wrap.dataset.bound = '1';
+}
+
 function renderTaiwanDailyActivity(entries) {
   if (!entries.length) return;
+  latestPlaEntries = entries;
 
   const latest = entries[0];
   const dailyAdiz = document.getElementById('daily-adiz');
@@ -335,22 +412,7 @@ function renderTaiwanDailyActivity(entries) {
     }).join('');
   }
 
-  const trendWrap = document.getElementById('daily-trend-bars');
-  if (trendWrap) {
-    const trend = entries.slice(0, 7).reverse();
-    const maxAdiz = Math.max(...trend.map((item) => item.adiz), 1);
-    trendWrap.innerHTML = trend.map((item) => {
-      const h = Math.max(6, Math.round((item.adiz / maxAdiz) * 70));
-      const dateLabel = item.date.includes('.') ? item.date.split('.').slice(1).join('/') : item.date;
-      return `
-        <div class="trend-col">
-          <div class="trend-val">${item.adiz}</div>
-          <div class="trend-bar" style="height:${h}px"></div>
-          <div class="trend-date">${dateLabel}</div>
-        </div>
-      `;
-    }).join('');
-  }
+  renderDailyTrend(entries, trendMetric);
 
   const source = document.querySelector('#s-daily .source-note');
   if (source) {
@@ -552,6 +614,7 @@ async function refreshLiveData() {
 }
 
 async function initSpecialPage() {
+  initTrendMetricToggle();
   await initGlobalMap();
   updateClock();
   setInterval(updateClock, 1000);
