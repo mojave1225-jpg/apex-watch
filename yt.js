@@ -29,12 +29,87 @@ function buildEmbedSrc(ch, useNoCookie) {
   ].join('');
 }
 
+function attachControls(w, ch, iframe, srcNoCookie, srcYoutube) {
+  if (w.dataset.ytControlsAttached === '1') return;
+
+  const controls = document.createElement('div');
+  controls.style.display = 'flex';
+  controls.style.flexWrap = 'wrap';
+  controls.style.gap = '6px';
+  controls.style.justifyContent = 'flex-end';
+  controls.style.padding = '6px 8px';
+  controls.style.background = 'rgba(255,255,255,0.02)';
+
+  const retryBtn = document.createElement('button');
+  retryBtn.type = 'button';
+  retryBtn.className = 'yt-retry-btn';
+  retryBtn.textContent = '再試行';
+  retryBtn.style.padding = '3px 10px';
+
+  const switchBtn = document.createElement('button');
+  switchBtn.type = 'button';
+  switchBtn.className = 'yt-retry-btn';
+  switchBtn.textContent = '埋め込み切替';
+  switchBtn.style.padding = '3px 10px';
+
+  const ytLink = document.createElement('a');
+  ytLink.href = ch.youtubeUrl;
+  ytLink.target = '_blank';
+  ytLink.rel = 'noopener';
+  ytLink.className = 'yt-error-link';
+  ytLink.textContent = '▶ YouTubeで視聴';
+  ytLink.style.padding = '3px 8px';
+  ytLink.style.fontSize = '9px';
+
+  const officialLink = document.createElement('a');
+  officialLink.href = ch.officialUrl;
+  officialLink.target = '_blank';
+  officialLink.rel = 'noopener';
+  officialLink.className = 'yt-error-link';
+  officialLink.textContent = '▶ CBS公式で視聴';
+  officialLink.style.padding = '3px 8px';
+  officialLink.style.fontSize = '9px';
+
+  controls.append(retryBtn, switchBtn, ytLink, officialLink);
+
+  const note = document.createElement('div');
+  note.style.padding = '4px 10px';
+  note.style.fontSize = '9px';
+  note.style.color = '#7e90a6';
+  note.style.lineHeight = '1.4';
+  note.style.borderTop = '1px solid rgba(26,42,74,0.7)';
+  note.textContent = '埋め込み再生不可の環境では、上の「YouTubeで視聴」または「CBS公式で視聴」をご利用ください。';
+
+  w.appendChild(controls);
+  w.appendChild(note);
+
+  let useNoCookie = (iframe.src || '').includes('youtube-nocookie.com');
+
+  retryBtn.addEventListener('click', () => {
+    iframe.src = useNoCookie ? srcNoCookie : srcYoutube;
+  });
+
+  switchBtn.addEventListener('click', () => {
+    useNoCookie = !useNoCookie;
+    iframe.src = useNoCookie ? srcNoCookie : srcYoutube;
+    switchBtn.textContent = useNoCookie ? '埋め込み切替' : '埋め込み切替(通常)';
+  });
+
+  w.dataset.ytControlsAttached = '1';
+}
+
 function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
 
   const srcNoCookie = buildEmbedSrc(ch, true);
   const srcYoutube = buildEmbedSrc(ch, false);
+
+  const existingFrame = w.querySelector('iframe.yt-iframe');
+  if (existingFrame) {
+    attachControls(w, ch, existingFrame, srcNoCookie, srcYoutube);
+    return;
+  }
 
   w.innerHTML = `
     <div class="yt-embed-label">${ch.label} <span style="font-size:10px;color:#88aa88">[字幕: 自動ON]</span></div>
@@ -47,35 +122,17 @@ function setEmbed(ch) {
       referrerpolicy="strict-origin-when-cross-origin"
       title="${ch.label}">
     </iframe>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;padding:6px 8px;background:rgba(255,255,255,0.02)">
-      <button type="button" class="yt-retry-btn" data-yt-action="retry" style="padding:3px 10px">再試行</button>
-      <button type="button" class="yt-retry-btn" data-yt-action="switch" style="padding:3px 10px">埋め込み切替</button>
-      <a href="${ch.youtubeUrl}" target="_blank" rel="noopener" class="yt-error-link" style="padding:3px 8px;font-size:9px">
+    <div style="text-align:right;padding:2px 6px">
+      <a href="${ch.youtubeUrl}" target="_blank" rel="noopener"
+         style="font-size:9px;color:#3a5a8a;text-decoration:none">
         ▶ YouTubeで視聴
       </a>
-      <a href="${ch.officialUrl}" target="_blank" rel="noopener" class="yt-error-link" style="padding:3px 8px;font-size:9px">
-        ▶ CBS公式で視聴
-      </a>
-    </div>
-    <div style="padding:4px 10px;font-size:9px;color:#7e90a6;line-height:1.4;border-top:1px solid rgba(26,42,74,0.7)">
-      埋め込み再生不可の環境では、上の「YouTubeで視聴」または「CBS公式で視聴」をご利用ください。
     </div>`;
 
-  const iframe = w.querySelector('iframe');
-  const retryBtn = w.querySelector('[data-yt-action="retry"]');
-  const switchBtn = w.querySelector('[data-yt-action="switch"]');
-  let useNoCookie = true;
-
-  retryBtn?.addEventListener('click', () => {
-    const current = useNoCookie ? srcNoCookie : srcYoutube;
-    iframe.src = current;
-  });
-
-  switchBtn?.addEventListener('click', () => {
-    useNoCookie = !useNoCookie;
-    iframe.src = useNoCookie ? srcNoCookie : srcYoutube;
-    switchBtn.textContent = useNoCookie ? '埋め込み切替' : '埋め込み切替(通常)';
-  });
+  const iframe = w.querySelector('iframe.yt-iframe');
+  if (iframe) {
+    attachControls(w, ch, iframe, srcNoCookie, srcYoutube);
+  }
 }
 
 function initYoutubeLive() {
