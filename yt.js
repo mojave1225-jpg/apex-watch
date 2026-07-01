@@ -50,6 +50,34 @@ function buildSourceList(ch) {
   ];
 }
 
+function kickYouTubePlayer(iframe) {
+  if (!iframe || !iframe.contentWindow) return;
+
+  let tries = 0;
+  const maxTries = 10;
+  const timer = setInterval(() => {
+    tries += 1;
+    if (!iframe.contentWindow) {
+      clearInterval(timer);
+      return;
+    }
+
+    iframe.contentWindow.postMessage(JSON.stringify({
+      event: 'command',
+      func: 'mute',
+      args: [],
+    }), '*');
+
+    iframe.contentWindow.postMessage(JSON.stringify({
+      event: 'command',
+      func: 'playVideo',
+      args: [],
+    }), '*');
+
+    if (tries >= maxTries) clearInterval(timer);
+  }, 1200);
+}
+
 function attachControls(w, ch, iframe, sourceList) {
   if (w.dataset.ytControlsAttached === '1') return;
 
@@ -113,6 +141,13 @@ function attachControls(w, ch, iframe, sourceList) {
     sourceIndex = (index + sourceList.length) % sourceList.length;
     iframe.src = sourceList[sourceIndex];
   }
+
+  iframe.addEventListener('load', () => {
+    kickYouTubePlayer(iframe);
+  });
+
+  // Initial kick for already loaded states.
+  kickYouTubePlayer(iframe);
 
   retryBtn.addEventListener('click', () => {
     setSource(sourceIndex + 1);
