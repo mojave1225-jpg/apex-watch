@@ -119,7 +119,19 @@
         <span>◈ グローバル脅威マップ / Global Threat Map — 戦争・紛争・不安定地域・サイバー攻撃 / War · Conflict · Instability · Cyber</span>
         <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
       </div>
-      <div class="map-container" id="mapContainer"></div>
+      <div class="map-container" id="mapContainer">
+        <div class="map-hud" id="mapHud" aria-label="Global threat map intelligence overlay">
+          <div class="map-hud-head">◈ LIVE THEATER INTEL</div>
+          <div class="map-hud-grid">
+            <div class="map-hud-item"><span class="k">TOTAL</span><span class="v" id="map-total">--</span></div>
+            <div class="map-hud-item critical"><span class="k">L4</span><span class="v" id="map-lv4">--</span></div>
+            <div class="map-hud-item high"><span class="k">L3</span><span class="v" id="map-lv3">--</span></div>
+            <div class="map-hud-item active"><span class="k">L2</span><span class="v" id="map-lv2">--</span></div>
+            <div class="map-hud-item monitor"><span class="k">L1</span><span class="v" id="map-lv1">--</span></div>
+          </div>
+          <div class="map-hud-foot" id="map-hotspot">主要ホットスポット: 集計中...</div>
+        </div>
+      </div>
 
       <div id="threat-status-panel">
         <div class="ts-block">
@@ -149,6 +161,7 @@
         <span class="legend-item red">● 緊急 / Critical</span>
         <span class="legend-item orange">● 危険 / Danger</span>
         <span class="legend-item yellow">● 警戒 / Caution</span>
+        <span class="legend-item blue">● 監視 / Monitor</span>
       </div>
 
       <div id="cyber-bar">

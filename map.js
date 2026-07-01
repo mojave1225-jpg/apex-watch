@@ -47,6 +47,73 @@ const CONFLICT_CFG = {
   1: { fill: '#005599',  fillHover: '#0088cc',  stroke: '#00aaff', label: '緊張・不安定 / Tension' },
 };
 
+const STRATEGIC_CORRIDORS = [
+  {
+    name: 'EASTERN FRONT',
+    level: 'critical',
+    from: [30.5, 50.4],
+    to: [36.8, 46.7],
+  },
+  {
+    name: 'RED SEA LANE',
+    level: 'high',
+    from: [12.6, 43.2],
+    to: [30.2, 32.5],
+  },
+  {
+    name: 'INDO-PAC ARC',
+    level: 'monitor',
+    from: [35.2, 127.2],
+    to: [13.4, 121.5],
+  },
+];
+
+function updateMapHud() {
+  const levels = [4, 3, 2, 1];
+  const counts = { 4: 0, 3: 0, 2: 0, 1: 0 };
+
+  Object.values(CONFLICT_ZONES).forEach((c) => {
+    if (levels.includes(c.level)) counts[c.level] += 1;
+  });
+
+  const total = counts[4] + counts[3] + counts[2] + counts[1];
+
+  const byRegion = {
+    '中東 / Middle East': 0,
+    'アフリカ / Africa': 0,
+    '欧州東部 / East Europe': 0,
+    'アジア / Asia': 0,
+    '米州 / Americas': 0,
+  };
+
+  Object.entries(CONFLICT_ZONES).forEach(([iso, c]) => {
+    const id = Number(iso);
+    if ([275, 364, 368, 760, 887].includes(id)) byRegion['中東 / Middle East'] += 1;
+    else if ([729, 728, 706, 231, 466, 562, 854, 140, 434, 566, 508, 148].includes(id)) byRegion['アフリカ / Africa'] += 1;
+    else if ([804].includes(id)) byRegion['欧州東部 / East Europe'] += 1;
+    else if ([104, 4, 408, 586].includes(id)) byRegion['アジア / Asia'] += 1;
+    else byRegion['米州 / Americas'] += 1;
+  });
+
+  const topRegion = Object.entries(byRegion).sort((a, b) => b[1] - a[1])[0];
+
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value);
+  };
+
+  set('map-total', total);
+  set('map-lv4', counts[4]);
+  set('map-lv3', counts[3]);
+  set('map-lv2', counts[2]);
+  set('map-lv1', counts[1]);
+
+  const hotspot = document.getElementById('map-hotspot');
+  if (hotspot && topRegion) {
+    hotspot.textContent = `主要ホットスポット: ${topRegion[0]} (${topRegion[1]}件)`;
+  }
+}
+
 async function initWorldMap() {
   const container = document.getElementById('mapContainer');
   if (!container) return;
@@ -168,6 +235,77 @@ async function initWorldMap() {
       }
     });
 
+  // Conflict hotspot pulse layer (country centroids)
+  const hotspotLayer = svg.append('g').attr('class', 'hotspot-layer');
+  const hotspotPoints = countries.features
+    .map((f) => {
+      const c = getConflict(f);
+      if (!c) return null;
+      const centroid = pathGen.centroid(f);
+      if (!centroid || !Number.isFinite(centroid[0]) || !Number.isFinite(centroid[1])) return null;
+      return {
+        x: centroid[0],
+        y: centroid[1],
+        level: c.level,
+      };
+    })
+    .filter(Boolean);
+
+  const hotspotG = hotspotLayer.selectAll('.hotspot')
+    .data(hotspotPoints)
+    .join('g')
+    .attr('class', 'hotspot');
+
+  hotspotG.append('circle')
+    .attr('class', 'hs-ring hs-ring-1')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('stroke', d => CONFLICT_CFG[d.level].stroke)
+    .attr('opacity', 0.7);
+
+  hotspotG.append('circle')
+    .attr('class', 'hs-ring hs-ring-2')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('stroke', d => CONFLICT_CFG[d.level].stroke)
+    .attr('opacity', 0.55);
+
+  hotspotG.append('circle')
+    .attr('class', 'hs-core')
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('r', d => d.level >= 3 ? 2.6 : 2.1)
+    .attr('fill', d => CONFLICT_CFG[d.level].fillHover)
+    .attr('stroke', d => CONFLICT_CFG[d.level].stroke)
+    .attr('stroke-width', 0.8);
+
+  // Strategic corridor layer
+  const corridorLayer = svg.append('g').attr('class', 'strategic-layer');
+  const lineGen = d3.line();
+
+  STRATEGIC_CORRIDORS.forEach((corridor) => {
+    const interp = d3.geoInterpolate(corridor.from, corridor.to);
+    const route = d3.range(0, 1.001, 0.05)
+      .map(t => projection(interp(t)))
+      .filter(Boolean);
+    if (route.length < 2) return;
+
+    corridorLayer.append('path')
+      .attr('class', `strategic-line ${corridor.level}`)
+      .attr('d', lineGen(route))
+      .attr('stroke-width', corridor.level === 'critical' ? 1.7 : corridor.level === 'high' ? 1.35 : 1.1)
+      .attr('stroke-dasharray', corridor.level === 'critical' ? '5 4' : '4 5');
+
+    const mid = route[Math.floor(route.length / 2)];
+    if (mid) {
+      corridorLayer.append('text')
+        .attr('class', 'strategic-label')
+        .attr('x', mid[0] + 3)
+        .attr('y', mid[1] - 4)
+        .text(corridor.name);
+    }
+  });
+
   // Country borders
   svg.append('path')
     .datum(borders)
@@ -176,6 +314,7 @@ async function initWorldMap() {
 
   document.getElementById('mapLoading').textContent = '◈ LIVE';
   document.getElementById('mapLoading').style.color = 'var(--accent-green)';
+  updateMapHud();
 
   // ── 凡例 ──
   const legendData = [4, 3, 2, 1];
