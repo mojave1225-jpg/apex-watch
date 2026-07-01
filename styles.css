@@ -431,6 +431,46 @@ html, body {
   align-content: start;
 }
 
+.top-params-grid .panel {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-params-grid .panel-indicators {
+  flex: 1;
+}
+
+.top-params-grid .panel-note {
+  margin-top: auto;
+}
+
+/* Risk tier accents for quick scan in parameter board */
+.top-params-grid #panel-southwest-taiwan,
+.top-params-grid #panel-military,
+.top-params-grid #panel-security {
+  border-top-color: rgba(255, 0, 68, 0.65);
+  box-shadow: 0 0 0 1px rgba(255, 0, 68, 0.14) inset;
+}
+
+.top-params-grid #panel-shipping,
+.top-params-grid #panel-bizjet,
+.top-params-grid #panel-mobility {
+  border-top-color: rgba(255, 136, 0, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 136, 0, 0.1) inset;
+}
+
+.top-params-grid #panel-assets,
+.top-params-grid #panel-residency,
+.top-params-grid #panel-comms,
+.top-params-grid #panel-medical,
+.top-params-grid #panel-spaceweather,
+.top-params-grid #panel-seismic,
+.top-params-grid #panel-volcanic,
+.top-params-grid #panel-neo {
+  border-top-color: rgba(0, 204, 255, 0.5);
+}
+
 /* ── SPECIAL PAGE ── */
 .special-page {
   padding: 24px;
@@ -1830,6 +1870,9 @@ html, body {
     grid-template-columns: 1fr;
     border-left: none;
     border-top: 1px solid var(--border);
+  }
+  .top-params-grid .panel {
+    min-height: auto;
   }
   .command-map-top {
     margin-left: -14px;
