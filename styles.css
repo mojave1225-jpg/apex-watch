@@ -1944,13 +1944,13 @@ html, body {
 }
 
 /* ── DEFCON / FPCON OVERLAY PANEL ── */
-/* デスクトップ: .map-section 左上にオーバーレイ */
+/* デスクトップ: .map-section 右上にオーバーレイ（LIVE THEATER HUDと干渉回避） */
 .map-section { position: relative; }
 #threat-status-panel {
   position: absolute;
   /* .map-section基準: 上部パディング16px + ヘッダー行(約32px) + margin-bottom14px + 内側8px */
   top: 70px;
-  left: 28px;
+  right: 28px;
   z-index: 20;
   display: flex;
   flex-direction: column;
