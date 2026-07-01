@@ -16,6 +16,9 @@ let latestWeather = [];
 let latestQuakes = [];
 let latestPlaEntries = [];
 let trendMetric = 'adiz';
+let tileErrorCount = 0;
+let tileLoadCount = 0;
+let mapRecoverCount = 0;
 
 const LEAFLET_CSS_CDNS = [
   'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
@@ -118,9 +121,11 @@ async function ensureLeafletLoaded() {
   });
 
   if (!hasLeafletCss) {
+    setMapHealth('Leaflet CSS 読込を試行中...', 'warn');
     for (const cssUrl of LEAFLET_CSS_CDNS) {
       try {
         await injectStylesheet(cssUrl);
+        setMapHealth('Leaflet CSS 読込済み', 'ok');
         break;
       } catch (error) {
         console.warn(error.message);
@@ -128,17 +133,24 @@ async function ensureLeafletLoaded() {
     }
   }
 
-  if (typeof window.L !== 'undefined') return true;
+  if (typeof window.L !== 'undefined') {
+    setMapHealth('地図ライブラリ接続: 正常', 'ok');
+    return true;
+  }
 
   for (const jsUrl of LEAFLET_JS_CDNS) {
     try {
       await injectScript(jsUrl);
-      if (typeof window.L !== 'undefined') return true;
+      if (typeof window.L !== 'undefined') {
+        setMapHealth('地図ライブラリ接続: 正常', 'ok');
+        return true;
+      }
     } catch (error) {
       console.warn(error.message);
     }
   }
 
+  setMapHealth('地図ライブラリ読込失敗', 'err');
   return typeof window.L !== 'undefined';
 }
 
@@ -147,6 +159,17 @@ function addBestTileLayer(map) {
   for (const provider of TILE_PROVIDERS) {
     try {
       layer = L.tileLayer(provider.url, provider.options).addTo(map);
+      layer.on('loading', () => {
+        setMapHealth('タイル接続中...', 'info');
+      });
+      layer.on('load', () => {
+        tileLoadCount += 1;
+        setMapHealth('地図タイル受信: 正常', 'ok');
+      });
+      layer.on('tileerror', () => {
+        tileErrorCount += 1;
+        setMapHealth(`タイルエラー: ${tileErrorCount}件`, 'warn');
+      });
       return layer;
     } catch (error) {
       console.warn(`Tile provider setup failed: ${provider.url}`, error);
@@ -171,6 +194,48 @@ function setStatus(text, tone = 'info') {
     info: '#5cc6ff',
   };
   el.style.color = tones[tone] || tones.info;
+}
+
+function setMapHealth(text, tone = 'info') {
+  const el = document.getElementById('mapHealth');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove('ok', 'warn', 'err');
+  if (tone === 'ok') el.classList.add('ok');
+  else if (tone === 'warn') el.classList.add('warn');
+  else if (tone === 'err') el.classList.add('err');
+}
+
+function mapTilesLookBroken(mapEl) {
+  const tiles = Array.from(mapEl.querySelectorAll('img.leaflet-tile'));
+  if (!tiles.length) return false;
+  return tiles.some((tile) => {
+    const w = tile.clientWidth;
+    const h = tile.clientHeight;
+    return (w > 0 && h > 0) && (w !== 256 || h !== 256);
+  });
+}
+
+function installMapSelfHeal(map, mapEl) {
+  const checks = [300, 1200, 2800];
+  checks.forEach((delay) => {
+    setTimeout(() => {
+      if (!globalMapInstance) return;
+      const rect = mapEl.getBoundingClientRect();
+      const sizeInvalid = rect.width < 260 || rect.height < 140;
+      const tileBroken = mapTilesLookBroken(mapEl);
+      if (sizeInvalid || tileBroken) {
+        mapRecoverCount += 1;
+        map.invalidateSize(true);
+        map.setView([22.8, 123.5], 4, { animate: false });
+        setMapHealth(`地図補正中 (${mapRecoverCount})`, 'warn');
+        return;
+      }
+      if (tileLoadCount > 0) {
+        setMapHealth('地図接続: 正常', 'ok');
+      }
+    }, delay);
+  });
 }
 
 function deriveRegionalMetrics() {
@@ -218,9 +283,12 @@ async function initGlobalMap() {
 
   const leafletReady = await ensureLeafletLoaded();
   if (!leafletReady || typeof window.L === 'undefined') {
+    setMapHealth('地図ライブラリの読み込みに失敗', 'err');
     mapEl.innerHTML = '<div style="display:grid;place-items:center;height:100%;color:#7f8fb1;font-size:12px;">地図ライブラリの読み込みに失敗しました。</div>';
     return;
   }
+
+  setMapHealth('地図を初期化中...', 'info');
 
   const map = L.map(mapEl, {
     zoomControl: true,
@@ -268,10 +336,12 @@ async function initGlobalMap() {
   route.bindTooltip('Nansei - Taiwan route watch');
 
   globalMapInstance = map;
+  installMapSelfHeal(map, mapEl);
   setTimeout(() => map.invalidateSize(), 50);
   window.addEventListener('resize', () => {
     if (globalMapInstance) {
       globalMapInstance.invalidateSize();
+      setMapHealth('地図サイズを再調整', 'warn');
     }
   });
 }
