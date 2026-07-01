@@ -335,6 +335,23 @@ function renderTaiwanDailyActivity(entries) {
     }).join('');
   }
 
+  const trendWrap = document.getElementById('daily-trend-bars');
+  if (trendWrap) {
+    const trend = entries.slice(0, 7).reverse();
+    const maxAdiz = Math.max(...trend.map((item) => item.adiz), 1);
+    trendWrap.innerHTML = trend.map((item) => {
+      const h = Math.max(6, Math.round((item.adiz / maxAdiz) * 70));
+      const dateLabel = item.date.includes('.') ? item.date.split('.').slice(1).join('/') : item.date;
+      return `
+        <div class="trend-col">
+          <div class="trend-val">${item.adiz}</div>
+          <div class="trend-bar" style="height:${h}px"></div>
+          <div class="trend-date">${dateLabel}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
   const source = document.querySelector('#s-daily .source-note');
   if (source) {
     source.dataset.lastFetch = new Date().toLocaleString('ja-JP');
