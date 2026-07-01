@@ -472,6 +472,7 @@ html, body {
   min-height: 250px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .top-params-grid .panel-indicators {
@@ -506,6 +507,52 @@ html, body {
 .top-params-grid #panel-volcanic,
 .top-params-grid #panel-neo {
   border-top-color: rgba(0, 204, 255, 0.5);
+}
+
+/* Inline tier badge on each parameter card */
+.top-params-grid .panel::after {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.8px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  pointer-events: none;
+}
+
+.top-params-grid #panel-southwest-taiwan::after,
+.top-params-grid #panel-military::after,
+.top-params-grid #panel-security::after {
+  content: 'HIGH/高警戒';
+  color: #ffd1dc;
+  border-color: rgba(255, 0, 68, 0.55);
+  background: rgba(255, 0, 68, 0.14);
+}
+
+.top-params-grid #panel-shipping::after,
+.top-params-grid #panel-bizjet::after,
+.top-params-grid #panel-mobility::after {
+  content: 'MEDIUM/警戒';
+  color: #ffe0bf;
+  border-color: rgba(255, 136, 0, 0.5);
+  background: rgba(255, 136, 0, 0.12);
+}
+
+.top-params-grid #panel-assets::after,
+.top-params-grid #panel-residency::after,
+.top-params-grid #panel-comms::after,
+.top-params-grid #panel-medical::after,
+.top-params-grid #panel-spaceweather::after,
+.top-params-grid #panel-seismic::after,
+.top-params-grid #panel-volcanic::after,
+.top-params-grid #panel-neo::after {
+  content: 'MONITOR/監視';
+  color: #c8f2ff;
+  border-color: rgba(0, 204, 255, 0.5);
+  background: rgba(0, 204, 255, 0.12);
 }
 
 /* ── SPECIAL PAGE ── */
