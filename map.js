@@ -281,12 +281,9 @@ async function initWorldMap() {
     .style('height', '100%');
 
   // Projection: Natural Earth 1 for aesthetic look
-  // モバイルでは右シフトなし（DEFCONパネルが地図の下に移動するため不要）
-  const mapScale = Math.min(W / 6.4, H / 2.1);
-  const shiftX = W >= 600 ? W * 0.10 : 0;
+  // fitExtentで球体全体が常に表示領域内へ収まるようにする
   const projection = d3.geoNaturalEarth1()
-    .scale(mapScale)
-    .translate([W / 2 + shiftX, H / 2 + H * 0.05]);
+    .fitExtent([[8, 8], [W - 8, H - 8]], { type: 'Sphere' });
 
   const pathGen = d3.geoPath().projection(projection);
 
