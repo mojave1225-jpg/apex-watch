@@ -192,6 +192,11 @@ function recalcMain() {
 
   // Alert banner
   updateAlertBanner(total);
+  
+  // Auto-update DEFCON based on current scores (if function is available)
+  if (typeof calculateDefconFromIndicators === 'function') {
+    calculateDefconFromIndicators();
+  }
 }
 
 // ── ALERT BANNER ──

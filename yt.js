@@ -20,11 +20,13 @@ function setEmbed(ch) {
   const src = [
     `https://www.youtube.com/embed/${ch.videoId}`,
     '?autoplay=1&mute=1&rel=0&modestbranding=1',
+    '&cc_load_policy=1',          // 字幕を有効にする
+    '&hl=ja',                     // インターフェース言語を日本語に
     '&origin=https://apex-watch.jp',
   ].join('');
 
   w.innerHTML = `
-    <div class="yt-embed-label">${ch.label}</div>
+    <div class="yt-embed-label">${ch.label} <span style="font-size:10px;color:#88aa88">[字幕: 自動ON]</span></div>
     <iframe
       src="${src}"
       frameborder="0"

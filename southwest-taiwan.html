@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX WATCH — 南西諸島 / 台湾海峡 特化ページ</title>
+  <meta name="description" content="南西諸島・台湾海峡の海上交通・軍事活動・海運・通信・避難リスクを特化監視するページです。">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="scanline"></div>
+  <div class="noise"></div>
+
+  <header class="site-header">
+    <div class="header-left">
+      <div class="logo-block">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">APEX <span class="accent">WATCH</span></span>
+      </div>
+      <div class="subtitle">南西諸島 / 台湾海峡 特化監視ページ</div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="special-link-btn">◀ ダッシュボードへ戻る</a>
+      <div class="live-badge"><span class="dot"></span>LIVE</div>
+      <div class="timestamp" id="clock">--:--:-- UTC</div>
+    </div>
+  </header>
+
+  <main class="special-page">
+    <section class="special-hero">
+      <div class="special-eyebrow">SPECIAL MONITORING CHANNEL</div>
+      <h1 class="special-title">南西諸島 / 台湾海峡</h1>
+      <p class="special-subtitle">海上交通・軍事動静・通信線・避難リスクを優先監視する特化ビュー。危機の兆候が現れやすい水路を、短時間で追えるように整理します。</p>
+      <div class="special-hero-meta">
+        <span class="special-badge">海上交通</span>
+        <span class="special-badge">軍事活動</span>
+        <span class="special-badge">電力・通信</span>
+        <span class="special-badge">避難判断</span>
+      </div>
+    </section>
+
+    <section class="special-grid">
+      <article class="special-card">
+        <h3>1. 海峡の戦略的位置</h3>
+        <ul>
+          <li>台湾海峡は、東アジアの海上輸送・軍事展開の要衝。</li>
+          <li>南西諸島は、島嶼防衛・早期警戒・航空・海上通信の前線。</li>
+          <li>海上封鎖・航路混乱・港湾遅延が短期で拡大しやすい。</li>
+        </ul>
+      </article>
+
+      <article class="special-card">
+        <h3>2. 監視対象</h3>
+        <div class="signal-row">
+          <span class="signal-pill">海上封鎖リスク</span>
+          <span class="signal-pill">航空機動</span>
+          <span class="signal-pill">ミサイル警戒</span>
+          <span class="signal-pill">海運遅延</span>
+          <span class="signal-pill">通信断</span>
+        </div>
+        <table class="data-table">
+          <tr><th>項目</th><th>観測ポイント</th></tr>
+          <tr><td>軍事動静</td><td>ADIZ・演習・艦艇・機動部隊</td></tr>
+          <tr><td>海運</td><td>航路混乱・港湾待機・コンテナ遅延</td></tr>
+          <tr><td>通信</td><td>海底ケーブル・衛星回線・局地停電</td></tr>
+          <tr><td>避難</td><td>離島アクセス・医療・燃料供給</td></tr>
+        </table>
+      </article>
+
+      <article class="special-card">
+        <h3>3. 警戒レベルの見方</h3>
+        <ul>
+          <li>通常：巡視・監視・情報収集の継続。</li>
+          <li>警戒：軍事演習・航路変更・海上交通の局地混乱。</li>
+          <li>危険：島嶼防衛強化・航空封鎖・船舶アクセス制限。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="special-grid special-grid-two">
+      <article class="special-card">
+        <h3>監視リスト</h3>
+        <ul>
+          <li>北部・中部・南部の海域における艦艇・航空機動</li>
+          <li>離島への補給・燃料・医療アクセスの変化</li>
+          <li>海運指数と輸送封鎖の相関</li>
+          <li>通信・電力・衛星回線の局地障害</li>
+        </ul>
+      </article>
+
+      <article class="special-card">
+        <h3>優先アラート</h3>
+        <ul>
+          <li>台湾海峡の航空交通制限や緊張の急上昇</li>
+          <li>南西諸島の補給線・離島アクセス逼迫</li>
+          <li>海上通信や海底ケーブルの異常</li>
+          <li>民間航路の大幅変更・港湾閉鎖</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="special-grid">
+      <article class="special-card">
+        <div class="section-row">
+          <h3>ライブ観測</h3>
+          <span class="status-pill" id="liveStatus">初期化中...</span>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-title">気象</div>
+          <div id="weatherList" class="mini-list"></div>
+        </div>
+      </article>
+
+      <article class="special-card">
+        <div class="section-row">
+          <h3>地震・津波関連</h3>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-title">直近の地震</div>
+          <div id="quakeList" class="mini-list"></div>
+        </div>
+      </article>
+
+      <article class="special-card">
+        <div class="section-row">
+          <h3>宇宙天気</h3>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-title">NOAA / SWPC</div>
+          <div id="spaceWeather" class="mini-list"></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-left">APEX WATCH v2.8.7 | 南西諸島 / 台湾海峡特化監視ページ</div>
+    <div class="footer-right">
+      <a href="index.html" style="color:inherit; text-decoration:none; opacity:0.7;">ホームへ戻る</a>
+    </div>
+  </footer>
+
+  <script src="southwest-taiwan.js"></script>
+</body>
+</html>

@@ -133,6 +133,210 @@ html, body {
   min-height: max(780px, calc(100vh - 120px));
 }
 
+/* ── SPECIAL PAGE ── */
+.special-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.special-hero {
+  background: linear-gradient(135deg, rgba(255,0,68,0.16), rgba(0,204,255,0.08));
+  border: 1px solid var(--border-bright);
+  padding: 24px;
+  border-radius: 6px;
+}
+.special-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-red);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+.special-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.special-subtitle {
+  color: var(--text-secondary);
+  max-width: 900px;
+  line-height: 1.7;
+}
+.special-hero-meta {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.special-badge {
+  padding: 6px 10px;
+  border: 1px solid rgba(0,255,136,0.3);
+  color: var(--accent-green);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.special-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.special-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.special-card {
+  background: rgba(10,15,36,0.95);
+  border: 1px solid var(--border);
+  padding: 18px;
+  border-radius: 6px;
+}
+.special-card h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: var(--accent-blue);
+}
+.special-card ul {
+  padding-left: 18px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+.signal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.signal-pill {
+  padding: 6px 8px;
+  border: 1px solid rgba(255,221,0,0.35);
+  color: var(--accent-yellow);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.data-table th, .data-table td {
+  border: 1px solid var(--border);
+  padding: 8px;
+  text-align: left;
+}
+.data-table th {
+  color: var(--accent-red);
+  background: rgba(255,0,68,0.08);
+}
+.special-link-btn {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  border: 1px solid rgba(0,204,255,0.3);
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+.special-link-btn:hover {
+  background: rgba(0,204,255,0.08);
+}
+.section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  border-radius: 3px;
+}
+.status-info {
+  color: var(--accent-blue);
+  border: 1px solid rgba(0,204,255,0.35);
+  background: rgba(0,204,255,0.08);
+}
+.status-ok {
+  color: var(--accent-green);
+  border: 1px solid rgba(0,255,136,0.35);
+  background: rgba(0,255,136,0.08);
+}
+.mini-panel {
+  border: 1px solid var(--border);
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 4px;
+}
+.mini-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.weather-item, .quake-item {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.weather-item:last-child, .quake-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.weather-city {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.weather-temp {
+  color: var(--accent-yellow);
+  font-size: 18px;
+  font-weight: 700;
+}
+.weather-sub, .quake-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.quake-place {
+  color: var(--text-primary);
+  margin-top: 2px;
+  font-size: 12px;
+}
+.space-weather-summary {
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.muted {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .special-grid,
+  .special-grid-two {
+    grid-template-columns: 1fr;
+  }
+  .special-title {
+    font-size: 24px;
+  }
+}
+
 /* ── LEFT PANEL: flex column, meter top / youtube bottom ── */
 .left-panel {
   display: flex; flex-direction: column;
