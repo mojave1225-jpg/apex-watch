@@ -46,33 +46,30 @@ function renderQuakes(items) {
   `).join('');
 }
 
-function renderSpaceWeather(data) {
-  const wrap = document.getElementById('spaceWeather');
-  if (!wrap) return;
-  if (!data) {
-    wrap.innerHTML = '<div class="muted">宇宙天気データの取得に失敗しました。次回更新まで待機します。</div>';
-    return;
-  }
-  const summary = typeof data === 'string' ? data : JSON.stringify(data).slice(0, 220);
-  wrap.innerHTML = `
-    <div class="space-weather-summary">${summary}</div>
-  `;
+function fetchWithTimeout(url, timeout = 8000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(id));
 }
 
 async function fetchWeather() {
   const weatherItems = await Promise.all(WEATHER_TARGETS.map(async (target) => {
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&timezone=Asia%2FTaipei`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=Asia%2FTaipei`;
+      const res = await fetchWithTimeout(url, 8000);
       if (!res.ok) throw new Error('weather fetch failed');
       const data = await res.json();
-      const current = data.current || {};
+      const current = data.current_weather || {};
+      const hourly = data.hourly || {};
+      const currentIndex = hourly.time?.indexOf(current.time ?? '') ?? -1;
+      const humidity = currentIndex >= 0 ? hourly.relativehumidity_2m?.[currentIndex] : null;
+      const precip = currentIndex >= 0 ? hourly.precipitation?.[currentIndex] : null;
       return {
         name: target.name,
-        temp: Number(current.temperature_2m ?? 0).toFixed(1),
-        humidity: current.relative_humidity_2m ?? 0,
-        wind: Number(current.wind_speed_10m ?? 0).toFixed(0),
-        precip: Number(current.precipitation ?? 0).toFixed(1),
+        temp: Number(current.temperature ?? 0).toFixed(1),
+        humidity: humidity != null ? Number(humidity).toFixed(0) : '--',
+        wind: Number(current.windspeed ?? 0).toFixed(0),
+        precip: precip != null ? Number(precip).toFixed(1) : '--',
       };
     } catch (error) {
       console.warn('Weather fetch failed:', error);
@@ -90,7 +87,7 @@ async function fetchWeather() {
 
 async function fetchQuakes() {
   try {
-    const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson', { signal: AbortSignal.timeout(8000) });
+    const res = await fetchWithTimeout('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson', 8000);
     if (!res.ok) throw new Error('quake fetch failed');
     const data = await res.json();
     const items = (data.features || [])
@@ -115,32 +112,25 @@ async function fetchQuakes() {
   }
 }
 
-async function fetchSpaceWeather() {
-  try {
-    const res = await fetch('https://services.swpc.noaa.gov/json/solar-geophysical-summary.json', { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error('space weather fetch failed');
-    const data = await res.json();
-    const latest = Array.isArray(data) ? data[0] : null;
-    if (!latest) throw new Error('no space weather data');
-    const summary = [
-      `更新: ${latest.updated || latest.time || '不明'}`,
-      `Kp: ${latest.kp_index ?? latest.kp ?? '不明'}`,
-      `Solar Wind: ${latest.solar_wind_speed ?? latest.solar_wind ?? '不明'}`,
-      `X-Ray: ${latest.xray ?? latest.x_ray ?? '不明'}`,
-    ].join(' · ');
-    renderSpaceWeather(summary);
-  } catch (error) {
-    console.warn('Space weather fetch failed:', error);
-    renderSpaceWeather('宇宙天気データは一時的に取得できませんでした。');
-  }
+
+function updateLastUpdated() {
+  const wrap = document.getElementById('updateInfo');
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="weather-sub">最終更新: ${new Date().toLocaleString('ja-JP')}</div>`;
+}
+
+async function refreshLiveData() {
+  setStatus('ライブ観測データを更新中...', 'info');
+  await Promise.allSettled([fetchWeather(), fetchQuakes()]);
+  updateLastUpdated();
+  setStatus('ライブ観測を更新済み', 'ok');
 }
 
 async function initSpecialPage() {
   updateClock();
   setInterval(updateClock, 1000);
-  setStatus('データ取得中...', 'info');
-  await Promise.allSettled([fetchWeather(), fetchQuakes(), fetchSpaceWeather()]);
-  setStatus('ライブ観測を更新済み', 'ok');
+  await refreshLiveData();
+  setInterval(refreshLiveData, 180000); // 3分ごとに更新
 }
 
 if (document.readyState === 'loading') {
