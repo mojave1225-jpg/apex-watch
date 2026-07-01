@@ -309,10 +309,9 @@
       </div>
 
     </div>
-  </div>
 
-  <!-- CATEGORY GRID -->
-  <main class="dashboard-grid" id="s-panels">
+    <!-- RIGHT PANEL: PARAMETER BOARD -->
+  <main class="dashboard-grid top-params-grid" id="s-panels">
 
     <!-- 1. ASSETS -->
     <div class="panel" id="panel-assets">
@@ -830,7 +829,45 @@
       <div class="panel-note" id="note-shipping">Baltic Exchange / Yahoo Finance データ取得中...</div>
     </div>
 
+    <!-- 11. SOUTHWEST / TAIWAN -->
+    <div class="panel panel-southwest-highlight" id="panel-southwest-taiwan">
+      <div class="panel-header">
+        <span class="panel-icon" style="color:var(--accent-red)">◈</span>
+        <span class="panel-title">南西諸島 / 台湾海峡 監視 / Southwest Islands - Taiwan Strait</span>
+        <span class="panel-status warn">重点監視</span>
+      </div>
+      <div class="panel-score-row">
+        <div class="panel-score" id="score-southwest-taiwan">74</div>
+        <div class="panel-bar-wrap"><div class="panel-bar" style="width:74%"></div></div>
+      </div>
+      <div class="panel-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">空域活動 / Air Activity</span>
+          <span class="ind-value">高</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">海域緊張 / Maritime Tension</span>
+          <span class="ind-value">警戒</span>
+          <span class="ind-arrow up">↑</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">重要インシデント / Key Incidents (24h)</span>
+          <span class="ind-value">3</span>
+          <span class="ind-arrow">→</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">最終同期 / Last Sync</span>
+          <span class="ind-value" id="southwest-last-sync">--</span>
+          <span class="ind-arrow" style="color:var(--accent-green)">◈</span>
+        </div>
+      </div>
+      <div class="panel-note">南西諸島 / 台湾海峡の専用監視ダッシュボードへ移動できます。</div>
+      <a class="southwest-link-btn" href="southwest-taiwan.html">南西諸島 / 台湾海峡ダッシュボードへ</a>
+    </div>
+
   </main>
+  </div>
 
   <!-- BIZJET ESCAPE MONITORING SECTION -->
   <section class="bizjet-section sec-collapsed" id="s-bizjet">

@@ -419,10 +419,16 @@ html, body {
 /* ── TOP ROW: THREAT METER + LIVE NEWS ── */
 .top-row {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(320px, 0.88fr) minmax(0, 1.72fr);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
   min-height: 420px;
+}
+
+.top-params-grid {
+  border-left: 1px solid var(--border);
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  align-content: start;
 }
 
 /* ── SPECIAL PAGE ── */
@@ -647,6 +653,32 @@ html, body {
   min-width: 0;
 }
 
+.panel-southwest-highlight {
+  border-top: 2px solid rgba(255, 0, 68, 0.5);
+  box-shadow: 0 0 0 1px rgba(255, 0, 68, 0.12) inset;
+}
+
+.southwest-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 0, 68, 0.45);
+  border-radius: 4px;
+  color: #ffdfe7;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  background: rgba(255, 0, 68, 0.12);
+  transition: background 0.2s ease;
+}
+
+.southwest-link-btn:hover {
+  background: rgba(255, 0, 68, 0.22);
+}
+
 /* ── THREAT METER ── */
 .threat-section {
   flex: 0.9;
@@ -860,6 +892,9 @@ html, body {
 }
 
 @media (max-width: 1200px) {
+  .top-params-grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
   .cmd-micro-matrix {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -1790,6 +1825,11 @@ html, body {
 
 /* mobile: cyber-bar stacks */
 @media (max-width: 600px) {
+  .top-params-grid {
+    grid-template-columns: 1fr;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
   .command-map-top {
     margin-left: -14px;
     margin-right: -14px;

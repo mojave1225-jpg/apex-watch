@@ -286,6 +286,9 @@ function renderCommandDeck() {
   const updatedEl = document.getElementById('cmd-last-update');
   if (updatedEl) updatedEl.textContent = `更新 ${hh}:${mm} / updated ${hh}:${mm}`;
 
+  const southwestSync = document.getElementById('southwest-last-sync');
+  if (southwestSync) southwestSync.textContent = `${hh}:${mm}`;
+
   const defconLink = document.getElementById('cmd-defcon-link');
   if (defconLink) {
     defconLink.textContent = globalRisk >= 80
