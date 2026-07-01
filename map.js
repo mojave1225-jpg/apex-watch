@@ -270,7 +270,7 @@ async function initWorldMap() {
   if (!container) return;
 
   const W = container.clientWidth || 960;
-  const H = Math.round(W * 0.52);
+  const H = container.clientHeight || Math.round(W * 0.52);
 
   // Create SVG
   const svg = d3.select('#mapContainer')
@@ -278,13 +278,14 @@ async function initWorldMap() {
     .attr('viewBox', `0 0 ${W} ${H}`)
     .attr('preserveAspectRatio', 'xMidYMid meet')
     .style('width', '100%')
-    .style('height', 'auto');
+    .style('height', '100%');
 
   // Projection: Natural Earth 1 for aesthetic look
   // モバイルでは右シフトなし（DEFCONパネルが地図の下に移動するため不要）
+  const mapScale = Math.min(W / 6.4, H / 2.1);
   const shiftX = W >= 600 ? W * 0.10 : 0;
   const projection = d3.geoNaturalEarth1()
-    .scale(W / 6.4)
+    .scale(mapScale)
     .translate([W / 2 + shiftX, H / 2 + H * 0.05]);
 
   const pathGen = d3.geoPath().projection(projection);
