@@ -6,6 +6,7 @@
   <title>APEX WATCH — 南西諸島 / 台湾海峡 特化ページ</title>
   <meta name="description" content="南西諸島・台湾海峡の海上交通・軍事活動・通信リスクをダッシュボード形式で監視するページです。">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <style>
     :root{
       --bg:#020514;
@@ -51,22 +52,14 @@
     .stat-meta{margin-top:10px;font-size:12px;color:var(--text-dim);line-height:1.7;}
     .panel-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;}
     .map-panel{min-height:420px;display:flex;flex-direction:column;}
-    .map-placeholder{flex:1;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at 78% 22%,rgba(92,198,255,.22),transparent 45%),linear-gradient(180deg,rgba(15,38,69,.92),rgba(7,14,27,.98));padding:18px;position:relative;overflow:hidden;}
-    .map-placeholder::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(92,198,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(92,198,255,.08) 1px,transparent 1px);background-size:40px 40px;opacity:.22;pointer-events:none;}
-    .global-map{position:relative;z-index:1;height:100%;min-height:260px;display:grid;place-items:center;}
-    .global-map svg{width:100%;max-width:560px;height:auto;filter:drop-shadow(0 0 18px rgba(92,198,255,.25));}
-    .map-land{fill:rgba(92,198,255,.18);stroke:rgba(92,198,255,.65);stroke-width:1.2;}
-    .map-hot{fill:rgba(255,143,127,.28);stroke:rgba(255,143,127,.8);stroke-width:1.4;}
-    .map-ring{fill:none;stroke:rgba(107,247,195,.75);stroke-width:1.2;}
-    .map-label{position:absolute;padding:5px 8px;border-radius:999px;background:rgba(6,18,36,.85);border:1px solid rgba(255,255,255,.14);font-size:11px;color:#dff2ff;backdrop-filter:blur(2px);}
-    .map-label.tw{top:43%;left:69%;}
-    .map-label.jp{top:37%;left:76%;}
-    .map-label.us{top:35%;left:21%;}
-    .ping{position:absolute;width:10px;height:10px;border-radius:999px;background:var(--accent-2);box-shadow:0 0 0 0 rgba(255,143,127,.75);animation:ping 2.4s infinite;}
-    .ping.tw{top:50%;left:72%;}
-    .ping.jp{top:43%;left:79%;animation-delay:.8s;}
-    .ping.us{top:41%;left:24%;animation-delay:1.4s;}
-    @keyframes ping{0%{transform:scale(.85);box-shadow:0 0 0 0 rgba(255,143,127,.65);}70%{transform:scale(1);box-shadow:0 0 0 16px rgba(255,143,127,0);}100%{transform:scale(.85);box-shadow:0 0 0 0 rgba(255,143,127,0);}}
+    .map-placeholder{flex:1;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(15,38,69,.92),rgba(7,14,27,.98));padding:12px;position:relative;overflow:hidden;}
+    .map-canvas{height:100%;min-height:300px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);}
+    #globalMap{height:100%;width:100%;}
+    .leaflet-container{background:#091426;font-family:var(--mono);}
+    .map-legend{position:absolute;top:20px;left:20px;z-index:500;background:rgba(7,19,37,.88);border:1px solid rgba(255,255,255,.12);padding:8px 10px;border-radius:10px;font-size:11px;color:#dff2ff;line-height:1.6;pointer-events:none;}
+    .legend-dot{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:6px;vertical-align:middle;}
+    .legend-dot.core{background:#ff8f7f;}
+    .legend-dot.watch{background:#6bf7c3;}
     .range-list{display:grid;gap:14px;margin-top:18px;}
     .range-item{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);}
     .range-item span{font-size:12px;color:var(--text-dim);}
@@ -124,26 +117,12 @@
       <div class="panel map-panel">
         <div class="panel-title">Global View</div>
         <div class="map-placeholder">
-          <div class="global-map" aria-label="Global map overview">
-            <svg viewBox="0 0 640 320" role="img" aria-label="Stylized world map with monitoring points">
-              <path class="map-land" d="M63 131l18-22 40-10 31 5 20 19-3 16-24 12-39 4-35-7z"/>
-              <path class="map-land" d="M166 94l30-18 33-6 33 9 20 23-3 30-25 21-42 4-30-16-18-21z"/>
-              <path class="map-land" d="M254 163l26-11 20 9 4 21-16 15-25-3-13-16z"/>
-              <path class="map-land" d="M294 88l37-9 47 3 38 10 32 22 6 19-18 16-26 2-33-10-30-2-17 12-36-7-15-16z"/>
-              <path class="map-land" d="M414 159l33-8 27 8 13 22-7 26-21 14-32-2-21-20z"/>
-              <path class="map-land" d="M515 205l24-11 25 4 12 19-8 22-24 10-23-7-11-19z"/>
-              <circle class="map-hot" cx="463" cy="169" r="7"/>
-              <circle class="map-hot" cx="505" cy="150" r="6"/>
-              <circle class="map-hot" cx="154" cy="138" r="6"/>
-              <circle class="map-ring" cx="463" cy="169" r="16"/>
-              <circle class="map-ring" cx="505" cy="150" r="14"/>
-            </svg>
-            <span class="map-label tw">Taiwan Strait</span>
-            <span class="map-label jp">Nansei Islands</span>
-            <span class="map-label us">Pacific Watch</span>
-            <span class="ping tw"></span>
-            <span class="ping jp"></span>
-            <span class="ping us"></span>
+          <div class="map-legend">
+            <div><span class="legend-dot core"></span>Taiwan Strait Core</div>
+            <div><span class="legend-dot watch"></span>Regional Watchpoints</div>
+          </div>
+          <div class="map-canvas">
+            <div id="globalMap" aria-label="Global monitoring map"></div>
           </div>
         </div>
         <div class="range-list">
@@ -231,6 +210,7 @@
 
   <footer class="footer-note">APEX WATCH REGIONAL — 南西諸島 / 台湾海峡監視ページ | Live OSINT Monitoring</footer>
 </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="southwest-taiwan.js?v=20260701"></script>
 </body>
 </html>

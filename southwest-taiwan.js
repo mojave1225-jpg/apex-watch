@@ -4,6 +4,15 @@ const WEATHER_TARGETS = [
   { name: '那覇', lat: 26.2124, lon: 127.6792 },
 ];
 
+const MAP_POINTS = [
+  { name: 'Taiwan Strait Core', lat: 24.0, lon: 120.8, color: '#ff8f7f' },
+  { name: 'Nansei Islands', lat: 26.5, lon: 127.8, color: '#6bf7c3' },
+  { name: 'East China Sea Watch', lat: 28.8, lon: 124.5, color: '#6bf7c3' },
+  { name: 'Pacific Support Route', lat: 24.8, lon: 135.0, color: '#6bf7c3' },
+];
+
+let globalMapInstance;
+
 function updateClock() {
   const now = new Date();
   const utc = now.toUTCString().replace('GMT', 'UTC').split(' ').slice(4).join(' ');
@@ -16,6 +25,63 @@ function setStatus(text, tone = 'info') {
   if (!el) return;
   el.textContent = text;
   el.className = `status-pill status-${tone}`;
+}
+
+function initGlobalMap() {
+  if (globalMapInstance) return;
+  const mapEl = document.getElementById('globalMap');
+  if (!mapEl || typeof window.L === 'undefined') return;
+
+  const map = L.map(mapEl, {
+    zoomControl: true,
+    minZoom: 2,
+    maxZoom: 9,
+    worldCopyJump: true,
+    attributionControl: true,
+  }).setView([22, 122], 3);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+  }).addTo(map);
+
+  L.rectangle([
+    [18, 118],
+    [32, 132],
+  ], {
+    color: '#5cc6ff',
+    weight: 1.5,
+    fillColor: '#5cc6ff',
+    fillOpacity: 0.09,
+    dashArray: '6 4',
+  }).addTo(map).bindTooltip('Primary Monitoring Box', { sticky: true });
+
+  MAP_POINTS.forEach((point) => {
+    const marker = L.circleMarker([point.lat, point.lon], {
+      radius: point.name.includes('Core') ? 8 : 6,
+      color: point.color,
+      weight: 2,
+      fillColor: point.color,
+      fillOpacity: 0.75,
+    }).addTo(map);
+    marker.bindTooltip(point.name, { direction: 'top', opacity: 0.9 });
+  });
+
+  const route = L.polyline([
+    [35.7, 139.7],
+    [26.2, 127.7],
+    [24.0, 120.8],
+    [22.6, 120.3],
+  ], {
+    color: '#ffd166',
+    weight: 2,
+    opacity: 0.85,
+    dashArray: '5 7',
+  }).addTo(map);
+  route.bindTooltip('Nansei - Taiwan route watch');
+
+  globalMapInstance = map;
+  setTimeout(() => map.invalidateSize(), 0);
 }
 
 function renderWeather(items) {
@@ -215,6 +281,7 @@ async function refreshLiveData() {
 }
 
 async function initSpecialPage() {
+  initGlobalMap();
   updateClock();
   setInterval(updateClock, 1000);
   await refreshLiveData();
