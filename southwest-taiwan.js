@@ -156,33 +156,6 @@ function renderRegionalMetrics() {
 
   const metricShips = document.getElementById('metric-ships');
   if (metricShips) metricShips.textContent = `${metrics.ships} 隻`;
-
-  const dailyAdiz = document.getElementById('daily-adiz');
-  if (dailyAdiz) dailyAdiz.textContent = `${metrics.adiz} 機`;
-
-  const dailyMidline = document.getElementById('daily-midline');
-  if (dailyMidline) dailyMidline.textContent = `${metrics.midline} 機`;
-
-  const dailyShips = document.getElementById('daily-ships');
-  if (dailyShips) dailyShips.textContent = `${metrics.ships} 隻`;
-
-  const body = document.getElementById('daily-activity-body');
-  if (body) {
-    const rows = (latestQuakes.length ? latestQuakes : [
-      { time: new Date().toLocaleString('ja-JP'), mag: '5.2', place: '台湾東方沖(推定)' },
-      { time: new Date(Date.now() - 86400000).toLocaleString('ja-JP'), mag: '4.8', place: '与那国島近海(推定)' },
-    ]).slice(0, 2);
-
-    body.innerHTML = rows.map((item, i) => {
-      const level = Number(item.mag) >= 6 ? 'high' : Number(item.mag) >= 5 ? 'mid' : 'low';
-      const levelLabel = level === 'high' ? '高' : level === 'mid' ? '中' : '低';
-      const date = String(item.time).slice(0, 10).replace(/\//g, '-');
-      const adizVal = Math.max(12, Math.round(metrics.adiz * (1 - (i * 0.12))));
-      const midVal = Math.max(4, Math.round(metrics.midline * (1 - (i * 0.15))));
-      const shipVal = Math.max(3, Math.round(metrics.ships * (1 - (i * 0.1))));
-      return `<tr><td>${date}</td><td>${adizVal}</td><td>${midVal}</td><td>${shipVal}</td><td>${item.place}</td><td><span class="badge ${level}">${levelLabel}</span></td></tr>`;
-    }).join('');
-  }
 }
 
 async function initGlobalMap() {
@@ -295,6 +268,8 @@ const WEATHER_ENDPOINTS = [
   (target) => `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=auto&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm`,
 ];
 
+const MND_PLA_LIST_PROXY = 'https://r.jina.ai/http://www.mnd.gov.tw/news/plaactlist';
+
 function fetchWithTimeout(url, timeout = 15000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -310,6 +285,105 @@ function parseProxyJson(text) {
   const end = text.lastIndexOf('}');
   if (start === -1 || end === -1) throw new Error('proxy response invalid');
   return JSON.parse(text.slice(start, end + 1));
+}
+
+async function fetchText(url) {
+  const response = await fetchWithTimeout(url, 20000);
+  if (!response.ok) throw new Error(`fetch failed (${response.status})`);
+  return await response.text();
+}
+
+function parsePlaCountsFromText(text) {
+  const adizMatch = text.match(/偵獲共機\s*(\d+)\s*架次/);
+  const midlineMatch = text.match(/逾越中線[^\d]*(\d+)\s*架次/);
+  const shipMatch = text.match(/共艦\s*(\d+)\s*艘/);
+
+  if (!adizMatch || !shipMatch) return null;
+
+  return {
+    adiz: Number(adizMatch[1]),
+    midline: midlineMatch ? Number(midlineMatch[1]) : null,
+    ships: Number(shipMatch[1]),
+  };
+}
+
+function calcLevel(entry) {
+  const score = (entry.adiz * 0.6) + ((entry.midline || 0) * 2.2) + (entry.ships * 1.4);
+  if (score >= 45) return { key: 'high', label: '高' };
+  if (score >= 24) return { key: 'mid', label: '中' };
+  return { key: 'low', label: '低' };
+}
+
+function renderTaiwanDailyActivity(entries) {
+  if (!entries.length) return;
+
+  const latest = entries[0];
+  const dailyAdiz = document.getElementById('daily-adiz');
+  if (dailyAdiz) dailyAdiz.textContent = `${latest.adiz} 機`;
+
+  const dailyMidline = document.getElementById('daily-midline');
+  if (dailyMidline) dailyMidline.textContent = `${latest.midline ?? '--'} 機`;
+
+  const dailyShips = document.getElementById('daily-ships');
+  if (dailyShips) dailyShips.textContent = `${latest.ships} 隻`;
+
+  const body = document.getElementById('daily-activity-body');
+  if (body) {
+    body.innerHTML = entries.slice(0, 5).map((entry) => {
+      const level = calcLevel(entry);
+      return `<tr><td>${entry.date}</td><td>${entry.adiz}</td><td>${entry.midline ?? '--'}</td><td>${entry.ships}</td><td>${entry.note}</td><td><span class="badge ${level.key}">${level.label}</span></td></tr>`;
+    }).join('');
+  }
+
+  const source = document.querySelector('#s-daily .source-note');
+  if (source) {
+    source.dataset.lastFetch = new Date().toLocaleString('ja-JP');
+    if (!source.dataset.baseText) {
+      source.dataset.baseText = source.textContent;
+    }
+    source.innerHTML = `${source.dataset.baseText}<br>最終取得: ${source.dataset.lastFetch}（台湾国防部 区域動態）`;
+  }
+}
+
+async function fetchTaiwanModDailyActivity() {
+  const listText = await fetchText(MND_PLA_LIST_PROXY);
+  const linkRegex = /\[(\d{3}\.\d{2}\.\d{2})[^\]]*?\]\(https?:\/\/www\.mnd\.gov\.tw\/news\/plaact\/(\d+)\)/g;
+
+  const found = [];
+  const seen = new Set();
+  let match;
+  while ((match = linkRegex.exec(listText)) !== null && found.length < 7) {
+    const date = match[1];
+    const id = match[2];
+    if (seen.has(id)) continue;
+    seen.add(id);
+    found.push({ date, id });
+  }
+
+  if (!found.length) throw new Error('No PLA activity entries found');
+
+  const details = [];
+  for (const entry of found) {
+    try {
+      const detailUrl = `https://r.jina.ai/http://www.mnd.gov.tw/news/plaact/${entry.id}`;
+      const detailText = await fetchText(detailUrl);
+      const counts = parsePlaCountsFromText(detailText);
+      if (!counts) continue;
+      details.push({
+        date: entry.date,
+        adiz: counts.adiz,
+        midline: counts.midline,
+        ships: counts.ships,
+        note: '中共解放軍臺海周邊海、空域動態',
+      });
+    } catch (error) {
+      console.warn('Failed to parse MND detail entry:', entry.id, error);
+    }
+  }
+
+  if (!details.length) throw new Error('No parseable PLA daily activity detail found');
+  renderTaiwanDailyActivity(details);
+  return true;
 }
 
 async function fetchJsonWithFallback(url) {
@@ -432,16 +506,25 @@ function updateLastUpdated() {
 
 async function refreshLiveData() {
   setStatus('ライブ観測データを更新中...', 'info');
-  const [weatherResult, quakeResult] = await Promise.allSettled([fetchWeather(), fetchQuakes()]);
+  const [weatherResult, quakeResult, taiwanResult] = await Promise.allSettled([
+    fetchWeather(),
+    fetchQuakes(),
+    fetchTaiwanModDailyActivity(),
+  ]);
   updateLastUpdated();
 
   const weatherOk = weatherResult.status === 'fulfilled' && weatherResult.value === true;
   const quakeOk = quakeResult.status === 'fulfilled' && quakeResult.value === true;
+  const taiwanOk = taiwanResult.status === 'fulfilled' && taiwanResult.value === true;
 
   renderRegionalMetrics();
 
-  if (weatherOk && quakeOk) {
+  if (weatherOk && quakeOk && taiwanOk) {
     setStatus('ライブ観測を更新済み', 'ok');
+  } else if (!weatherOk && !quakeOk && !taiwanOk) {
+    setStatus('主要データの取得に失敗しました', 'warn');
+  } else if (!taiwanOk) {
+    setStatus('台湾国防部の日次データ取得に失敗しました', 'warn');
   } else if (!weatherOk && !quakeOk) {
     setStatus('気象・地震データの取得に失敗しました', 'warn');
   } else if (!weatherOk) {
