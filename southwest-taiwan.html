@@ -1,216 +1,400 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APEX WATCH — 南西諸島 / 台湾海峡 特化ページ</title>
-  <meta name="description" content="南西諸島・台湾海峡の海上交通・軍事活動・通信リスクをダッシュボード形式で監視するページです。">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <style>
-    :root{
-      --bg:#020514;
-      --panel:#0b172d;
-      --panel-border:#1f3774;
-      --highlight:#132e5c;
-      --text:#e7edf9;
-      --text-dim:#7f8fb1;
-      --accent:#5cc6ff;
-      --accent-2:#ff8f7f;
-      --accent-3:#ffd166;
-      --accent-4:#6bf7c3;
-      --shadow:0 20px 60px rgba(0,0,0,.28);
-      --mono:"JetBrains Mono","SF Mono",Consolas,monospace;
-    }
-    *{box-sizing:border-box;}
-    body{background:radial-gradient(circle at top left,#071025 0%,#020512 45%,#02020b 100%);color:var(--text);font-family:var(--mono);margin:0;}
-    a{color:var(--accent);text-decoration:none;}
-    a:hover{color:var(--accent-4);}
-    .page-shell{min-height:100vh;display:flex;flex-direction:column;}
-    header.hero-panel{padding:32px 24px 20px;}
-    .hero-grid{display:grid;grid-template-columns:1.6fr .9fr;gap:24px;align-items:start;max-width:1200px;margin:0 auto;}
-    .hero-copy{padding:34px 32px;border-radius:32px;background:linear-gradient(180deg,rgba(12,29,60,.92),rgba(8,13,28,.96));border:1px solid rgba(119,149,223,.16);box-shadow:var(--shadow);}
-    .hero-copy .eyebrow{display:inline-flex;padding:8px 14px;border-radius:999px;background:rgba(92,198,255,.1);color:var(--accent);font-size:11px;letter-spacing:.25em;text-transform:uppercase;}
-    .hero-copy h1{margin:18px 0 14px;font-size:2.4rem;line-height:1.05;letter-spacing:-.03em;}
-    .hero-copy p{color:var(--text-dim);font-size:14px;line-height:1.9;margin:0;max-width:680px;}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;}
-    .hero-pill{padding:12px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);font-size:12px;color:var(--text-dim);}
-    .hero-pill.active{border-color:rgba(92,198,255,.32);background:rgba(92,198,255,.08);color:#fff;}
-    .hero-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:24px;}
-    .hero-card{padding:20px;border-radius:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);box-shadow:0 30px 60px rgba(0,0,0,.18);}
-    .hero-card small{display:block;color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:.18em;margin-bottom:10px;}
-    .hero-card strong{display:block;font-size:2rem;line-height:1.1;color:#fff;}
-    .hero-card .hint{font-size:12px;color:var(--text-dim);margin-top:8px;}
-    .dashboard-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:0 24px 28px;margin-top:12px;}
-    .dashboard-nav a{padding:12px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);font-size:12px;color:var(--text);transition:.25s;}
-    .dashboard-nav a:hover{border-color:rgba(92,198,255,.3);background:rgba(92,198,255,.08);}
-    main{flex:1 1 auto;max-width:1200px;width:100%;margin:0 auto;padding:0 24px 40px;display:grid;gap:24px;}
-    .top-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;}
-    .panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:28px;padding:24px;box-shadow:var(--shadow);}
-    .panel-title{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;}
-    .stat-large{font-size:2.8rem;font-weight:800;line-height:1;letter-spacing:-.03em;color:#fff;}
-    .stat-meta{margin-top:10px;font-size:12px;color:var(--text-dim);line-height:1.7;}
-    .panel-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;}
-    .map-panel{min-height:420px;display:flex;flex-direction:column;}
-    .map-placeholder{flex:1;border-radius:28px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(15,38,69,.92),rgba(7,14,27,.98));padding:12px;position:relative;overflow:hidden;}
-    .map-canvas{height:100%;min-height:300px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);}
-    #globalMap{height:100%;width:100%;}
-    .leaflet-container{background:#091426;font-family:var(--mono);}
-    .map-legend{position:absolute;top:20px;left:20px;z-index:500;background:rgba(7,19,37,.88);border:1px solid rgba(255,255,255,.12);padding:8px 10px;border-radius:10px;font-size:11px;color:#dff2ff;line-height:1.6;pointer-events:none;}
-    .legend-dot{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:6px;vertical-align:middle;}
-    .legend-dot.core{background:#ff8f7f;}
-    .legend-dot.watch{background:#6bf7c3;}
-    .range-list{display:grid;gap:14px;margin-top:18px;}
-    .range-item{display:flex;justify-content:space-between;align-items:center;padding:16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);}
-    .range-item span{font-size:12px;color:var(--text-dim);}
-    .range-item strong{font-size:1rem;color:#fff;}
-    .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-    .status-bar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
-    .status-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;}
-    .status-info{background:rgba(92,198,255,.12);color:var(--accent);}
-    .status-ok{background:rgba(107,247,195,.12);color:var(--accent-4);}
-    .status-warn{background:rgba(255,143,127,.12);color:var(--accent-2);}
-    .weather-panel{display:flex;flex-direction:column;gap:16px;}
-    .weather-panel .panel-header{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-dim);}
-    .weather-list,.quake-list{display:grid;gap:14px;}
-    .weather-item,.quake-item{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
-    .weather-city,.quake-meta{font-size:13px;font-weight:700;color:#fff;}
-    .weather-temp{margin-top:8px;font-size:2rem;font-weight:800;color:var(--accent);}
-    .weather-sub,.quake-place{margin-top:10px;color:var(--text-dim);font-size:12px;line-height:1.7;}
-    .zone-tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px;}
-    .zone-tag{padding:18px;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);font-size:12px;color:var(--text);text-align:center;}
-    .timeline-table{width:100%;border-collapse:separate;border-spacing:0;margin-top:12px;}
-    .timeline-table th,.timeline-table td{padding:14px 16px;text-align:left;font-size:13px;}
-    .timeline-table thead th{color:var(--text-dim);font-size:11px;letter-spacing:.12em;text-transform:uppercase;}
-    .timeline-table tbody tr{border-bottom:1px solid rgba(255,255,255,.06);}
-    .timeline-table tbody tr:last-child{border-bottom:none;}
-    .badge{display:inline-flex;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;}
-    .badge.high{background:rgba(255,110,110,.16);color:var(--accent-2);}
-    .badge.mid{background:rgba(255,209,102,.15);color:var(--accent-3);}
-    .badge.low{background:rgba(107,247,195,.15);color:var(--accent-4);}
-    .footer-note{padding:24px;color:var(--text-dim);font-size:12px;text-align:center;}
-    @media (max-width:1140px){.top-cards{grid-template-columns:repeat(2,minmax(0,1fr));}.hero-grid{grid-template-columns:1fr;}.panel-grid{grid-template-columns:1fr;}.live-grid{grid-template-columns:1fr;}.zone-tags{grid-template-columns:repeat(2,minmax(0,1fr));}}
-    @media (max-width:720px){header.hero-panel{padding:24px 16px 16px;}.hero-copy{padding:24px;}.dashboard-nav{padding:0 16px 22px;}.hero-meta{grid-template-columns:1fr;}.hero-actions{justify-content:flex-start;}.top-cards{grid-template-columns:1fr;}.panel{padding:20px;}.map-placeholder{min-height:300px;}.zone-tags{grid-template-columns:1fr;}.timeline-table th,.timeline-table td{padding:12px;}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>南西諸島・台湾海峡 緊張監視 | APEX WATCH REGIONAL</title>
+<style>
+  :root{
+    --bg:#03040d;
+    --panel:#0a0d1c;
+    --panel-border:#1b2440;
+    --text:#c9d3e8;
+    --text-dim:#5c6a8c;
+    --accent:#ff4d4d;      /* 中国側/危険 */
+    --accent-2:#3ea6ff;    /* 台湾/監視 */
+    --accent-3:#ffb020;    /* 警戒 */
+    --accent-jp:#7fffb2;   /* 自衛隊/日本側 */
+    --mono: "JetBrains Mono","SF Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    margin:0;
+    line-height:1.6;
+  }
+  a{color:var(--accent-2);}
+  header{
+    padding:28px 20px 18px;
+    border-bottom:1px solid var(--panel-border);
+    text-align:center;
+  }
+  header .eyebrow{
+    color:var(--accent);
+    letter-spacing:.15em;
+    font-size:12px;
+  }
+  header h1{
+    margin:8px 0 4px;
+    font-size:22px;
+    letter-spacing:.05em;
+  }
+  header .sub{
+    color:var(--text-dim);
+    font-size:12px;
+  }
+  nav{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    padding:10px;
+    border-bottom:1px solid var(--panel-border);
+    font-size:12px;
+  }
+  nav a{color:var(--text-dim);text-decoration:none;}
+  nav a:hover{color:var(--accent-2);}
+
+  main{max-width:1180px;margin:0 auto;padding:24px 16px 60px;}
+
+  section{margin-bottom:34px;}
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--panel-border);
+    padding-bottom:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .section-head h2{
+    font-size:15px;
+    margin:0;
+    letter-spacing:.05em;
+  }
+  .section-head .links a{margin-left:10px;font-size:11px;}
+
+  /* 緊張度インデックス */
+  .tension-wrap{
+    display:grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:760px){ .tension-wrap{grid-template-columns:1fr;} }
+
+  .tension-gauge{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    padding:20px;
+  }
+  .tension-num{
+    font-size:52px;
+    font-weight:700;
+    line-height:1;
+    color:var(--accent-3);
+  }
+  .tension-num small{font-size:16px;color:var(--text-dim);}
+  .tension-bar{
+    height:8px;
+    background:#141a30;
+    border-radius:4px;
+    margin:14px 0;
+    overflow:hidden;
+  }
+  .tension-bar-fill{
+    height:100%;
+    width:62%;
+    background:linear-gradient(90deg,var(--accent-jp),var(--accent-3),var(--accent));
+  }
+  .tension-legend{display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);}
+
+  .tension-breakdown{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    padding:16px;
+    font-size:12px;
+  }
+  .tb-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--panel-border);}
+  .tb-row:last-child{border-bottom:none;}
+  .tb-row .val{color:var(--accent-3);}
+
+  /* パネルグリッド */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    padding:14px 16px;
+  }
+  .card .label{font-size:11px;color:var(--text-dim);margin-bottom:6px;}
+  .card .value{font-size:24px;font-weight:700;}
+  .card .value.jp{color:var(--accent-jp);}
+  .card .value.cn{color:var(--accent);}
+  .card .value.tw{color:var(--accent-2);}
+  .card .foot{font-size:10px;color:var(--text-dim);margin-top:6px;}
+
+  /* 侵入日次履歴表 */
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--panel-border);text-align:left;}
+  th{color:var(--text-dim);font-weight:400;font-size:11px;}
+  tr:hover{background:#0d1226;}
+  .badge{
+    display:inline-block;padding:1px 7px;border-radius:3px;font-size:10px;
+  }
+  .badge.high{background:rgba(255,77,77,.15);color:var(--accent);}
+  .badge.mid{background:rgba(255,176,32,.15);color:var(--accent-3);}
+  .badge.low{background:rgba(127,255,178,.15);color:var(--accent-jp);}
+
+  /* 地図プレースホルダ */
+  .map-placeholder{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    height:360px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-dim);
+    font-size:12px;
+    text-align:center;
+    padding:20px;
+  }
+
+  .zone-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .zone-tag{
+    font-size:11px;padding:4px 10px;border:1px solid var(--panel-border);border-radius:20px;color:var(--text-dim);
+  }
+
+  .source-note{font-size:10.5px;color:var(--text-dim);margin-top:10px;}
+
+  footer{
+    text-align:center;padding:24px;color:var(--text-dim);font-size:11px;
+    border-top:1px solid var(--panel-border);
+  }
+</style>
 </head>
 <body>
-<div class="page-shell">
-  <header class="hero-panel">
-    <div class="hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow">Regional Dashboard</span>
-        <h1>南西諸島 / 台湾海峡 ダッシュボード</h1>
-        <p>世界監視ダッシュボードのレイアウトを参考にしつつ、南西諸島と台湾海峡の海上・軍事・気象・地震データを一ページで俯瞰できる構成とデザインに再構築しました。</p>
-        <div class="hero-actions">
-          <span class="hero-pill active">conflicts</span>
-          <span class="hero-pill">bases</span>
-          <span class="hero-pill">weather</span>
-          <span class="hero-pill">natural</span>
-          <span class="hero-pill">waterways</span>
+
+<header>
+  <div class="eyebrow">APEX WATCH REGIONAL FOCUS</div>
+  <h1>◈ 南西諸島・台湾海峡 緊張監視</h1>
+  <div class="sub">Nansei Islands &amp; Taiwan Strait Tension Monitor — Southwestern Theater Intelligence</div>
+</header>
+
+<nav>
+  <a href="#s-index">緊張度指数</a>
+  <a href="#s-map">警戒空域マップ</a>
+  <a href="#s-daily">日次侵入統計</a>
+  <a href="#s-jsdf">南西シフト配備</a>
+  <a href="#s-naval">周辺艦艇</a>
+  <a href="#s-timeline">緊張イベント年表</a>
+</nav>
+
+<main>
+
+  <!-- 緊張度指数 -->
+  <section id="s-index">
+    <div class="section-head">
+      <h2>◈ 台湾海峡緊張度指数 / Strait Tension Index</h2>
+      <div class="links"><a href="#">算出方法</a></div>
+    </div>
+    <div class="tension-wrap">
+      <div class="tension-gauge">
+        <div class="tension-num">62<small> / 100</small></div>
+        <div class="tension-bar"><div class="tension-bar-fill"></div></div>
+        <div class="tension-legend">
+          <span>平常</span><span>警戒</span><span>高度警戒</span><span>危機的</span>
         </div>
-        <div class="hero-meta">
-          <div class="hero-card"><small>現在の警戒レベル</small><strong>62 / 100</strong><div class="hint">台湾海峡と南西諸島での動向を統合。</div></div>
-          <div class="hero-card"><small>監視ゾーン</small><strong>5 エリア</strong><div class="hint">航路・ADIZ・ケーブルラインをカバー。</div></div>
-          <div class="hero-card"><small>直近更新</small><strong id="updateInfo">取得中...</strong><div class="hint">リアルタイムで気象・地震情報を反映。</div></div>
+        <div class="source-note">
+          直近7日間の中国機ADIZ侵入数・中間線越え回数・艦艇展開数・自衛隊緊急発進(スクランブル)回数の
+          加重平均から算出（仮モデル・要調整）。
         </div>
       </div>
-      <div class="panel map-panel">
-        <div class="panel-title">Global View</div>
-        <div class="map-placeholder">
-          <div class="map-legend">
-            <div><span class="legend-dot core"></span>Taiwan Strait Core</div>
-            <div><span class="legend-dot watch"></span>Regional Watchpoints</div>
-          </div>
-          <div class="map-canvas">
-            <div id="globalMap" aria-label="Global monitoring map"></div>
-          </div>
-        </div>
-        <div class="range-list">
-          <div class="range-item"><span>集中監視</span><strong>台湾海峡／宮古海峡</strong></div>
-          <div class="range-item"><span>重要レイヤー</span><strong>conflicts・weather・natural</strong></div>
-        </div>
+      <div class="tension-breakdown">
+        <div class="tb-row"><span>中間線越え（7日）— 重み30%</span><span class="val">34 回</span></div>
+        <div class="tb-row"><span>ADIZ侵入機数（7日）— 重み25%</span><span class="val">128 機</span></div>
+        <div class="tb-row"><span>中国艦艇 南西方面確認 — 重み20%</span><span class="val">6 隻</span></div>
+        <div class="tb-row"><span>グレーゾーン事案（拿捕・臨検等）— 重み10%</span><span class="val">なし</span></div>
+        <div class="tb-row"><span>大規模演習フラグ — 該当時+15点固定加算</span><span class="val">非該当</span></div>
       </div>
     </div>
-  </header>
+    <div class="source-note">
+      算出方式：各指標を直近2年間のローリング範囲でmin-maxスケーリング後、上記重みで加重平均。
+      「聯合利剣」等の名称付き大規模演習が発表されている期間は、他指標が同時に跳ねるため二重加算を避け
+      +15点を上限キャップとして加算する。
+    </div>
+  </section>
 
-  <nav class="dashboard-nav">
-    <a href="#overview">Overview</a>
-    <a href="#watchlist">Watchlist</a>
-    <a href="#s-live">Live Status</a>
-    <a href="#s-timeline">Timeline</a>
-  </nav>
-
-  <main>
-    <section id="overview" class="panel">
-      <div class="panel-title">Unified Tactical Overview</div>
-      <div class="top-cards">
-        <div class="panel"><small>緊急航域</small><div class="stat-large">5</div><div class="stat-meta">現在警戒中の主要エリア</div></div>
-        <div class="panel"><small>気象警報</small><div class="stat-large">3</div><div class="stat-meta">台風・強風・豪雨に注目</div></div>
-        <div class="panel"><small>地震イベント</small><div class="stat-large">7</div><div class="stat-meta">直近24時間内に検知</div></div>
-        <div class="panel"><small>海上トラフィック</small><div class="stat-large">高</div><div class="stat-meta">迂回・制限が増加中</div></div>
+  <!-- 警戒空域マップ -->
+  <section id="s-map">
+    <div class="section-head">
+      <h2>⚡ 警戒空域・海域マップ / Monitored Zones</h2>
+      <div class="links">
+        <a href="https://globe.adsbexchange.com/?mil=1" target="_blank">ADS-B Exchange 軍用</a>
+        <a href="https://www.marinetraffic.com/en/ais/home/centerx:122/centery:24/zoom:6" target="_blank">MarineTraffic</a>
       </div>
-    </section>
+    </div>
+    <div class="map-placeholder">
+      与那国島・台湾間バウンディングボックスでOpenSky Network ADS-Bをフィルタし、<br>
+      軍用機トラック＋中間線をオーバーレイした地図をここに実装（Leaflet + OpenSky REST想定）
+    </div>
+    <div class="zone-tags">
+      <span class="zone-tag">与那国島</span>
+      <span class="zone-tag">石垣島</span>
+      <span class="zone-tag">宮古島</span>
+      <span class="zone-tag">尖閣諸島周辺</span>
+      <span class="zone-tag">バシー海峡</span>
+      <span class="zone-tag">台湾海峡中間線</span>
+      <span class="zone-tag">東沙諸島</span>
+    </div>
+  </section>
 
-    <section id="watchlist" class="panel panel-grid">
-      <div>
-        <div class="panel-title">Zone Watchlist</div>
-        <div class="zone-tags">
-          <span class="zone-tag">台湾海峡</span>
-          <span class="zone-tag">宮古海峡</span>
-          <span class="zone-tag">東シナ海</span>
-          <span class="zone-tag">南西諸島航路</span>
-          <span class="zone-tag">海底ケーブル</span>
-          <span class="zone-tag">ADS-B / AIS</span>
-        </div>
+  <!-- 日次侵入統計 -->
+  <section id="s-daily">
+    <div class="section-head">
+      <h2>◈ 中国軍 日次活動統計 / PLA Daily Activity</h2>
+      <div class="links"><a href="https://www.mnd.gov.tw/PublishTable.aspx?Types=%E5%8D%B3%E6%99%82%E8%BB%8D%E4%BA%8B%E5%8B%95%E6%85%8B&title=%E5%9C%8B%E9%98%B2%E6%B6%88%E6%81%AF" target="_blank">台湾国防部 原文</a></div>
+    </div>
+    <div class="grid" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="label">本日 ADIZ侵入機数</div>
+        <div class="value cn">-- 機</div>
+        <div class="foot">台湾国防部 即時軍事動態</div>
       </div>
-      <div>
-        <div class="panel-title">Key Threat Streams</div>
-        <div class="range-list">
-          <div class="range-item"><span>Military Movements</span><strong>JSDF / China / US Fleet</strong></div>
-          <div class="range-item"><span>Communication Risk</span><strong>海底ケーブル / 衛星遮断</strong></div>
-          <div class="range-item"><span>Transport Disruption</span><strong>油送・漁船・貨物船</strong></div>
-        </div>
+      <div class="card">
+        <div class="label">中間線越え</div>
+        <div class="value cn">-- 機</div>
+        <div class="foot">同上</div>
       </div>
-    </section>
+      <div class="card">
+        <div class="label">確認艦艇数</div>
+        <div class="value cn">-- 隻</div>
+        <div class="foot">同上</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>日付</th><th>ADIZ侵入</th><th>中間線越え</th><th>艦艇</th><th>備考</th><th>水準</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>--/--</td><td>--</td><td>--</td><td>--</td><td>データ取得中</td><td><span class="badge mid">中</span></td></tr>
+        <tr><td>--/--</td><td>--</td><td>--</td><td>--</td><td>データ取得中</td><td><span class="badge low">低</span></td></tr>
+      </tbody>
+    </table>
+    <div class="source-note">
+      出典：中華民國國防部「即時軍事動態」日次発表。CORS制限のためプロキシ経由取得が必要（既存GVPパネルと同方式）。
+      過去分はスクレイピングして自前DBに蓄積し、トレンド表示に利用する想定。<br>
+      参考実装：台湾のシビックテックコミュニティg0vが同ページ向けに構築したクローラー
+      （typingmonk/mnd_ADIZ_news_crawler, GitHub）が、日次データの構造化・軍機型号/架次抽出・
+      簡易REST API化という設計を先行して実現しており、パース仕様の参考にできる
+      （2020-2021年頃のプロジェクトのため稼働状況は要確認）。
+    </div>
+  </section>
 
-    <section id="s-live" class="panel">
-      <div class="panel-title">Live Monitoring</div>
-      <div class="status-bar">
-        <span class="status-pill status-info">データソース: Open-Meteo / USGS</span>
-        <span class="status-pill status-ok">ライブ更新中</span>
+  <!-- 自衛隊南西シフト -->
+  <section id="s-jsdf">
+    <div class="section-head">
+      <h2>🛡 自衛隊 南西シフト配備状況 / JSDF Southwestern Posture</h2>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="label">与那国駐屯地</div>
+        <div class="value jp">沿岸監視隊</div>
+        <div class="foot">レーダー・警備部隊 常駐</div>
       </div>
-      <div class="live-grid">
-        <div class="weather-panel">
-          <div class="panel-header"><span>気象観測</span><span id="liveStatus">初期化中...</span></div>
-          <div id="weatherList" class="weather-list"><div class="weather-item"><div class="weather-city">--</div><div class="weather-temp">--</div><div class="weather-sub">--</div></div></div>
-          <div class="source-note">Open-Meteo の現在気象データ。</div>
-        </div>
-        <div class="weather-panel">
-          <div class="panel-header"><span>地震観測</span><span style="color:var(--accent-4);font-size:11px;">直近24h</span></div>
-          <div id="quakeList" class="quake-list"><div class="quake-item"><div class="quake-meta">読み込み中...</div></div></div>
-          <div class="source-note">USGS 地震フィードをフィルタリング。</div>
-        </div>
+      <div class="card">
+        <div class="label">宮古島駐屯地</div>
+        <div class="value jp">警備・地対艦/地対空</div>
+        <div class="foot">12式地対艦誘導弾 等（公開情報ベース）</div>
       </div>
-    </section>
+      <div class="card">
+        <div class="label">石垣駐屯地</div>
+        <div class="value jp">警備・中距離地対空</div>
+        <div class="foot">2023年開設</div>
+      </div>
+      <div class="card">
+        <div class="label">那覇 F-15配備</div>
+        <div class="value jp">南西空域スクランブル</div>
+        <div class="foot">航空自衛隊 那覇基地</div>
+      </div>
+      <div class="card">
+        <div class="label">陸自 第15旅団</div>
+        <div class="value jp">沖縄本島</div>
+        <div class="foot">師団改編に向けた増強方針</div>
+      </div>
+      <div class="card">
+        <div class="label">JADGE / 早期警戒</div>
+        <div class="value jp">常時運用</div>
+        <div class="foot">自動警戒管制システム</div>
+      </div>
+    </div>
+    <div class="source-note">
+      本セクションは防衛省発表・防衛白書等の公開情報のみに基づく静的データ。定期的な手動更新を想定（部隊運用の詳細・非公開情報は扱わない）。
+    </div>
+  </section>
 
-    <section id="s-timeline" class="panel">
-      <div class="panel-title">Regional Timeline</div>
-      <table class="timeline-table">
-        <thead><tr><th>日時</th><th>イベント</th><th>ステータス</th></tr></thead>
-        <tbody>
-          <tr><td>2026-06</td><td>台湾海峡の軍事演習と追加航行制限</td><td><span class="badge high">高</span></td></tr>
-          <tr><td>2026-04</td><td>南西諸島周辺での艦艇接近と通信断報</td><td><span class="badge high">高</span></td></tr>
-          <tr><td>2025-12</td><td>台湾海峡での艦艇迂回と空域警戒強化</td><td><span class="badge mid">中</span></td></tr>
-          <tr><td>2025-08</td><td>海底ケーブル注視、主要港湾遅延</td><td><span class="badge mid">中</span></td></tr>
-          <tr><td>2025-02</td><td>航行安全情報の上昇と巡視艦展開</td><td><span class="badge low">低</span></td></tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+  <!-- 周辺艦艇（既存艦艇セクションから南西特化で抽出） -->
+  <section id="s-naval">
+    <div class="section-head">
+      <h2>⚓ 南西方面 艦艇動向 / Regional Naval Activity</h2>
+      <div class="links"><a href="https://www.mod.go.jp/js/" target="_blank">統合幕僚監部 発表</a></div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="label">中国海軍</div>
+        <div class="value cn">-- 隻確認</div>
+        <div class="foot">沖縄本島〜宮古島間 通過等</div>
+      </div>
+      <div class="card">
+        <div class="label">海上自衛隊 対応艦</div>
+        <div class="value jp">警戒監視中</div>
+        <div class="foot">護衛艦 配置（発表ベース）</div>
+      </div>
+      <div class="card">
+        <div class="label">米海軍 展開</div>
+        <div class="value tw">既存パネルと連動</div>
+        <div class="foot">西太平洋 空母打撃群</div>
+      </div>
+    </div>
+    <div class="source-note">
+      出典：防衛省統合幕僚監部「中国海軍艦艇の動向について」個別プレスリリース（RSS非対応のためスクレイピング取得）。
+    </div>
+  </section>
 
-  <footer class="footer-note">APEX WATCH REGIONAL — 南西諸島 / 台湾海峡監視ページ | Live OSINT Monitoring</footer>
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script src="southwest-taiwan.js?v=20260701b"></script>
+  <!-- 年表 -->
+  <section id="s-timeline">
+    <div class="section-head">
+      <h2>◈ 緊張イベント年表 / Tension Event Timeline</h2>
+    </div>
+    <table>
+      <thead><tr><th>日付</th><th>イベント</th><th>影響</th></tr></thead>
+      <tbody>
+        <tr><td>2022-08</td><td>ペロシ米下院議長 台湾訪問 → 大規模軍事演習（中間線越え延べ約300機、前年比150倍）</td><td><span class="badge high">高</span></td></tr>
+        <tr><td>2023-04</td><td>蔡英文総統・マッカーシー下院議長会談 → 「聯合利剣」演習、空母「山東」参加</td><td><span class="badge high">高</span></td></tr>
+        <tr><td>2024-02〜夏</td><td>金門島沖 漁船転覆事故 → 拿捕・臨検の常態化（グレーゾーン化）</td><td><span class="badge mid">中</span></td></tr>
+        <tr><td>2024-05</td><td>頼清徳総統就任3日後 →「聯合利剣-2024A」演習（5/23-24、前2回より小規模）</td><td><span class="badge high">高</span></td></tr>
+        <tr><td>2026-06</td><td>中国軍、台湾海峡通過のオランダ海軍フリゲート艦を追跡・監視</td><td><span class="badge mid">中</span></td></tr>
+        <tr><td>----</td><td>（自動化後：緊張度指数が閾値を超えたタイミングを自動追記）</td><td><span class="badge low">低</span></td></tr>
+      </tbody>
+    </table>
+    <div class="source-note">出典：防衛研究所NIDSコメンタリー, アジア経済研究所, 日米台安全保障研究, Reuters。今後は緊張度指数が閾値を超えたタイミングを自動でこの年表に追記する仕組みを実装予定。</div>
+  </section>
+
+</main>
+
+<footer>
+  APEX WATCH REGIONAL — 南西諸島・台湾海峡 特化モジュール（プロトタイプ）<br>
+  データソース: 防衛省統合幕僚監部, 中華民國國防部, OpenSky Network, ADS-B Exchange, MarineTraffic<br>
+  本ページは公開情報(OSINT)の集約であり、特定の軍事行動を予測・扇動する意図はありません。
+</footer>
+
 </body>
 </html>
