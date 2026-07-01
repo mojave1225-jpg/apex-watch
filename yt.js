@@ -9,27 +9,42 @@ const YT_CHANNELS = [
   {
     wrapperId:  'yt-wrap-cbs',
     channelId:  'UC8p1vwvWtl6T73JiExfWs1g',  // CBS News official channel
+    liveVideoId:'zvMSZFgWYBA',              // CBS 24/7 stream fallback
     label:      '▶ CBS News 24/7',
     youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
     officialUrl:'https://www.cbsnews.com/live/',
   },
 ];
 
-function buildEmbedSrc(ch, useNoCookie) {
+function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
   const host = useNoCookie
     ? 'https://www.youtube-nocookie.com'
     : 'https://www.youtube.com';
 
+  const base = mode === 'video' && ch.liveVideoId
+    ? `${host}/embed/${ch.liveVideoId}`
+    : `${host}/embed/live_stream?channel=${ch.channelId}`;
+
   return [
-    `${host}/embed/live_stream?channel=${ch.channelId}`,
+    base,
     '&autoplay=1&mute=1&rel=0&modestbranding=1',
     '&playsinline=1',
     '&cc_load_policy=1',
     '&hl=ja',
+    '&enablejsapi=1',
   ].join('');
 }
 
-function attachControls(w, ch, iframe, srcNoCookie, srcYoutube) {
+function buildSourceList(ch) {
+  return [
+    buildEmbedSrc(ch, false, 'channel'),
+    buildEmbedSrc(ch, false, 'video'),
+    buildEmbedSrc(ch, true, 'channel'),
+    buildEmbedSrc(ch, true, 'video'),
+  ];
+}
+
+function attachControls(w, ch, iframe, sourceList) {
   if (w.dataset.ytControlsAttached === '1') return;
 
   const controls = document.createElement('div');
@@ -49,7 +64,7 @@ function attachControls(w, ch, iframe, srcNoCookie, srcYoutube) {
   const switchBtn = document.createElement('button');
   switchBtn.type = 'button';
   switchBtn.className = 'yt-retry-btn';
-  switchBtn.textContent = '埋め込み切替';
+  switchBtn.textContent = 'ソース切替';
   switchBtn.style.padding = '3px 10px';
 
   const ytLink = document.createElement('a');
@@ -83,16 +98,22 @@ function attachControls(w, ch, iframe, srcNoCookie, srcYoutube) {
   w.appendChild(controls);
   w.appendChild(note);
 
-  let useNoCookie = (iframe.src || '').includes('youtube-nocookie.com');
+  let sourceIndex = 0;
+  const currentSrc = iframe.getAttribute('src') || iframe.src || '';
+  const matchedIndex = sourceList.findIndex(src => currentSrc.startsWith(src.split('&')[0]));
+  if (matchedIndex >= 0) sourceIndex = matchedIndex;
+
+  function setSource(index) {
+    sourceIndex = (index + sourceList.length) % sourceList.length;
+    iframe.src = sourceList[sourceIndex];
+  }
 
   retryBtn.addEventListener('click', () => {
-    iframe.src = useNoCookie ? srcNoCookie : srcYoutube;
+    setSource(sourceIndex + 1);
   });
 
   switchBtn.addEventListener('click', () => {
-    useNoCookie = !useNoCookie;
-    iframe.src = useNoCookie ? srcNoCookie : srcYoutube;
-    switchBtn.textContent = useNoCookie ? '埋め込み切替' : '埋め込み切替(通常)';
+    setSource(sourceIndex + 1);
   });
 
   w.dataset.ytControlsAttached = '1';
@@ -102,24 +123,24 @@ function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
 
-  const srcNoCookie = buildEmbedSrc(ch, true);
-  const srcYoutube = buildEmbedSrc(ch, false);
+  const sourceList = buildSourceList(ch);
+  const srcPrimary = sourceList[0];
 
   const existingFrame = w.querySelector('iframe');
   if (existingFrame) {
     const currentSrc = existingFrame.getAttribute('src') || '';
-    if (currentSrc.includes('youtube-nocookie.com')) {
-      existingFrame.src = srcYoutube;
+    if (currentSrc.includes('youtube-nocookie.com') || currentSrc.includes('/embed/live_stream?channel=')) {
+      existingFrame.src = srcPrimary;
     }
 
-    attachControls(w, ch, existingFrame, srcNoCookie, srcYoutube);
+    attachControls(w, ch, existingFrame, sourceList);
     return;
   }
 
   w.innerHTML = `
     <div class="yt-embed-label">${ch.label} <span style="font-size:10px;color:#88aa88">[字幕: 自動ON]</span></div>
     <iframe
-      src="${srcYoutube}"
+      src="${srcPrimary}"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowfullscreen
@@ -136,7 +157,7 @@ function setEmbed(ch) {
 
   const iframe = w.querySelector('iframe.yt-iframe');
   if (iframe) {
-    attachControls(w, ch, iframe, srcNoCookie, srcYoutube);
+    attachControls(w, ch, iframe, sourceList);
   }
 }
 
