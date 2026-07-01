@@ -113,6 +113,68 @@
       </div>
     </div>
 
+    <!-- GLOBAL THREAT MAP: moved to top under command intro -->
+    <section class="map-section command-map-top" id="s-map">
+      <div class="map-header-row">
+        <span>◈ グローバル脅威マップ / Global Threat Map — 戦争・紛争・不安定地域・サイバー攻撃 / War · Conflict · Instability · Cyber</span>
+        <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
+      </div>
+      <div class="map-container" id="mapContainer"></div>
+
+      <div id="threat-status-panel">
+        <div class="ts-block">
+          <div class="ts-header">
+            <span class="ts-icon">⚡</span> DEFCON
+            <span class="ts-badge">推定</span>
+          </div>
+          <div class="ts-indicators" id="defcon-indicators"></div>
+          <div class="ts-level" id="defcon-level"></div>
+          <div class="ts-desc" id="defcon-desc"></div>
+          <div class="ts-src" id="defcon-src"></div>
+        </div>
+
+        <div class="ts-block">
+          <div class="ts-header">
+            <span class="ts-icon">🛡</span> FPCON
+            <span class="ts-sub">在日米軍 / US Forces Japan</span>
+          </div>
+          <div class="ts-indicators" id="fpcon-indicators"></div>
+          <div class="ts-level" id="fpcon-level"></div>
+          <div class="ts-desc" id="fpcon-desc"></div>
+          <div class="ts-src" id="fpcon-src"></div>
+        </div>
+      </div>
+
+      <div class="map-legend">
+        <span class="legend-item red">● 緊急 / Critical</span>
+        <span class="legend-item orange">● 危険 / Danger</span>
+        <span class="legend-item yellow">● 警戒 / Caution</span>
+      </div>
+
+      <div id="cyber-bar">
+        <div class="cyber-counter">
+          <span class="cyber-label">⚡ 検出攻撃数 / Detected Attacks</span>
+          <span class="cyber-val" id="cyber-count">0</span>
+          <span class="cyber-label-sub">件</span>
+        </div>
+        <div class="cyber-last-wrap">
+          <span class="cyber-label">最新 / Latest</span>
+          <span id="cyber-last" class="cyber-last-val">---</span>
+          <span id="cyber-type" class="cyber-type-badge">---</span>
+        </div>
+        <div class="cyber-legend">
+          <span style="color:#ff0044">● DDoS</span>
+          <span style="color:#ff8800">● Malware</span>
+          <span style="color:#ffdd00">● Phishing</span>
+          <span style="color:#cc00ff">● Ransomware</span>
+          <span style="color:#00ccff">● Exploit</span>
+        </div>
+        <div id="cyber-intel-src" class="cyber-intel-src">◈ 脅威インテリジェンス: 読込中...</div>
+      </div>
+
+      <div class="map-tooltip" id="mapTooltip"></div>
+    </section>
+
     <div class="command-kpi-grid">
       <article class="cmd-kpi-card danger">
         <div class="cmd-kpi-label">総合リスク指数 / Global Risk Composite</div>
@@ -181,8 +243,8 @@
     </div>
   </section>
 
-  <!-- TOP ROW: THREAT METER + WORLD MAP (1:3) -->
-  <div class="top-row" id="s-map">
+  <!-- TOP ROW: THREAT METER + LIVE NEWS -->
+  <div class="top-row">
 
     <!-- LEFT PANEL: METER (top 50%) + YOUTUBE LIVE (bottom 50%) -->
     <div class="left-panel">
@@ -247,75 +309,6 @@
       </div>
 
     </div>
-
-    <!-- WORLD MAP (moved here) -->
-    <section class="map-section">
-      <div class="map-header-row">
-        <span>◈ グローバル脅威マップ / Global Threat Map — 戦争・紛争・不安定地域・サイバー攻撃 / War · Conflict · Instability · Cyber</span>
-        <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
-      </div>
-      <div class="map-container" id="mapContainer"></div>
-
-      <!-- DEFCON / FPCON panel: desktop=map左上オーバーレイ / mobile=マップ下に展開 -->
-      <div id="threat-status-panel">
-
-        <!-- DEFCON -->
-        <div class="ts-block">
-          <div class="ts-header">
-            <span class="ts-icon">⚡</span> DEFCON
-            <span class="ts-badge">推定</span>
-          </div>
-          <div class="ts-indicators" id="defcon-indicators"></div>
-          <div class="ts-level" id="defcon-level"></div>
-          <div class="ts-desc"  id="defcon-desc"></div>
-          <div class="ts-src"   id="defcon-src"></div>
-        </div>
-
-        <!-- FPCON -->
-        <div class="ts-block">
-          <div class="ts-header">
-            <span class="ts-icon">🛡</span> FPCON
-            <span class="ts-sub">在日米軍 / US Forces Japan</span>
-          </div>
-          <div class="ts-indicators" id="fpcon-indicators"></div>
-          <div class="ts-level" id="fpcon-level"></div>
-          <div class="ts-desc"  id="fpcon-desc"></div>
-          <div class="ts-src"   id="fpcon-src"></div>
-        </div>
-
-      </div>
-
-      <div class="map-legend">
-        <span class="legend-item red">● 緊急 / Critical</span>
-        <span class="legend-item orange">● 危険 / Danger</span>
-        <span class="legend-item yellow">● 警戒 / Caution</span>
-      </div>
-
-      <!-- CYBER THREAT STATUS BAR -->
-      <div id="cyber-bar">
-        <div class="cyber-counter">
-          <span class="cyber-label">⚡ 検出攻撃数 / Detected Attacks</span>
-          <span class="cyber-val" id="cyber-count">0</span>
-          <span class="cyber-label-sub">件</span>
-        </div>
-        <div class="cyber-last-wrap">
-          <span class="cyber-label">最新 / Latest</span>
-          <span id="cyber-last" class="cyber-last-val">---</span>
-          <span id="cyber-type" class="cyber-type-badge">---</span>
-        </div>
-        <div class="cyber-legend">
-          <span style="color:#ff0044">● DDoS</span>
-          <span style="color:#ff8800">● Malware</span>
-          <span style="color:#ffdd00">● Phishing</span>
-          <span style="color:#cc00ff">● Ransomware</span>
-          <span style="color:#00ccff">● Exploit</span>
-        </div>
-        <div id="cyber-intel-src" class="cyber-intel-src">◈ 脅威インテリジェンス: 読込中...</div>
-      </div>
-
-      <div class="map-tooltip" id="mapTooltip"></div>
-    </section>
-
   </div>
 
   <!-- CATEGORY GRID -->

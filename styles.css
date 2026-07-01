@@ -416,13 +416,13 @@ html, body {
   50%{ text-shadow: 0 0 12px rgba(255,136,0,0.9); }
 }
 
-/* ── TOP ROW: LEFT-PANEL + MAP 55:45 ── */
+/* ── TOP ROW: THREAT METER + LIVE NEWS ── */
 .top-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 45%);
+  grid-template-columns: 1fr;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
-  min-height: max(780px, calc(100vh - 120px));
+  min-height: 420px;
 }
 
 /* ── SPECIAL PAGE ── */
@@ -810,8 +810,8 @@ html, body {
     min-height: 220px;
   }
   .map-container {
-    min-height: 190px;
-    height: 190px;
+    min-height: 460px;
+    height: 460px;
   }
   .map-header-row {
     font-size: 10px;
@@ -903,8 +903,8 @@ html, body {
     min-height: 340px;
   }
   .map-container {
-    min-height: 170px;
-    height: 170px;
+    min-height: 520px;
+    height: 520px;
   }
   .news-live-panel {
     min-height: 200px;
@@ -922,8 +922,8 @@ html, body {
     min-height: 320px;
   }
   .map-container {
-    min-height: 160px;
-    height: 160px;
+    min-height: 560px;
+    height: 560px;
   }
   .news-live-panel {
     min-height: 180px;
@@ -1094,6 +1094,11 @@ html, body {
   display: flex; flex-direction: column;
   min-width: 0;
 }
+.command-map-top {
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
 .map-header-row {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 14px;
@@ -1114,8 +1119,8 @@ html, body {
   overflow: hidden;
   position: relative;
   flex: 0 0 auto;
-  height: 220px;
-  min-height: 220px;
+  height: 360px;
+  min-height: 360px;
 }
 .map-container svg { display: block; width: 100%; height: auto; }
 
