@@ -178,15 +178,15 @@ html, body {
 .command-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .cmd-kpi-card {
   background: rgba(9, 17, 38, 0.94);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 6px;
+  padding: 9px;
 }
 
 .cmd-kpi-card.danger {
@@ -197,36 +197,72 @@ html, body {
 .cmd-kpi-label {
   font-family: var(--font-mono);
   color: var(--text-secondary);
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 1px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .cmd-kpi-value {
   font-family: var(--font-mono);
-  font-size: 28px;
+  font-size: 22px;
   color: var(--text-primary);
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .cmd-kpi-foot {
-  font-size: 11px;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.cmd-micro-matrix {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cmd-micro-item {
+  border: 1px solid rgba(42, 74, 138, 0.55);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 7px;
+  min-height: 56px;
+}
+
+.cmd-micro-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.cmd-micro-val {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.cmd-micro-sub {
+  margin-top: 3px;
+  font-size: 9px;
   color: var(--text-dim);
 }
 
 .command-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .command-panel {
   background: rgba(7, 13, 30, 0.95);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  min-height: 230px;
+  border-radius: 6px;
+  padding: 9px;
+  min-height: 210px;
 }
 
 .cmd-panel-head {
@@ -741,7 +777,7 @@ html, body {
 /* ── DASHBOARD GRID ── */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1px;
   background: var(--border);
   margin: 0;
@@ -823,6 +859,9 @@ html, body {
 }
 
 @media (max-width: 1200px) {
+  .cmd-micro-matrix {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
   .command-kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -835,6 +874,9 @@ html, body {
 }
 
 @media (max-width: 700px) {
+  .cmd-micro-matrix {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .command-deck {
     padding: 16px 14px 12px;
   }
@@ -890,24 +932,24 @@ html, body {
 
 .panel {
   background: var(--bg-panel);
-  padding: 18px;
+  padding: 11px;
   transition: background 0.2s;
 }
 .panel:hover { background: var(--bg-panel-hover); }
 
 .panel-header {
   display: flex; align-items: center; gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 7px;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
+  padding-bottom: 6px;
 }
 .panel-icon { color: var(--accent-blue); font-size: 16px; }
 .panel-title {
-  font-family: var(--font-ui); font-size: 13px; font-weight: 600;
+  font-family: var(--font-ui); font-size: 12px; font-weight: 600;
   letter-spacing: 2px; color: var(--text-primary); flex: 1;
 }
 .panel-status {
-  font-family: var(--font-mono); font-size: 10px;
+  font-family: var(--font-mono); font-size: 9px;
   color: var(--accent-yellow); letter-spacing: 1px;
   padding: 2px 6px; border: 1px solid rgba(255,221,0,0.3);
   border-radius: 2px;
@@ -918,10 +960,10 @@ html, body {
 
 .panel-score-row {
   display: flex; align-items: center; gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 .panel-score {
-  font-family: var(--font-mono); font-size: 32px;
+  font-family: var(--font-mono); font-size: 24px;
   color: var(--accent-yellow); min-width: 60px;
   text-shadow: 0 0 10px rgba(255,221,0,0.4);
 }
@@ -937,15 +979,15 @@ html, body {
 
 .indicator-row {
   display: flex; align-items: center;
-  padding: 5px 0; border-bottom: 1px solid rgba(26,42,74,0.5);
+  padding: 3px 0; border-bottom: 1px solid rgba(26,42,74,0.5);
 }
 .indicator-row:last-child { border-bottom: none; }
 .ind-label {
-  font-family: var(--font-mono); font-size: 10px;
+  font-family: var(--font-mono); font-size: 9px;
   color: var(--text-secondary); flex: 1;
 }
 .ind-value {
-  font-family: var(--font-mono); font-size: 11px;
+  font-family: var(--font-mono); font-size: 10px;
   color: var(--text-primary); margin-right: 8px;
 }
 .ind-arrow {
@@ -961,7 +1003,7 @@ html, body {
 @keyframes dangerFlash { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
 .panel-note {
-  font-family: var(--font-mono); font-size: 9px;
+  font-family: var(--font-mono); font-size: 8px;
   color: var(--text-dim); margin-top: 10px; letter-spacing: 0.5px;
 }
 

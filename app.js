@@ -348,6 +348,32 @@ function renderCommandDeck() {
       </article>
     `).join('');
   }
+
+  const micro = document.getElementById('cmd-micro-matrix');
+  if (micro) {
+    const microItems = [
+      { tag: 'conflicts', val: `${conflictClusters}`, sub: 'active clusters' },
+      { tag: 'bases', val: `${Math.max(22, Math.round(military * 0.55))}`, sub: 'monitored nodes' },
+      { tag: 'hotspots', val: `${Math.max(8, Math.round(globalRisk / 9))}`, sub: 'priority zones' },
+      { tag: 'nuclear', val: `${globalRisk >= 75 ? 'elevated' : 'stable'}`, sub: 'doctrine posture' },
+      { tag: 'sanctions', val: `${Math.max(14, Math.round(globalRisk * 0.35))}`, sub: 'active packages' },
+      { tag: 'weather', val: `${Math.max(3, Math.round((globalRisk + 10) / 18))}`, sub: 'severe cells' },
+      { tag: 'economic', val: `${Math.max(48, Math.round((shipping + globalRisk) / 2))}`, sub: 'stress index' },
+      { tag: 'waterways', val: `${Math.max(4, Math.round(shipping / 14))}`, sub: 'chokepoints' },
+      { tag: 'outages', val: `${Math.max(5, Math.round(security / 16))}`, sub: 'infra incidents' },
+      { tag: 'military', val: `${military}`, sub: 'movement score' },
+      { tag: 'natural', val: `${Math.max(9, Math.round(globalRisk / 7))}`, sub: 'geo events / 7d' },
+      { tag: 'iranAttacks', val: `${globalRisk >= 70 ? 'watch' : 'low'}`, sub: 'regional stream' },
+    ];
+
+    micro.innerHTML = microItems.map((item) => `
+      <article class="cmd-micro-item">
+        <div class="cmd-micro-tag">${item.tag}</div>
+        <div class="cmd-micro-val">${item.val}</div>
+        <div class="cmd-micro-sub">${item.sub}</div>
+      </article>
+    `).join('');
+  }
 }
 
 // ── STATIC PANELS ──
