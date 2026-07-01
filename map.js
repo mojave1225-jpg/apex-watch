@@ -282,8 +282,10 @@ async function initWorldMap() {
 
   // Projection: Natural Earth 1 for aesthetic look
   // fitExtentで球体全体が常に表示領域内へ収まるようにする
+  const fitPadX = 10;
+  const fitPadY = Math.max(10, Math.round(H * 0.06));
   const projection = d3.geoNaturalEarth1()
-    .fitExtent([[8, 8], [W - 8, H - 8]], { type: 'Sphere' });
+    .fitExtent([[fitPadX, fitPadY], [W - fitPadX, H - fitPadY]], { type: 'Sphere' });
 
   const pathGen = d3.geoPath().projection(projection);
 
