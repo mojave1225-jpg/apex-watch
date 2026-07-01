@@ -278,22 +278,30 @@ function renderCommandDeck() {
   if (infraEl) infraEl.textContent = `${infraStress}%`;
 
   const syncEl = document.getElementById('cmd-sync-status');
-  if (syncEl) syncEl.textContent = state.apiReady ? 'synced' : 'syncing';
+  if (syncEl) syncEl.textContent = state.apiReady ? '同期済み / synced' : '同期中 / syncing';
 
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const updatedEl = document.getElementById('cmd-last-update');
-  if (updatedEl) updatedEl.textContent = `updated ${hh}:${mm}`;
+  if (updatedEl) updatedEl.textContent = `更新 ${hh}:${mm} / updated ${hh}:${mm}`;
 
   const defconLink = document.getElementById('cmd-defcon-link');
   if (defconLink) {
-    defconLink.textContent = globalRisk >= 80 ? 'high lock' : globalRisk >= 60 ? 'elevated sync' : 'stable';
+    defconLink.textContent = globalRisk >= 80
+      ? '高警戒 / high lock'
+      : globalRisk >= 60
+        ? '警戒上昇 / elevated sync'
+        : '安定 / stable';
   }
 
   const maritimePressure = document.getElementById('cmd-maritime-pressure');
   if (maritimePressure) {
-    maritimePressure.textContent = shipping >= 75 ? 'red lane stress' : shipping >= 55 ? 'watchlisted' : 'nominal';
+    maritimePressure.textContent = shipping >= 75
+      ? '高負荷 / red lane stress'
+      : shipping >= 55
+        ? '監視対象 / watchlisted'
+        : '平常 / nominal';
   }
 
   const crossAnomaly = document.getElementById('cmd-cross-anomaly');
@@ -303,10 +311,10 @@ function renderCommandDeck() {
   }
 
   const theaters = [
-    { name: 'Taiwan Strait / East China Sea', score: Math.round((military + globalRisk) / 2) },
-    { name: 'Persian Gulf / Hormuz', score: Math.round((military * 0.85) + (shipping * 0.15)) },
-    { name: 'Baltic / Eastern Europe', score: Math.round((military * 0.75) + (security * 0.25)) },
-    { name: 'Pacific Logistics Corridor', score: Math.round((shipping * 0.7) + (bizjet * 0.3)) },
+    { name: '台湾海峡 / 東シナ海 / Taiwan Strait / East China Sea', score: Math.round((military + globalRisk) / 2) },
+    { name: 'ペルシャ湾 / ホルムズ海峡 / Persian Gulf / Hormuz', score: Math.round((military * 0.85) + (shipping * 0.15)) },
+    { name: 'バルト海 / 東欧 / Baltic / Eastern Europe', score: Math.round((military * 0.75) + (security * 0.25)) },
+    { name: '太平洋物流回廊 / Pacific Logistics Corridor', score: Math.round((shipping * 0.7) + (bizjet * 0.3)) },
   ];
 
   const theaterGrid = document.getElementById('cmd-theater-grid');
@@ -334,7 +342,7 @@ function renderCommandDeck() {
         severity,
         tag: item.tag,
         title: item.title,
-        time: `${minuteAgo}m ago`,
+        time: `${minuteAgo}分前 / ${minuteAgo}m ago`,
       };
     });
 
@@ -352,18 +360,18 @@ function renderCommandDeck() {
   const micro = document.getElementById('cmd-micro-matrix');
   if (micro) {
     const microItems = [
-      { tag: 'conflicts', val: `${conflictClusters}`, sub: 'active clusters' },
-      { tag: 'bases', val: `${Math.max(22, Math.round(military * 0.55))}`, sub: 'monitored nodes' },
-      { tag: 'hotspots', val: `${Math.max(8, Math.round(globalRisk / 9))}`, sub: 'priority zones' },
-      { tag: 'nuclear', val: `${globalRisk >= 75 ? 'elevated' : 'stable'}`, sub: 'doctrine posture' },
-      { tag: 'sanctions', val: `${Math.max(14, Math.round(globalRisk * 0.35))}`, sub: 'active packages' },
-      { tag: 'weather', val: `${Math.max(3, Math.round((globalRisk + 10) / 18))}`, sub: 'severe cells' },
-      { tag: 'economic', val: `${Math.max(48, Math.round((shipping + globalRisk) / 2))}`, sub: 'stress index' },
-      { tag: 'waterways', val: `${Math.max(4, Math.round(shipping / 14))}`, sub: 'chokepoints' },
-      { tag: 'outages', val: `${Math.max(5, Math.round(security / 16))}`, sub: 'infra incidents' },
-      { tag: 'military', val: `${military}`, sub: 'movement score' },
-      { tag: 'natural', val: `${Math.max(9, Math.round(globalRisk / 7))}`, sub: 'geo events / 7d' },
-      { tag: 'iranAttacks', val: `${globalRisk >= 70 ? 'watch' : 'low'}`, sub: 'regional stream' },
+      { tag: '紛争 / conflicts', val: `${conflictClusters}`, sub: '活動クラスター / active clusters' },
+      { tag: '基地 / bases', val: `${Math.max(22, Math.round(military * 0.55))}`, sub: '監視ノード / monitored nodes' },
+      { tag: 'ホットスポット / hotspots', val: `${Math.max(8, Math.round(globalRisk / 9))}`, sub: '優先監視域 / priority zones' },
+      { tag: '核態勢 / nuclear', val: `${globalRisk >= 75 ? '警戒 / elevated' : '安定 / stable'}`, sub: 'ドクトリン姿勢 / doctrine posture' },
+      { tag: '制裁 / sanctions', val: `${Math.max(14, Math.round(globalRisk * 0.35))}`, sub: '有効パッケージ / active packages' },
+      { tag: '気象 / weather', val: `${Math.max(3, Math.round((globalRisk + 10) / 18))}`, sub: '厳重セル / severe cells' },
+      { tag: '経済 / economic', val: `${Math.max(48, Math.round((shipping + globalRisk) / 2))}`, sub: 'ストレス指数 / stress index' },
+      { tag: '航路 / waterways', val: `${Math.max(4, Math.round(shipping / 14))}`, sub: '要衝数 / chokepoints' },
+      { tag: '障害 / outages', val: `${Math.max(5, Math.round(security / 16))}`, sub: 'インフラ事象 / infra incidents' },
+      { tag: '軍事 / military', val: `${military}`, sub: '機動スコア / movement score' },
+      { tag: '自然 / natural', val: `${Math.max(9, Math.round(globalRisk / 7))}`, sub: '地球活動 / 7日 / geo events / 7d' },
+      { tag: 'イラン関連 / iranAttacks', val: `${globalRisk >= 70 ? '監視 / watch' : '低位 / low'}`, sub: '地域ストリーム / regional stream' },
     ];
 
     micro.innerHTML = microItems.map((item) => `
