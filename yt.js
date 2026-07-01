@@ -107,6 +107,11 @@ function setEmbed(ch) {
 
   const existingFrame = w.querySelector('iframe');
   if (existingFrame) {
+    const currentSrc = existingFrame.getAttribute('src') || '';
+    if (currentSrc.includes('youtube-nocookie.com')) {
+      existingFrame.src = srcYoutube;
+    }
+
     attachControls(w, ch, existingFrame, srcNoCookie, srcYoutube);
     return;
   }
@@ -114,7 +119,7 @@ function setEmbed(ch) {
   w.innerHTML = `
     <div class="yt-embed-label">${ch.label} <span style="font-size:10px;color:#88aa88">[字幕: 自動ON]</span></div>
     <iframe
-      src="${srcNoCookie}"
+      src="${srcYoutube}"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowfullscreen
