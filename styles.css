@@ -2437,7 +2437,7 @@ html, body {
   .news-live-panel { flex: 1; }
 
   /* マップ */
-  .map-container { min-height: 280px; }
+  .map-container { min-height: 112px; height: 112px; }
 
   /* DEFCONパネル: タブレットはそのまま左上に */
   #threat-status-panel { width: 175px; top: 66px; left: 24px; }
@@ -2482,7 +2482,7 @@ html, body {
 
   /* ── マップ ── */
   .map-section { padding: 10px 12px 6px; }
-  .map-container { min-height: 210px; }
+  .map-container { min-height: 84px; height: 84px; }
   .map-header-row { margin-bottom: 8px; }
   .map-header-row > span:first-child { font-size: 10px; letter-spacing: 1px; }
 
@@ -3025,7 +3025,7 @@ html, body {
   .arc-svg { max-width: 130px !important; }
   .score-value { font-size: 30px; }
   .news-live-panel { height: 180px; }
-  .map-container { min-height: 180px; }
+  .map-container { min-height: 72px; height: 72px; }
   #threat-status-panel { gap: 4px; }
   .ts-block { padding: 6px 7px; }
   .ts-indicators { gap: 2px; }
