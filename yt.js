@@ -25,6 +25,11 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
     ? `${host}/embed/${ch.liveVideoId}`
     : `${host}/embed/live_stream?channel=${ch.channelId}`;
 
+  const originParam =
+    typeof window !== 'undefined' && window.location && window.location.origin
+      ? `&origin=${encodeURIComponent(window.location.origin)}`
+      : '';
+
   return [
     base,
     '&autoplay=1&mute=1&rel=0&modestbranding=1',
@@ -32,6 +37,7 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
     '&cc_load_policy=1',
     '&hl=ja',
     '&enablejsapi=1',
+    originParam,
   ].join('');
 }
 
