@@ -656,6 +656,7 @@ html, body {
 .panel-southwest-highlight {
   border-top: 2px solid rgba(255, 0, 68, 0.5);
   box-shadow: 0 0 0 1px rgba(255, 0, 68, 0.12) inset;
+  grid-column: 1 / -1;
 }
 
 .southwest-link-btn {
