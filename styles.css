@@ -491,6 +491,120 @@ html, body {
   margin: 0;
 }
 
+@media (min-width: 1200px) {
+  html, body {
+    font-size: 12px;
+  }
+  .site-header {
+    padding: 10px 16px;
+  }
+  .alert-banner {
+    padding: 6px 16px;
+  }
+  .section-nav {
+    top: 48px;
+    padding: 0 10px;
+  }
+  .top-row {
+    min-height: 420px;
+  }
+  .threat-section {
+    padding: 10px 12px 6px;
+  }
+  .arc-svg {
+    max-width: 190px;
+  }
+  .news-live-panel {
+    min-height: 220px;
+  }
+  .map-container {
+    min-height: 380px;
+  }
+  .map-header-row {
+    font-size: 10px;
+    gap: 6px;
+  }
+  .dashboard-grid {
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 0.5px;
+  }
+  .panel {
+    padding: 12px;
+  }
+  .panel-header {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+  }
+  .panel-score {
+    font-size: 22px;
+  }
+  .panel-bar-wrap {
+    height: 5px;
+  }
+  .panel-note {
+    font-size: 8px;
+  }
+  .indicator-row {
+    padding: 3px 0;
+  }
+  .ind-label {
+    font-size: 9px;
+  }
+  .ind-value {
+    font-size: 10px;
+  }
+  .ind-arrow {
+    min-width: 14px;
+  }
+  .score-label,
+  .panel-title,
+  .threat-label-top {
+    font-size: 11px;
+  }
+  .map-legend { gap: 8px; }
+  .cyber-legend { font-size: 7px; gap: 6px; }
+  .cyber-intel-src { font-size: 7px; }
+}
+
+@media (min-width: 1600px) {
+  html, body {
+    font-size: 12px;
+  }
+  .dashboard-grid {
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
+  }
+  .top-row {
+    min-height: 400px;
+  }
+  .map-container {
+    min-height: 340px;
+  }
+  .news-live-panel {
+    min-height: 200px;
+  }
+  .arc-svg {
+    max-width: 170px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(6, minmax(200px, 1fr));
+  }
+  .top-row {
+    min-height: 360px;
+  }
+  .map-container {
+    min-height: 320px;
+  }
+  .news-live-panel {
+    min-height: 180px;
+  }
+  .arc-svg {
+    max-width: 150px;
+  }
+}
+
 .panel {
   background: var(--bg-panel);
   padding: 18px;
