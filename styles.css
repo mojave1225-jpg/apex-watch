@@ -1397,6 +1397,58 @@ html, body {
   color: var(--text-primary);
   text-align: right;
 }
+.map-hud-spark {
+  margin-top: 6px;
+  border: 1px solid rgba(42, 74, 138, 0.45);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 5px 6px;
+}
+.map-spark-head {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.map-spark-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.map-spark-card {
+  border: 1px solid rgba(42, 74, 138, 0.45);
+  border-radius: 2px;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.12);
+}
+.map-spark-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+.map-spark-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  color: var(--text-secondary);
+}
+.map-spark-val {
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+.map-spark-svg {
+  width: 100%;
+  height: 26px;
+  display: block;
+}
+.map-spark-path {
+  fill: none;
+  stroke-width: 1.4;
+}
+.map-spark-dot {
+  r: 1.8;
+}
 
 /* D3 country paths — fill is set exclusively via D3 attr/style, NOT CSS */
 .map-container .country {
@@ -2116,6 +2168,9 @@ html, body {
   }
   .map-hud-bar-row {
     grid-template-columns: 62px 1fr 20px;
+  }
+  .map-spark-grid {
+    grid-template-columns: 1fr;
   }
   #cyber-bar { gap: 10px; padding: 6px 10px; }
   .cyber-legend { gap: 6px; font-size: 8px; }

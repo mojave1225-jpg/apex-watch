@@ -144,6 +144,92 @@ function updateHudDelta(total) {
   el.classList.remove('up', 'down', 'flat');
 }
 
+function getDayKey(ts = Date.now()) {
+  const d = new Date(ts);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function updateLevelHistory(counts) {
+  const key = 'apex_map_level_history_v1';
+  const today = getDayKey();
+  let history = [];
+  try {
+    history = JSON.parse(localStorage.getItem(key) || '[]');
+  } catch (_) {
+    history = [];
+  }
+
+  if (!Array.isArray(history)) history = [];
+
+  const entry = {
+    d: today,
+    l4: Number(counts[4] || 0),
+    l3: Number(counts[3] || 0),
+    l2: Number(counts[2] || 0),
+    l1: Number(counts[1] || 0),
+  };
+
+  const idx = history.findIndex((h) => h && h.d === today);
+  if (idx >= 0) history[idx] = entry;
+  else history.push(entry);
+
+  history = history
+    .filter((h) => h && typeof h.d === 'string')
+    .sort((a, b) => a.d.localeCompare(b.d))
+    .slice(-7);
+
+  localStorage.setItem(key, JSON.stringify(history));
+  return history;
+}
+
+function buildSparkPath(values, w = 82, h = 26, pad = 2) {
+  const nums = values.map((v) => Number(v || 0));
+  const maxV = Math.max(...nums, 1);
+  const step = nums.length > 1 ? (w - pad * 2) / (nums.length - 1) : 0;
+  const points = nums.map((v, i) => {
+    const x = pad + i * step;
+    const y = h - pad - (v / maxV) * (h - pad * 2);
+    return [x, y];
+  });
+
+  const d = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(' ');
+  const last = points[points.length - 1] || [w - pad, h - pad];
+  return { d, lastX: last[0], lastY: last[1] };
+}
+
+function renderLevelSparks(history, counts) {
+  const wrap = document.getElementById('map-spark-grid');
+  if (!wrap) return;
+
+  const series = [
+    { key: 'l4', label: 'L4', color: CONFLICT_CFG[4].stroke },
+    { key: 'l3', label: 'L3', color: CONFLICT_CFG[3].stroke },
+    { key: 'l2', label: 'L2', color: CONFLICT_CFG[2].stroke },
+    { key: 'l1', label: 'L1', color: CONFLICT_CFG[1].stroke },
+  ];
+
+  wrap.innerHTML = series.map((s) => {
+    const vals = history.map((h) => Number(h[s.key] || 0));
+    const spark = buildSparkPath(vals);
+    const current = counts[Number(s.label.slice(1))] || 0;
+    return `
+      <div class="map-spark-card">
+        <div class="map-spark-row">
+          <span class="map-spark-label" style="color:${s.color}">${s.label}</span>
+          <span class="map-spark-val" style="color:${s.color}">${current}</span>
+        </div>
+        <svg class="map-spark-svg" viewBox="0 0 82 26" preserveAspectRatio="none" role="img" aria-label="${s.label} 7-day trend">
+          <path class="map-spark-path" d="${spark.d}" stroke="${s.color}"></path>
+          <circle class="map-spark-dot" cx="${spark.lastX.toFixed(2)}" cy="${spark.lastY.toFixed(2)}" fill="${s.color}"></circle>
+        </svg>
+      </div>
+    `;
+  }).join('');
+}
+
 function updateMapHud() {
   const levels = [4, 3, 2, 1];
   const counts = { 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -169,6 +255,8 @@ function updateMapHud() {
   set('map-lv2', counts[2]);
   set('map-lv1', counts[1]);
   updateHudDelta(total);
+  const history = updateLevelHistory(counts);
+  renderLevelSparks(history, counts);
   renderRegionBars(byRegion);
 
   const hotspot = document.getElementById('map-hotspot');
