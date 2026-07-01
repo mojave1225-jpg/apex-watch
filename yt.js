@@ -8,7 +8,7 @@
 const YT_CHANNELS = [
   {
     wrapperId:  'yt-wrap-cbs',
-    videoId:    'uv5-ars3sAs',               // CBS News 24/7 live stream
+    channelId:  'UC8p1vwvWtl6T73JiExfWs1g',  // CBS News official channel
     label:      '▶ CBS News 24/7',
     youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
   },
@@ -18,7 +18,7 @@ function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
   const src = [
-    `https://www.youtube.com/embed/${ch.videoId}`,
+    `https://www.youtube.com/embed/live_stream?channel=${ch.channelId}`,
     '?autoplay=1&mute=1&rel=0&modestbranding=1',
     '&cc_load_policy=1',          // 字幕を有効にする
     '&hl=ja',                     // インターフェース言語を日本語に
