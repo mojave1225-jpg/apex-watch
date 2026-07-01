@@ -762,7 +762,7 @@ html, body {
     padding: 0 10px;
   }
   .top-row {
-    min-height: 420px;
+    min-height: 360px;
   }
   .threat-section {
     padding: 10px 12px 6px;
@@ -774,7 +774,7 @@ html, body {
     min-height: 220px;
   }
   .map-container {
-    min-height: 380px;
+    min-height: 300px;
   }
   .map-header-row {
     font-size: 10px;
@@ -857,10 +857,10 @@ html, body {
     grid-template-columns: repeat(5, minmax(200px, 1fr));
   }
   .top-row {
-    min-height: 400px;
+    min-height: 340px;
   }
   .map-container {
-    min-height: 340px;
+    min-height: 280px;
   }
   .news-live-panel {
     min-height: 200px;
@@ -875,10 +875,10 @@ html, body {
     grid-template-columns: repeat(6, minmax(200px, 1fr));
   }
   .top-row {
-    min-height: 360px;
+    min-height: 320px;
   }
   .map-container {
-    min-height: 320px;
+    min-height: 260px;
   }
   .news-live-panel {
     min-height: 180px;
