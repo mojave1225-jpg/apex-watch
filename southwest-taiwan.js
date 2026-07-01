@@ -68,16 +68,23 @@ function injectScript(url) {
 }
 
 async function ensureLeafletLoaded() {
-  if (typeof window.L !== 'undefined') return true;
+  const hasLeafletCss = Array.from(document.styleSheets || []).some((sheet) => {
+    const href = sheet?.href || '';
+    return href.includes('leaflet') && href.includes('.css');
+  });
 
-  for (const cssUrl of LEAFLET_CSS_CDNS) {
-    try {
-      await injectStylesheet(cssUrl);
-      break;
-    } catch (error) {
-      console.warn(error.message);
+  if (!hasLeafletCss) {
+    for (const cssUrl of LEAFLET_CSS_CDNS) {
+      try {
+        await injectStylesheet(cssUrl);
+        break;
+      } catch (error) {
+        console.warn(error.message);
+      }
     }
   }
+
+  if (typeof window.L !== 'undefined') return true;
 
   for (const jsUrl of LEAFLET_JS_CDNS) {
     try {
