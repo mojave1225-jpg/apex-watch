@@ -51,6 +51,10 @@ const CYBER_TARGETS = [
   'IL','SA','PL','CA','IN','SG','TR','SE','CH',
 ];
 
+// Prefer backside routing for major source actors so long-haul attacks
+// visually pass over the far hemisphere instead of cutting across the front.
+const BACKSIDE_ROUTE_SOURCES = new Set(['CN', 'RU', 'KP']);
+
 /* ============================================================
    THREAT INTELLIGENCE — Feodo Tracker (abuse.ch)
    Real botnet C&C server data, updated every ~3h by abuse.ch.
@@ -199,12 +203,35 @@ const TAIL_FRAC  = 0.32;   // tail length as fraction of arc
 const ARC_STEPS  = 80;     // interpolation points per arc
 
 // ── Great-circle interpolation → pixel array ──
-function buildArcPoints(srcGeo, tgtGeo) {
-  const interp = d3.geoInterpolate(srcGeo, tgtGeo);
+function wrapLon(lon) {
+  return ((lon + 540) % 360) - 180;
+}
+
+function lonDeltaShortest(srcLon, tgtLon) {
+  return ((tgtLon - srcLon + 540) % 360) - 180;
+}
+
+function buildArcPoints(srcGeo, tgtGeo, preferBackside = false) {
+  const srcLon = wrapLon(srcGeo[0]);
+  const tgtLon = wrapLon(tgtGeo[0]);
+
+  let interpTarget = [tgtGeo[0], tgtGeo[1]];
+  if (preferBackside) {
+    const d = lonDeltaShortest(srcLon, tgtLon);
+    // If the target is not very close longitudinally, force the opposite turn.
+    if (Math.abs(d) >= 45) {
+      interpTarget = [tgtGeo[0] + (d > 0 ? -360 : 360), tgtGeo[1]];
+    }
+  }
+
+  const interp = d3.geoInterpolate(srcGeo, interpTarget);
   const pts = [];
   for (let i = 0; i <= ARC_STEPS; i++) {
-    const p = _proj(interp(i / ARC_STEPS));
-    if (p) pts.push(p);
+    const geo = interp(i / ARC_STEPS);
+    const lon = wrapLon(geo[0]);
+    const lat = geo[1];
+    const p = _proj([lon, lat]);
+    if (p) pts.push([p[0], p[1], lon]);
   }
   return pts;
 }
@@ -213,7 +240,7 @@ function buildArcPoints(srcGeo, tgtGeo) {
 function makeAttack(sk, tk, type) {
   const src = CYBER_NODES[sk], tgt = CYBER_NODES[tk];
   if (!src || !tgt) return null;
-  const pts = buildArcPoints(src.c, tgt.c);
+  const pts = buildArcPoints(src.c, tgt.c, BACKSIDE_ROUTE_SOURCES.has(sk));
   if (pts.length < 8) return null;
   const tp = _proj(tgt.c);
   if (!tp) return null;
@@ -234,11 +261,14 @@ function makeAttack(sk, tk, type) {
 // Use moveTo instead of lineTo so no line is drawn "through the globe".
 function polyline(pts, lw, alpha) {
   if (pts.length < 2) return;
-  const jumpX = _cv ? _cv.width * 0.40 : 400;
+  const jumpX = _cv ? _cv.width * 0.22 : 260;
   _cx.beginPath();
   _cx.moveTo(pts[0][0], pts[0][1]);
   for (let i = 1; i < pts.length; i++) {
-    if (Math.abs(pts[i][0] - pts[i - 1][0]) > jumpX) {
+    const lonA = pts[i - 1][2];
+    const lonB = pts[i][2];
+    const datelineCross = Number.isFinite(lonA) && Number.isFinite(lonB) && Math.abs(lonB - lonA) > 180;
+    if (datelineCross || Math.abs(pts[i][0] - pts[i - 1][0]) > jumpX) {
       _cx.moveTo(pts[i][0], pts[i][1]);   // break path at date-line crossing
     } else {
       _cx.lineTo(pts[i][0], pts[i][1]);
