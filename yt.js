@@ -37,8 +37,8 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
 
 function buildSourceList(ch) {
   return [
-    buildEmbedSrc(ch, false, 'channel'),
     buildEmbedSrc(ch, false, 'video'),
+    buildEmbedSrc(ch, false, 'channel'),
     buildEmbedSrc(ch, true, 'channel'),
     buildEmbedSrc(ch, true, 'video'),
   ];
