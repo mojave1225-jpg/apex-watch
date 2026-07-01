@@ -22,7 +22,7 @@ function buildEmbedSrc(ch, useNoCookie) {
 
   return [
     `${host}/embed/live_stream?channel=${ch.channelId}`,
-    '?autoplay=1&mute=1&rel=0&modestbranding=1',
+    '&autoplay=1&mute=1&rel=0&modestbranding=1',
     '&playsinline=1',
     '&cc_load_policy=1',
     '&hl=ja',
@@ -105,7 +105,7 @@ function setEmbed(ch) {
   const srcNoCookie = buildEmbedSrc(ch, true);
   const srcYoutube = buildEmbedSrc(ch, false);
 
-  const existingFrame = w.querySelector('iframe.yt-iframe');
+  const existingFrame = w.querySelector('iframe');
   if (existingFrame) {
     attachControls(w, ch, existingFrame, srcNoCookie, srcYoutube);
     return;
