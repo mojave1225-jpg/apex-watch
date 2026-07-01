@@ -13,6 +13,93 @@ const MAP_POINTS = [
 
 let globalMapInstance;
 
+const LEAFLET_CSS_CDNS = [
+  'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+];
+
+const LEAFLET_JS_CDNS = [
+  'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+];
+
+const TILE_PROVIDERS = [
+  {
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors',
+    },
+  },
+  {
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    options: {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    },
+  },
+];
+
+function injectStylesheet(url) {
+  return new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.crossOrigin = '';
+    link.onload = () => resolve();
+    link.onerror = () => reject(new Error(`Stylesheet load failed: ${url}`));
+    document.head.appendChild(link);
+  });
+}
+
+function injectScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.crossOrigin = '';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Script load failed: ${url}`));
+    document.head.appendChild(script);
+  });
+}
+
+async function ensureLeafletLoaded() {
+  if (typeof window.L !== 'undefined') return true;
+
+  for (const cssUrl of LEAFLET_CSS_CDNS) {
+    try {
+      await injectStylesheet(cssUrl);
+      break;
+    } catch (error) {
+      console.warn(error.message);
+    }
+  }
+
+  for (const jsUrl of LEAFLET_JS_CDNS) {
+    try {
+      await injectScript(jsUrl);
+      if (typeof window.L !== 'undefined') return true;
+    } catch (error) {
+      console.warn(error.message);
+    }
+  }
+
+  return typeof window.L !== 'undefined';
+}
+
+function addBestTileLayer(map) {
+  let layer;
+  for (const provider of TILE_PROVIDERS) {
+    try {
+      layer = L.tileLayer(provider.url, provider.options).addTo(map);
+      return layer;
+    } catch (error) {
+      console.warn(`Tile provider setup failed: ${provider.url}`, error);
+    }
+  }
+  return null;
+}
+
 function updateClock() {
   const now = new Date();
   const utc = now.toUTCString().replace('GMT', 'UTC').split(' ').slice(4).join(' ');
@@ -27,23 +114,26 @@ function setStatus(text, tone = 'info') {
   el.className = `status-pill status-${tone}`;
 }
 
-function initGlobalMap() {
+async function initGlobalMap() {
   if (globalMapInstance) return;
   const mapEl = document.getElementById('globalMap');
-  if (!mapEl || typeof window.L === 'undefined') return;
+  if (!mapEl) return;
+
+  const leafletReady = await ensureLeafletLoaded();
+  if (!leafletReady || typeof window.L === 'undefined') {
+    mapEl.innerHTML = '<div style="display:grid;place-items:center;height:100%;color:#7f8fb1;font-size:12px;">地図ライブラリの読み込みに失敗しました。</div>';
+    return;
+  }
 
   const map = L.map(mapEl, {
     zoomControl: true,
     minZoom: 2,
-    maxZoom: 9,
+    maxZoom: 10,
     worldCopyJump: true,
     attributionControl: true,
-  }).setView([22, 122], 3);
+  }).setView([22.8, 123.5], 4);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-  }).addTo(map);
+  addBestTileLayer(map);
 
   L.rectangle([
     [18, 118],
@@ -81,7 +171,12 @@ function initGlobalMap() {
   route.bindTooltip('Nansei - Taiwan route watch');
 
   globalMapInstance = map;
-  setTimeout(() => map.invalidateSize(), 0);
+  setTimeout(() => map.invalidateSize(), 50);
+  window.addEventListener('resize', () => {
+    if (globalMapInstance) {
+      globalMapInstance.invalidateSize();
+    }
+  });
 }
 
 function renderWeather(items) {
@@ -281,7 +376,7 @@ async function refreshLiveData() {
 }
 
 async function initSpecialPage() {
-  initGlobalMap();
+  await initGlobalMap();
   updateClock();
   setInterval(updateClock, 1000);
   await refreshLiveData();
