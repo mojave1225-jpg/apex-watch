@@ -46,24 +46,73 @@ function renderQuakes(items) {
   `).join('');
 }
 
-function fetchWithTimeout(url, timeout = 8000) {
+function renderWeatherError(message) {
+  const wrap = document.getElementById('weatherList');
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="muted">${message}</div>`;
+}
+
+function renderQuakeError(message) {
+  const wrap = document.getElementById('quakeList');
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="muted">${message}</div>`;
+}
+
+const WEATHER_ENDPOINTS = [
+  (target) => `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=Asia%2FTaipei&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm`,
+  (target) => `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=auto&temperature_unit=celsius&windspeed_unit=kmh&precipitation_unit=mm`,
+];
+
+function fetchWithTimeout(url, timeout = 15000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(id));
 }
 
-async function fetchWeather() {
-  const weatherItems = await Promise.all(WEATHER_TARGETS.map(async (target) => {
+function buildProxyUrl(url) {
+  return `https://r.jina.ai/http://${url.replace(/^https?:\/\//, '')}`;
+}
+
+function parseProxyJson(text) {
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end === -1) throw new Error('proxy response invalid');
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+async function fetchJsonWithFallback(url) {
+  try {
+    const response = await fetchWithTimeout(url, 15000);
+    if (!response.ok) throw new Error(`fetch failed (${response.status})`);
+    return await response.json();
+  } catch (primaryError) {
+    console.warn(`Direct fetch failed for ${url}:`, primaryError);
+    if (url.includes('api.open-meteo.com') || url.includes('earthquake.usgs.gov')) {
+      const proxyUrl = buildProxyUrl(url);
+      try {
+        const proxyResponse = await fetchWithTimeout(proxyUrl, 20000);
+        if (!proxyResponse.ok) throw new Error(`proxy fetch failed (${proxyResponse.status})`);
+        const text = await proxyResponse.text();
+        return parseProxyJson(text);
+      } catch (proxyError) {
+        console.warn(`Proxy fetch failed for ${url}:`, proxyError);
+        throw proxyError;
+      }
+    }
+    throw primaryError;
+  }
+}
+
+async function fetchWeatherTarget(target) {
+  for (const endpoint of WEATHER_ENDPOINTS) {
+    const url = endpoint(target);
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=Asia%2FTaipei`;
-      const res = await fetchWithTimeout(url, 8000);
-      if (!res.ok) throw new Error('weather fetch failed');
-      const data = await res.json();
+      const data = await fetchJsonWithFallback(url);
       const current = data.current_weather || {};
       const hourly = data.hourly || {};
       const currentIndex = hourly.time?.indexOf(current.time ?? '') ?? -1;
-      const humidity = currentIndex >= 0 ? hourly.relativehumidity_2m?.[currentIndex] : null;
-      const precip = currentIndex >= 0 ? hourly.precipitation?.[currentIndex] : null;
+      const humidity = currentIndex >= 0 ? hourly.relativehumidity_2m?.[currentIndex] : hourly.relativehumidity_2m?.[0] ?? null;
+      const precip = currentIndex >= 0 ? hourly.precipitation?.[currentIndex] : hourly.precipitation?.[0] ?? null;
       return {
         name: target.name,
         temp: Number(current.temperature ?? 0).toFixed(1),
@@ -72,24 +121,49 @@ async function fetchWeather() {
         precip: precip != null ? Number(precip).toFixed(1) : '--',
       };
     } catch (error) {
-      console.warn('Weather fetch failed:', error);
+      console.warn(`Weather fetch failed for ${target.name} at ${url}:`, error);
+    }
+  }
+  throw new Error(`All weather endpoints failed for ${target.name}`);
+}
+
+async function fetchWeather() {
+  const weatherItems = await Promise.all(WEATHER_TARGETS.map(async (target) => {
+    try {
+      return await fetchWeatherTarget(target);
+    } catch (error) {
+      console.warn('Weather fetch failed for target:', target.name, error);
       return {
         name: target.name,
         temp: '--',
         humidity: '--',
         wind: '--',
         precip: '--',
+        error: true,
       };
     }
   }));
-  renderWeather(weatherItems);
+
+  const anySuccess = weatherItems.some((item) => !item.error);
+  renderWeather(weatherItems.map((item) => ({
+    name: item.name,
+    temp: item.temp,
+    humidity: item.humidity,
+    wind: item.wind,
+    precip: item.precip,
+  })));
+
+  if (!anySuccess) {
+    renderWeatherError('気象データの取得に失敗しました。ネットワークまたはAPIアクセスを確認してください。');
+    return false;
+  }
+
+  return true;
 }
 
 async function fetchQuakes() {
   try {
-    const res = await fetchWithTimeout('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson', 8000);
-    if (!res.ok) throw new Error('quake fetch failed');
-    const data = await res.json();
+    const data = await fetchJsonWithFallback('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
     const items = (data.features || [])
       .filter((feature) => {
         const [lon, lat] = feature.geometry.coordinates;
@@ -106,9 +180,11 @@ async function fetchQuakes() {
         };
       });
     renderQuakes(items);
+    return true;
   } catch (error) {
     console.warn('Quake fetch failed:', error);
-    renderQuakes([]);
+    renderQuakeError('地震データの取得に失敗しました。');
+    return false;
   }
 }
 
@@ -121,9 +197,21 @@ function updateLastUpdated() {
 
 async function refreshLiveData() {
   setStatus('ライブ観測データを更新中...', 'info');
-  await Promise.allSettled([fetchWeather(), fetchQuakes()]);
+  const [weatherResult, quakeResult] = await Promise.allSettled([fetchWeather(), fetchQuakes()]);
   updateLastUpdated();
-  setStatus('ライブ観測を更新済み', 'ok');
+
+  const weatherOk = weatherResult.status === 'fulfilled' && weatherResult.value === true;
+  const quakeOk = quakeResult.status === 'fulfilled' && quakeResult.value === true;
+
+  if (weatherOk && quakeOk) {
+    setStatus('ライブ観測を更新済み', 'ok');
+  } else if (!weatherOk && !quakeOk) {
+    setStatus('気象・地震データの取得に失敗しました', 'warn');
+  } else if (!weatherOk) {
+    setStatus('気象データの取得に失敗しました', 'warn');
+  } else {
+    setStatus('地震データの取得に失敗しました', 'warn');
+  }
 }
 
 async function initSpecialPage() {
