@@ -1351,6 +1351,52 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.map-hud-meta {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 0.3px;
+}
+.map-hud-meta.up { color: #ff8aa0; }
+.map-hud-meta.down { color: #69d9ff; }
+.map-hud-meta.flat { color: #94a8c9; }
+.map-hud-bars {
+  margin-top: 6px;
+  display: grid;
+  gap: 4px;
+}
+.map-hud-bar-row {
+  display: grid;
+  grid-template-columns: 76px 1fr 24px;
+  align-items: center;
+  gap: 5px;
+}
+.map-hud-bar-name {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.map-hud-bar-track {
+  height: 5px;
+  border: 1px solid rgba(58, 90, 140, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.map-hud-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(68, 187, 255, 0.6), rgba(255, 136, 0, 0.9));
+}
+.map-hud-bar-val {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-primary);
+  text-align: right;
+}
 
 /* D3 country paths — fill is set exclusively via D3 attr/style, NOT CSS */
 .map-container .country {
@@ -2064,6 +2110,12 @@ html, body {
   }
   .map-hud-foot {
     font-size: 7px;
+  }
+  .map-hud-meta {
+    font-size: 7px;
+  }
+  .map-hud-bar-row {
+    grid-template-columns: 62px 1fr 20px;
   }
   #cyber-bar { gap: 10px; padding: 6px 10px; }
   .cyber-legend { gap: 6px; font-size: 8px; }

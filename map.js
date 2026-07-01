@@ -68,6 +68,82 @@ const STRATEGIC_CORRIDORS = [
   },
 ];
 
+function collectRegionCounts() {
+  const byRegion = {
+    '中東 / ME': 0,
+    'アフリカ / AF': 0,
+    '欧州東部 / EU': 0,
+    'アジア / AS': 0,
+    '米州 / AM': 0,
+  };
+
+  Object.entries(CONFLICT_ZONES).forEach(([iso]) => {
+    const id = Number(iso);
+    if ([275, 364, 368, 760, 887].includes(id)) byRegion['中東 / ME'] += 1;
+    else if ([729, 728, 706, 231, 466, 562, 854, 140, 434, 566, 508, 148].includes(id)) byRegion['アフリカ / AF'] += 1;
+    else if ([804].includes(id)) byRegion['欧州東部 / EU'] += 1;
+    else if ([104, 4, 408, 586].includes(id)) byRegion['アジア / AS'] += 1;
+    else byRegion['米州 / AM'] += 1;
+  });
+
+  return byRegion;
+}
+
+function renderRegionBars(byRegion) {
+  const wrap = document.getElementById('map-hud-bars');
+  if (!wrap) return;
+  const entries = Object.entries(byRegion).sort((a, b) => b[1] - a[1]);
+  const maxVal = Math.max(...entries.map(([, n]) => n), 1);
+  wrap.innerHTML = entries.map(([name, val]) => {
+    const w = Math.max(8, Math.round((val / maxVal) * 100));
+    return `
+      <div class="map-hud-bar-row">
+        <span class="map-hud-bar-name">${name}</span>
+        <span class="map-hud-bar-track"><span class="map-hud-bar-fill" style="width:${w}%"></span></span>
+        <span class="map-hud-bar-val">${val}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateHudDelta(total) {
+  const el = document.getElementById('map-delta');
+  if (!el) return;
+
+  const key = 'apex_map_total_snapshot_v1';
+  const now = Date.now();
+  let snapshot = null;
+  try {
+    snapshot = JSON.parse(localStorage.getItem(key) || 'null');
+  } catch (_) {
+    snapshot = null;
+  }
+
+  if (!snapshot || !Number.isFinite(snapshot.total) || !Number.isFinite(snapshot.ts)) {
+    el.textContent = '24h差分: N/A (初回計測)';
+    el.classList.remove('up', 'down', 'flat');
+    localStorage.setItem(key, JSON.stringify({ total, ts: now }));
+    return;
+  }
+
+  const age = now - snapshot.ts;
+  if (age >= 24 * 60 * 60 * 1000) {
+    const delta = total - snapshot.total;
+    const sign = delta > 0 ? '+' : '';
+    el.textContent = `24h差分: ${sign}${delta}`;
+    el.classList.remove('up', 'down', 'flat');
+    if (delta > 0) el.classList.add('up');
+    else if (delta < 0) el.classList.add('down');
+    else el.classList.add('flat');
+    localStorage.setItem(key, JSON.stringify({ total, ts: now }));
+    return;
+  }
+
+  const remainH = Math.max(0, Math.ceil((24 * 60 * 60 * 1000 - age) / (60 * 60 * 1000)));
+  el.textContent = `24h差分: 計測中 (${remainH}h)`;
+  el.classList.remove('up', 'down', 'flat');
+}
+
 function updateMapHud() {
   const levels = [4, 3, 2, 1];
   const counts = { 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -78,22 +154,7 @@ function updateMapHud() {
 
   const total = counts[4] + counts[3] + counts[2] + counts[1];
 
-  const byRegion = {
-    '中東 / Middle East': 0,
-    'アフリカ / Africa': 0,
-    '欧州東部 / East Europe': 0,
-    'アジア / Asia': 0,
-    '米州 / Americas': 0,
-  };
-
-  Object.entries(CONFLICT_ZONES).forEach(([iso, c]) => {
-    const id = Number(iso);
-    if ([275, 364, 368, 760, 887].includes(id)) byRegion['中東 / Middle East'] += 1;
-    else if ([729, 728, 706, 231, 466, 562, 854, 140, 434, 566, 508, 148].includes(id)) byRegion['アフリカ / Africa'] += 1;
-    else if ([804].includes(id)) byRegion['欧州東部 / East Europe'] += 1;
-    else if ([104, 4, 408, 586].includes(id)) byRegion['アジア / Asia'] += 1;
-    else byRegion['米州 / Americas'] += 1;
-  });
+  const byRegion = collectRegionCounts();
 
   const topRegion = Object.entries(byRegion).sort((a, b) => b[1] - a[1])[0];
 
@@ -107,6 +168,8 @@ function updateMapHud() {
   set('map-lv3', counts[3]);
   set('map-lv2', counts[2]);
   set('map-lv1', counts[1]);
+  updateHudDelta(total);
+  renderRegionBars(byRegion);
 
   const hotspot = document.getElementById('map-hotspot');
   if (hotspot && topRegion) {
