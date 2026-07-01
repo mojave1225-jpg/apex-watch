@@ -317,6 +317,13 @@ function calcLevel(entry) {
 }
 
 function trendMeta(metric) {
+  if (metric === 'compare') {
+    return {
+      title: '7日推移 比較（各系列正規化）/ 7-day comparison (normalized)',
+      label: '',
+      fallback: 0,
+    };
+  }
   if (metric === 'midline') {
     return {
       title: '中間線越え 7日推移 / 7-day Midline-crossing trend',
@@ -347,6 +354,37 @@ function renderDailyTrend(entries, metric = trendMetric) {
   if (titleEl) titleEl.textContent = meta.title;
 
   const trend = entries.slice(0, 7).reverse();
+
+  if (metric === 'compare') {
+    trendWrap.classList.add('compare-mode');
+    const adizVals = trend.map((item) => Number(item.adiz) || 0);
+    const midVals = trend.map((item) => Number(item.midline) || 0);
+    const shipVals = trend.map((item) => Number(item.ships) || 0);
+    const maxA = Math.max(...adizVals, 1);
+    const maxM = Math.max(...midVals, 1);
+    const maxS = Math.max(...shipVals, 1);
+
+    trendWrap.innerHTML = trend.map((item, idx) => {
+      const ha = Math.max(6, Math.round((adizVals[idx] / maxA) * 70));
+      const hm = Math.max(6, Math.round((midVals[idx] / maxM) * 70));
+      const hs = Math.max(6, Math.round((shipVals[idx] / maxS) * 70));
+      const dateLabel = item.date.includes('.') ? item.date.split('.').slice(1).join('/') : item.date;
+      return `
+        <div class="trend-col">
+          <div class="trend-val multi">A${adizVals[idx]} / M${midVals[idx]} / S${shipVals[idx]}</div>
+          <div class="trend-group">
+            <div class="trend-bar adiz" style="height:${ha}px"></div>
+            <div class="trend-bar midline" style="height:${hm}px"></div>
+            <div class="trend-bar ships" style="height:${hs}px"></div>
+          </div>
+          <div class="trend-date">${dateLabel}</div>
+        </div>
+      `;
+    }).join('');
+    return;
+  }
+
+  trendWrap.classList.remove('compare-mode');
   const values = trend.map((item) => {
     const val = item[metric];
     return Number.isFinite(val) ? val : meta.fallback;

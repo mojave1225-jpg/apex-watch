@@ -199,7 +199,19 @@
   .trend-col{display:flex;flex-direction:column;align-items:center;gap:5px;}
   .trend-bar{width:100%;max-width:18px;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--accent-3),var(--accent));min-height:4px;}
   .trend-val{font-size:10px;color:var(--text);line-height:1;}
+  .trend-val.multi{font-size:9px;letter-spacing:.02em;}
   .trend-date{font-size:9px;color:var(--text-dim);line-height:1;}
+  .daily-trend-bars.compare-mode{height:106px;}
+  .daily-trend-bars.compare-mode .trend-group{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:74px;}
+  .daily-trend-bars.compare-mode .trend-bar{max-width:6px;width:6px;border-radius:2px 2px 0 0;}
+  .daily-trend-bars.compare-mode .trend-bar.adiz{background:linear-gradient(180deg,#ffb020,#ff4d4d);}
+  .daily-trend-bars.compare-mode .trend-bar.midline{background:linear-gradient(180deg,#78b8ff,#3ea6ff);}
+  .daily-trend-bars.compare-mode .trend-bar.ships{background:linear-gradient(180deg,#9cffd1,#7fffb2);}
+  .trend-compare-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:var(--text-dim);margin-top:6px;}
+  .trend-legend-dot{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:4px;vertical-align:middle;}
+  .trend-legend-dot.adiz{background:#ff7f63;}
+  .trend-legend-dot.midline{background:#3ea6ff;}
+  .trend-legend-dot.ships{background:#7fffb2;}
 
   footer{
     text-align:center;padding:24px;color:var(--text-dim);font-size:11px;
@@ -312,9 +324,15 @@
           <button class="trend-toggle-btn active" data-metric="adiz" type="button">ADIZ</button>
           <button class="trend-toggle-btn" data-metric="midline" type="button">中間線越え</button>
           <button class="trend-toggle-btn" data-metric="ships" type="button">共艦</button>
+          <button class="trend-toggle-btn" data-metric="compare" type="button">比較</button>
         </div>
       </div>
       <div class="daily-trend-bars" id="daily-trend-bars"></div>
+      <div class="trend-compare-legend">
+        <span><i class="trend-legend-dot adiz"></i>ADIZ</span>
+        <span><i class="trend-legend-dot midline"></i>中間線越え</span>
+        <span><i class="trend-legend-dot ships"></i>共艦</span>
+      </div>
     </div>
     <table>
       <thead>
