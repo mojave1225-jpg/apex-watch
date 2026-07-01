@@ -198,6 +198,17 @@ html, body {
   margin-bottom: 10px;
   color: var(--accent-blue);
 }
+.card-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent-red);
+  margin-bottom: 6px;
+}
+.special-card-highlight {
+  background: linear-gradient(135deg, rgba(255,0,68,0.12), rgba(0,204,255,0.07));
+  border-color: rgba(255,0,68,0.35);
+}
 .special-card ul {
   padding-left: 18px;
   color: var(--text-secondary);
