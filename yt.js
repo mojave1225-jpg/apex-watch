@@ -1,5 +1,5 @@
 /* ============================================================
-   YouTube Live Stream Loader v6
+   YouTube Live Stream Loader v6.2
    ライブ動画IDを実行時に解決する方式:
    自前Workerプロキシ経由で /live ページを取得し、canonical の
    watch?v=ID から現在のライブ配信IDを抽出して直接埋め込む。
@@ -73,15 +73,28 @@ async function resolveLiveVideoId(ch) {
     const res = await fetch(pu, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const html = await res.text();
-    // canonicalがwatch?v=を指す = /liveが特定の配信に解決されている
-    const m = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/);
+
+    // ライブ配信フラグ(どれか1つで可)
+    const isLive =
+      /"isLiveNow"\s*:\s*true/.test(html) ||
+      /"isLiveContent"\s*:\s*true/.test(html) ||
+      /"isLive"\s*:\s*true/.test(html);
+
+    // 動画IDの抽出(確度の高い順に試行)
+    const m =
+      // ① canonical(パラメータ付き・引用符差異も許容)
+      html.match(/rel="canonical"\s+href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})/) ||
+      // ② プレイヤーのvideoDetails
+      html.match(/"videoDetails"\s*:\s*\{\s*"videoId"\s*:\s*"([\w-]{11})"/) ||
+      // ③ 最初のvideoId(最終手段)
+      html.match(/"videoId"\s*:\s*"([\w-]{11})"/);
+
     if (!m) {
-      console.info('[YT] resolve: canonical not found (not live or consent page)');
+      console.info('[YT] resolve: no videoId in page (isLive flag:', isLive, ')');
       return null;
     }
-    // 実際にライブ配信中であることを確認(VODや予約枠を除外)
-    if (!html.includes('"isLiveNow":true')) {
-      console.info('[YT] resolve: canonical found but not live now:', m[1]);
+    if (!isLive) {
+      console.info('[YT] resolve: videoId found but no live flag, skipping:', m[1]);
       return null;
     }
     console.info('[YT] live video resolved:', m[1]);
