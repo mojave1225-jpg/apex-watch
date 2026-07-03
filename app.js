@@ -179,9 +179,7 @@ function recalcMain() {
   labelEl.textContent = label;
   labelEl.style.color = color;
 
-  const scoreEl = document.getElementById('mainScore');
-  scoreEl.style.color = color;
-  scoreEl.style.textShadow = `0 0 20px ${color.replace(')', ', 0.6)')}, 0 0 40px ${color.replace(')', ', 0.3)')}`;
+  // スコア数字は7セグ・シルバー固定(色による危険度表示はカード点灯とラベルで表現)
 
   // Arc animation: 0=full dashoffset(408), 100=0 dashoffset
   const dashOffset = Math.round(408 * (1 - total / 100));
@@ -190,6 +188,12 @@ function recalcMain() {
   // Needle: 0=-90deg, 100=+90deg
   const deg = -90 + (total / 100) * 180;
   document.getElementById('needle').style.transform = `rotate(${deg}deg)`;
+
+  // 現在レベルのステータスカードを点灯
+  const lvlIdx = total >= 80 ? 3 : total >= 60 ? 2 : total >= 40 ? 1 : 0;
+  document.querySelectorAll('.tcard').forEach((el, i) => {
+    el.classList.toggle('tcard-active', i === lvlIdx);
+  });
 
   // Alert banner
   updateAlertBanner(total);

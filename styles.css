@@ -3580,3 +3580,113 @@ html, body {
     background: rgba(4,8,20,0.92);
   }
 }
+
+
+/* ============================================================
+   DOOMSDAY INDEX GAUGE REDESIGN — v296
+   青→紫→マゼンタのグラデーション / 7セグ数字 / 角枠タイトル /
+   アイコン付きステータスカード
+   ============================================================ */
+
+/* 7セグメントフォント(読み込み失敗時はShare Tech Monoに自動フォールバック) */
+@font-face {
+  font-family: 'DSEG7';
+  src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff') format('woff');
+  font-display: swap;
+}
+
+/* 針の回転中心 */
+#needle { transform-origin: 150px 150px; }
+
+/* スコア数字: 7セグ+シルバーホワイト */
+.score-value {
+  font-family: 'DSEG7', var(--font-mono) !important;
+  color: #e9f0ff !important;
+  text-shadow:
+    0 0 14px rgba(150, 190, 255, 0.55),
+    0 0 34px rgba(120, 150, 255, 0.25) !important;
+  animation: none !important;
+  letter-spacing: 3px;
+}
+
+/* 角枠タイトルプレート(六角プレート二層構造で枠線を表現) */
+.threat-title-frame {
+  display: inline-block;
+  background: linear-gradient(90deg, #3a6fc4, #7fa8e8, #3a6fc4);
+  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
+  padding: 1px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 6px rgba(90, 140, 230, 0.45));
+}
+.threat-title-inner {
+  background: #060a18;
+  clip-path: polygon(15px 0, calc(100% - 15px) 0, calc(100% - 1px) 50%, calc(100% - 15px) 100%, 15px 100%, 1px 50%);
+  padding: 8px 30px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #d5e4ff;
+  text-shadow: 0 0 8px rgba(140, 180, 255, 0.6);
+}
+
+/* ステータスカード */
+.threat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.tcard {
+  border: 1px solid var(--c, var(--border));
+  border-radius: 8px;
+  padding: 9px 4px 8px;
+  text-align: center;
+  background: rgba(8, 12, 28, 0.65);
+  transition: box-shadow 0.4s ease, background 0.4s ease;
+}
+.tcard-ok       { --c: #35d0e0; }
+.tcard-warn     { --c: #ffcf4d; }
+.tcard-danger   { --c: #ff8a3d; }
+.tcard-critical { --c: #ff4d7a; }
+.tcard-jp {
+  font-size: 13px; font-weight: bold; color: var(--c);
+  letter-spacing: 2px;
+}
+.tcard-en {
+  font-family: var(--font-mono); font-size: 9px; color: var(--c);
+  opacity: 0.85; letter-spacing: 1px; margin-top: 1px;
+}
+.tcard-icon {
+  width: 22px; height: 22px; margin: 7px auto 6px;
+  display: block; color: var(--c);
+}
+.tcard-dashes {
+  display: flex; gap: 4px; justify-content: center;
+}
+.tcard-dashes span {
+  width: 13px; height: 3px; border-radius: 2px;
+  background: #232c48;
+}
+.tcard-dashes span.on {
+  background: var(--c);
+  box-shadow: 0 0 6px var(--c);
+}
+/* 現在レベルのカードを点灯 */
+.tcard-active {
+  background: rgba(12, 18, 40, 0.9);
+  box-shadow:
+    0 0 14px -4px var(--c),
+    inset 0 0 22px -12px var(--c);
+}
+
+@media (max-width: 600px) {
+  .threat-cards { gap: 5px; }
+  .tcard { padding: 7px 2px 6px; border-radius: 6px; }
+  .tcard-jp { font-size: 11px; letter-spacing: 1px; }
+  .tcard-en { font-size: 7.5px; }
+  .tcard-icon { width: 18px; height: 18px; margin: 5px auto 4px; }
+  .tcard-dashes span { width: 9px; }
+  .threat-title-inner { font-size: 9px; letter-spacing: 2px; padding: 7px 22px; }
+  .score-value { letter-spacing: 2px; }
+}
