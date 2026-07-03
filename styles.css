@@ -3690,3 +3690,23 @@ html, body {
   .threat-title-inner { font-size: 9px; letter-spacing: 2px; padding: 7px 22px; }
   .score-value { letter-spacing: 2px; }
 }
+
+
+/* ============================================================
+   GAUGE COLOR UNIFICATION — v297
+   DOOMSDAY INDEXリデザイン(青→紫→マゼンタ)に全ゲージを統一
+   ============================================================ */
+:root {
+  /* 統一ゲージグラデーション */
+  --gauge-grad: linear-gradient(90deg, #2f9bff, #7f9dff, #b98cff, #ff6a7d, #ff2e8a);
+  /* 統一レベルカラー(ステータスカードと同一パレット) */
+  --lvl-ok:       #35d0e0;
+  --lvl-warn:     #ffcf4d;
+  --lvl-danger:   #ff8a3d;
+  --lvl-critical: #ff4d7a;
+}
+
+/* 各所のスコアバーを統一グラデーションへ */
+.panel-bar          { background: var(--gauge-grad) !important; }
+.cmd-theater-fill   { background: var(--gauge-grad) !important; }
+.map-hud-bar-fill   { background: linear-gradient(90deg, rgba(47,155,255,0.65), rgba(255,46,138,0.9)) !important; }

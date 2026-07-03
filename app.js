@@ -136,9 +136,10 @@ function updatePanel(id, score, statusText) {
 
   // Color the score number
   const scoreEl = document.getElementById('score-' + id);
-  if (score >= 80) scoreEl.style.color = 'var(--accent-red)';
-  else if (score >= 60) scoreEl.style.color = 'var(--accent-orange)';
-  else scoreEl.style.color = 'var(--accent-yellow)';
+  if (score >= 80) scoreEl.style.color = 'var(--lvl-critical)';
+  else if (score >= 60) scoreEl.style.color = 'var(--lvl-danger)';
+  else if (score >= 40) scoreEl.style.color = 'var(--lvl-warn)';
+  else scoreEl.style.color = 'var(--lvl-ok)';
 }
 
 // ── ARROW HELPER ──
@@ -170,10 +171,10 @@ function recalcMain() {
   document.getElementById('mainScore').textContent = total;
 
   let label, color;
-  if (total >= 85) { label = '⚠ 緊急レベル: アポカリプス準備完了'; color = 'var(--accent-red)'; }
-  else if (total >= 70) { label = '⚡ 危険レベル: 大規模逃避フェーズ'; color = 'var(--accent-orange)'; }
-  else if (total >= 55) { label = '▲ 警戒レベル: 資産分散進行中'; color = 'var(--accent-yellow)'; }
-  else { label = '◈ 監視レベル: 通常範囲内'; color = 'var(--accent-green)'; }
+  if (total >= 85) { label = '⚠ 緊急レベル: アポカリプス準備完了'; color = 'var(--lvl-critical)'; }
+  else if (total >= 70) { label = '⚡ 危険レベル: 大規模逃避フェーズ'; color = 'var(--lvl-danger)'; }
+  else if (total >= 55) { label = '▲ 警戒レベル: 資産分散進行中'; color = 'var(--lvl-warn)'; }
+  else { label = '◈ 監視レベル: 通常範囲内'; color = 'var(--lvl-ok)'; }
 
   const labelEl = document.getElementById('threatLabel');
   labelEl.textContent = label;

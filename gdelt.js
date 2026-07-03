@@ -216,9 +216,9 @@ function gdeltRenderScore() {
   if (!el) return;
   if (gdeltState.score == null) { el.textContent = '--'; return; }
   el.textContent = gdeltState.score;
-  el.style.color = gdeltState.score >= 80 ? 'var(--accent-red)'
-                 : gdeltState.score >= 60 ? 'var(--accent-orange)'
-                 : gdeltState.score >= 40 ? 'var(--accent-yellow)' : 'var(--accent-green)';
+  el.style.color = gdeltState.score >= 80 ? 'var(--lvl-critical)'
+                 : gdeltState.score >= 60 ? 'var(--lvl-danger)'
+                 : gdeltState.score >= 40 ? 'var(--lvl-warn)' : 'var(--lvl-ok)';
   if (detail && gdeltState.toneRecent != null) {
     const delta = gdeltState.toneBaseline - gdeltState.toneRecent;
     detail.textContent = `直近トーン ${gdeltState.toneRecent.toFixed(2)} / 7日平均比 ${delta >= 0 ? '悪化' : '改善'} ${Math.abs(delta).toFixed(2)}`;
