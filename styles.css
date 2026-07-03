@@ -3540,3 +3540,43 @@ html, body {
   .map-layer-chip { font-size: 9px; padding: 3px 7px; }
   .gdelt-score-wrap { margin-left: 0; }
 }
+
+
+/* ============================================================
+   MOBILE MAP FIX — v295
+   スマホでマップが112px固定+HUD重なりで見えなくなる問題の修正。
+   コンテナに正しいアスペクト比を与え(map.jsのviewBox算出前に効く)、
+   ≤600pxではHUD(戦域情報)を地図の下に静的配置する。
+   ============================================================ */
+@media (max-width: 900px) {
+  .map-container {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1.92 / 1;
+  }
+  .map-container svg { height: auto; }
+}
+
+@media (max-width: 600px) {
+  .map-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .map-container svg {
+    order: 1;
+    width: 100%;
+    aspect-ratio: 1.92 / 1;
+    flex: 0 0 auto;
+  }
+  .map-hud {
+    order: 2;
+    position: static;
+    width: auto;
+    top: auto; right: auto; bottom: auto; left: auto;
+    margin: 0;
+    border-left: none; border-right: none; border-bottom: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: rgba(4,8,20,0.92);
+  }
+}

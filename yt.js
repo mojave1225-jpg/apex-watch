@@ -1,8 +1,10 @@
 /* ============================================================
-   YouTube Live Stream Loader v5
-   Direct channel embed — no Invidious API dependency.
-   YouTube resolves live_stream?channel= to the current live
-   video internally, so no video ID lookup is needed.
+   YouTube Live Stream Loader v6
+   ライブ動画IDを実行時に解決する方式:
+   自前Workerプロキシ経由で /live ページを取得し、canonical の
+   watch?v=ID から現在のライブ配信IDを抽出して直接埋め込む。
+   (live_stream?channel= 方式はYouTube側で不安定化しているため
+    フォールバックに降格)
    ============================================================ */
 
 const YT_CHANNELS = [
@@ -41,13 +43,43 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
   ].join('');
 }
 
-function buildSourceList(ch) {
+function buildSourceList(ch, resolvedLive) {
+  if (resolvedLive) {
+    // 現在のライブIDを解決できた場合はそれを最優先
+    const live = { ...ch, liveVideoId: resolvedLive };
+    return [
+      buildEmbedSrc(live, false, 'video'),
+      buildEmbedSrc(live, true,  'video'),
+      buildEmbedSrc(ch,   false, 'channel'),
+      buildEmbedSrc(ch,   true,  'channel'),
+    ];
+  }
+  // 解決失敗時: channel埋め込みを優先し、固定IDは最後の保険
   return [
-    buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, false, 'channel'),
-    buildEmbedSrc(ch, true, 'channel'),
-    buildEmbedSrc(ch, true, 'video'),
+    buildEmbedSrc(ch, true,  'channel'),
+    buildEmbedSrc(ch, false, 'video'),
+    buildEmbedSrc(ch, true,  'video'),
   ];
+}
+
+/* /live ページから現在のライブ動画IDを解決(Workerプロキシ経由) */
+async function resolveLiveVideoId(ch) {
+  if (typeof apexProxyUrl !== 'function') return null;
+  const pu = apexProxyUrl(ch.youtubeUrl);
+  if (!pu) return null;
+  try {
+    const res = await fetch(pu, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const m =
+      html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/) ||
+      html.match(/"videoId":"([\w-]{11})"/);
+    if (m) console.info('[YT] live video resolved:', m[1]);
+    return m ? m[1] : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 function kickYouTubePlayer(iframe) {
@@ -164,17 +196,18 @@ function attachControls(w, ch, iframe, sourceList) {
   w.dataset.ytControlsAttached = '1';
 }
 
-function setEmbed(ch) {
+async function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
 
-  const sourceList = buildSourceList(ch);
+  const resolvedLive = await resolveLiveVideoId(ch);
+  const sourceList = buildSourceList(ch, resolvedLive);
   const srcPrimary = sourceList[0];
 
   const existingFrame = w.querySelector('iframe');
   if (existingFrame) {
     const currentSrc = existingFrame.getAttribute('src') || '';
-    if (currentSrc.includes('youtube-nocookie.com') || currentSrc.includes('/embed/live_stream?channel=')) {
+    if (currentSrc !== srcPrimary) {
       existingFrame.src = srcPrimary;
     }
 

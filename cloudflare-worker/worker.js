@@ -14,6 +14,7 @@ const ALLOWED_HOSTS = new Set([
   'api.open-meteo.com',      // southwest-taiwan.js — 気象フォールバック
   'earthquake.usgs.gov',     // southwest-taiwan.js — 地震フォールバック
   'api.gdeltproject.org',       // gdelt.js — 世界メディア監視
+  'www.youtube.com',            // yt.js — ライブ動画ID解決(/liveページ)
 ]);
 
 const ALLOWED_ORIGINS = new Set([
