@@ -32,15 +32,16 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
       ? `&origin=${encodeURIComponent(window.location.origin)}`
       : '';
 
-  return [
-    base,
-    '&autoplay=1&mute=1&rel=0&modestbranding=1',
-    '&playsinline=1',
-    '&cc_load_policy=1',
-    '&hl=ja',
-    '&enablejsapi=1',
-    originParam,
-  ].join('');
+  const params = [
+    'autoplay=1&mute=1&rel=0&modestbranding=1',
+    'playsinline=1',
+    'cc_load_policy=1',
+    'hl=ja',
+    'enablejsapi=1',
+  ].join('&') + originParam;
+
+  // baseに既にクエリがあれば'&'、なければ'?'で連結(従来は常に'&'でURL不正だった)
+  return base + (base.includes('?') ? '&' : '?') + params;
 }
 
 function buildSourceList(ch, resolvedLive) {
@@ -54,11 +55,11 @@ function buildSourceList(ch, resolvedLive) {
       buildEmbedSrc(ch,   true,  'channel'),
     ];
   }
-  // 解決失敗時: channel埋め込みを優先し、固定IDは最後の保険
+  // 解決失敗時: 従来どおり固定動画を優先(channel方式は不安定なため保険に降格)
   return [
+    buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, false, 'channel'),
     buildEmbedSrc(ch, true,  'channel'),
-    buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, true,  'video'),
   ];
 }
@@ -72,11 +73,19 @@ async function resolveLiveVideoId(ch) {
     const res = await fetch(pu, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const html = await res.text();
-    const m =
-      html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/) ||
-      html.match(/"videoId":"([\w-]{11})"/);
-    if (m) console.info('[YT] live video resolved:', m[1]);
-    return m ? m[1] : null;
+    // canonicalがwatch?v=を指す = /liveが特定の配信に解決されている
+    const m = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})"/);
+    if (!m) {
+      console.info('[YT] resolve: canonical not found (not live or consent page)');
+      return null;
+    }
+    // 実際にライブ配信中であることを確認(VODや予約枠を除外)
+    if (!html.includes('"isLiveNow":true')) {
+      console.info('[YT] resolve: canonical found but not live now:', m[1]);
+      return null;
+    }
+    console.info('[YT] live video resolved:', m[1]);
+    return m[1];
   } catch (_) {
     return null;
   }
