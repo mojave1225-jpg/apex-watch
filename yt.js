@@ -1,5 +1,5 @@
 /* ============================================================
-   YouTube Live Stream Loader v7 — channel直接埋め込み方式(HTML解析による誤ID採用の問題を廃止)
+   YouTube Live Stream Loader v8 — YouTube Data API(Worker経由)でライブID解決 — channel直接埋め込み方式(HTML解析による誤ID採用の問題を廃止)
    ライブ動画IDを実行時に解決する方式:
    自前Workerプロキシ経由で /live ページを取得し、canonical の
    watch?v=ID から現在のライブ配信IDを抽出して直接埋め込む。
@@ -44,15 +44,41 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
   return base + (base.includes('?') ? '&' : '?') + params;
 }
 
-function buildSourceList(ch) {
-  // channel埋め込み(現行ライブに自動解決)を最優先。
-  // 失敗時は「ソース切替」ボタンでVODフォールバックへ手動切替可能。
+function buildSourceList(ch, liveId) {
+  if (liveId) {
+    // YouTube Data APIで解決した現行ライブIDを最優先で直接埋め込み
+    const live = { ...ch, liveVideoId: liveId };
+    return [
+      buildEmbedSrc(live, false, 'video'),
+      buildEmbedSrc(live, true,  'video'),
+      buildEmbedSrc(ch,   false, 'channel'),
+      buildEmbedSrc(ch,   false, 'video'),
+    ];
+  }
+  // ID未解決時: channel埋め込み → VODフォールバック
   return [
     buildEmbedSrc(ch, false, 'channel'),
     buildEmbedSrc(ch, true,  'channel'),
     buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, true,  'video'),
   ];
+}
+
+/* Workerの/ytliveルート経由でYouTube Data APIから現行ライブIDを取得 */
+async function fetchLiveVideoId(ch) {
+  if (typeof APEX_PROXY_BASE !== 'string' || !APEX_PROXY_BASE) return null;
+  try {
+    const origin = new URL(APEX_PROXY_BASE).origin;
+    const res = await fetch(origin + '/ytlive?channel=' + ch.channelId,
+      { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.videoId) console.info('[YT] Data API live resolved:', data.videoId);
+    else console.info('[YT] Data API: no live stream found (or key not set)');
+    return data.videoId || null;
+  } catch (_) {
+    return null;
+  }
 }
 
 function kickYouTubePlayer(iframe) {
@@ -173,7 +199,8 @@ async function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
 
-  const sourceList = buildSourceList(ch);
+  const liveId = await fetchLiveVideoId(ch);
+  const sourceList = buildSourceList(ch, liveId);
   const srcPrimary = sourceList[0];
 
   const existingFrame = w.querySelector('iframe');
