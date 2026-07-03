@@ -7,9 +7,9 @@
    GDELTは15分毎更新・無認証・CORS対応。
    ============================================================ */
 
-const GDELT_GEO_URL  = 'https://api.gdeltproject.org/api/v2/geo/geo?query=theme%3AARMEDCONFLICT&format=geojson&timespan=24H';
-const GDELT_DOC_URL  = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=ArtList&maxrecords=14&sort=DateDesc&format=json&timespan=12H';
-const GDELT_TONE_URL = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=TimelineTone&format=json&timespan=7D';
+const GDELT_GEO_URL  = 'https://api.gdeltproject.org/api/v2/geo/geo?query=theme%3AARMEDCONFLICT&format=geojson&timespan=1d';
+const GDELT_DOC_URL  = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=ArtList&maxrecords=14&sort=datedesc&format=json&timespan=1d';
+const GDELT_TONE_URL = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=timelinetone&format=json&timespan=7d';
 const GDELT_REFRESH_MS = 15 * 60 * 1000; // GDELTの更新周期に合わせ15分
 
 const gdeltState = {
@@ -29,6 +29,12 @@ async function gdeltFetchJson(url, timeoutMs = 12000) {
     const res = await fetch(u, { signal: AbortSignal.timeout(timeoutMs) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
+    // レート制限(5秒に1回)の応答はプレーンテキスト
+    if (text.includes('Please limit requests')) {
+      const err = new Error('rate-limited');
+      err.rateLimited = true;
+      throw err;
+    }
     // GDELTはクエリ異常時にHTMLを返すことがあるためガード
     const start = text.indexOf('{');
     if (start === -1) throw new Error('non-JSON response');
@@ -182,38 +188,79 @@ function gdeltRenderScore() {
 /* ============================================================
    メインループ
    ============================================================ */
+/* GDELTはIPあたり5秒に1回のレート制限があるため、3本のAPIを
+   6.5秒間隔で直列実行する。制限検知時は60秒後に自動再試行。 */
+const GDELT_GAP_MS = 6500;
+const gdeltSleep = ms => new Promise(r => setTimeout(r, ms));
+let gdeltRetryScheduled = false;
+let gdeltRunning = false;
+
+async function gdeltTryFetch(url, timeoutMs) {
+  try {
+    return { ok: true, data: await gdeltFetchJson(url, timeoutMs) };
+  } catch (e) {
+    console.warn('[GDELT]', e.message, url.slice(0, 80));
+    return { ok: false, rateLimited: !!e.rateLimited };
+  }
+}
+
 async function gdeltRefresh() {
-  const results = await Promise.allSettled([
-    gdeltFetchJson(GDELT_GEO_URL, 15000),
-    gdeltFetchJson(GDELT_DOC_URL),
-    gdeltFetchJson(GDELT_TONE_URL),
-  ]);
-
-  const [geo, doc, tone] = results;
-
-  if (geo.status === 'fulfilled' && Array.isArray(geo.value?.features)) {
-    gdeltState.geoFeatures = geo.value.features;
-    gdeltRenderMapLayer();
-  }
-  if (doc.status === 'fulfilled' && Array.isArray(doc.value?.articles)) {
-    gdeltState.articles = doc.value.articles;
-  }
-  if (tone.status === 'fulfilled') {
-    const s = gdeltComputeScore(tone.value);
-    if (s != null) {
-      gdeltState.score = s;
-      // DOOMSDAY INDEXへ反映 (app.js側のフックを使用)
-      if (typeof window.setGdeltScore === 'function') window.setGdeltScore(s);
-    }
-  }
-
-  gdeltState.lastFetch = new Date();
-  gdeltRenderPanel();
-  gdeltRenderScore();
-
+  if (gdeltRunning) return; // 多重実行防止
+  gdeltRunning = true;
   const status = document.getElementById('gdeltStatus');
-  const failed = results.filter(r => r.status === 'rejected').length;
-  if (status && failed === results.length) status.textContent = 'オフライン(再試行待ち)';
+  let anyOk = false, anyRateLimited = false;
+
+  try {
+    // ① ヘッドライン(最も目に付くので先行)
+    if (status) status.textContent = '取得中...';
+    const doc = await gdeltTryFetch(GDELT_DOC_URL);
+    if (doc.ok && Array.isArray(doc.data?.articles) && doc.data.articles.length) {
+      gdeltState.articles = doc.data.articles;
+      gdeltState.lastFetch = new Date();
+      gdeltRenderPanel();
+      anyOk = true;
+    }
+    anyRateLimited = anyRateLimited || doc.rateLimited;
+
+    // ② トーン → 緊張度スコア
+    await gdeltSleep(GDELT_GAP_MS);
+    const tone = await gdeltTryFetch(GDELT_TONE_URL);
+    if (tone.ok) {
+      const s = gdeltComputeScore(tone.data);
+      if (s != null) {
+        gdeltState.score = s;
+        if (typeof window.setGdeltScore === 'function') window.setGdeltScore(s);
+        gdeltRenderScore();
+        anyOk = true;
+      }
+    }
+    anyRateLimited = anyRateLimited || tone.rateLimited;
+
+    // ③ 地図レイヤー
+    await gdeltSleep(GDELT_GAP_MS);
+    const geo = await gdeltTryFetch(GDELT_GEO_URL, 20000);
+    if (geo.ok && Array.isArray(geo.data?.features)) {
+      gdeltState.geoFeatures = geo.data.features;
+      gdeltRenderMapLayer();
+      anyOk = true;
+    }
+    anyRateLimited = anyRateLimited || geo.rateLimited;
+  } finally {
+    gdeltRunning = false;
+  }
+
+  if (anyOk) {
+    gdeltState.lastFetch = new Date();
+    gdeltRenderPanel();
+  } else if (status) {
+    status.textContent = anyRateLimited ? 'レート制限中(60秒後に再試行)' : 'オフライン(再試行待ち)';
+  }
+
+  // レート制限を検知したら一度だけ60秒後に再実行
+  if (anyRateLimited && !gdeltRetryScheduled) {
+    gdeltRetryScheduled = true;
+    setTimeout(() => { gdeltRetryScheduled = false; gdeltRefresh(); }, 60000);
+  }
 }
 
 /* ── マップレイヤートグル配線 ── */
