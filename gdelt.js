@@ -7,18 +7,58 @@
    GDELTは15分毎更新・無認証・CORS対応。
    ============================================================ */
 
-const GDELT_GEO_URL  = 'https://api.gdeltproject.org/api/v2/geo/geo?query=theme%3AARMEDCONFLICT&format=geojson&timespan=1d';
-const GDELT_DOC_URL  = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=ArtList&maxrecords=14&sort=datedesc&format=json&timespan=1d';
+/* GEO 2.0 APIは廃止(404)されたため、DOC APIの記事を発信国別に集計して
+   マップレイヤーを描画する方式に変更。maxrecordsを75に増やし集計精度を確保
+   (APIリクエスト数は変わらず1本)。パネル表示は先頭14件のみ。 */
+const GDELT_DOC_URL  = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=ArtList&maxrecords=75&sort=datedesc&format=json&timespan=1d';
 const GDELT_TONE_URL = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=timelinetone&format=json&timespan=7d';
 const GDELT_REFRESH_MS = 15 * 60 * 1000; // GDELTの更新周期に合わせ15分
-/* GEO 2.0 APIは2026-07時点で404(エンドポイント停止を確認)のため一時無効化。
-   マップレイヤーは次期対応で記事データの国別集計方式に置き換え予定。 */
-const GDELT_GEO_ENABLED = false;
+/* GDELT sourcecountry名 → 地図座標 [経度, 緯度](主要約90カ国) */
+const GDELT_COUNTRY_COORDS = {
+  'United States': [-98, 39], 'United Kingdom': [-2, 53], 'Canada': [-102, 57],
+  'Australia': [134, -25], 'New Zealand': [172, -42], 'Ireland': [-8, 53],
+  'India': [79, 22], 'Pakistan': [69, 30], 'Bangladesh': [90, 24],
+  'Sri Lanka': [81, 8], 'Nepal': [84, 28], 'Afghanistan': [66, 34],
+  'China': [104, 35], 'Japan': [138, 37], 'South Korea': [128, 36],
+  'North Korea': [127, 40], 'Taiwan': [121, 24], 'Hong Kong': [114, 22],
+  'Philippines': [122, 12], 'Indonesia': [117, -2], 'Malaysia': [102, 4],
+  'Singapore': [104, 1], 'Thailand': [101, 15], 'Vietnam': [106, 16],
+  'Myanmar': [96, 21], 'Cambodia': [105, 12], 'Laos': [103, 18],
+  'Russia': [95, 61], 'Ukraine': [31, 49], 'Belarus': [28, 53],
+  'Poland': [19, 52], 'Germany': [10, 51], 'France': [2, 47],
+  'Spain': [-4, 40], 'Portugal': [-8, 39], 'Italy': [12, 43],
+  'Netherlands': [5, 52], 'Belgium': [4, 51], 'Switzerland': [8, 47],
+  'Austria': [14, 47], 'Czech Republic': [15, 50], 'Slovakia': [19, 48],
+  'Hungary': [19, 47], 'Romania': [25, 46], 'Bulgaria': [25, 43],
+  'Greece': [22, 39], 'Serbia': [21, 44], 'Croatia': [16, 45],
+  'Slovenia': [15, 46], 'Sweden': [15, 62], 'Norway': [9, 61],
+  'Denmark': [10, 56], 'Finland': [26, 64], 'Estonia': [26, 59],
+  'Latvia': [25, 57], 'Lithuania': [24, 55], 'Iceland': [-18, 65],
+  'Moldova': [29, 47], 'Georgia': [43, 42], 'Armenia': [45, 40],
+  'Azerbaijan': [48, 40], 'Kazakhstan': [67, 48], 'Uzbekistan': [64, 41],
+  'Turkey': [35, 39], 'Israel': [35, 31], 'Palestine': [35, 32],
+  'Lebanon': [36, 34], 'Syria': [38, 35], 'Jordan': [37, 31],
+  'Iraq': [44, 33], 'Iran': [54, 32], 'Saudi Arabia': [45, 24],
+  'Yemen': [48, 15], 'Qatar': [51, 25], 'United Arab Emirates': [54, 24],
+  'Kuwait': [48, 29], 'Egypt': [30, 27], 'Libya': [17, 27],
+  'Algeria': [3, 28], 'Morocco': [-6, 32], 'Tunisia': [9, 34],
+  'Sudan': [30, 15], 'Ethiopia': [39, 9], 'Somalia': [46, 6],
+  'Kenya': [38, 0], 'Uganda': [32, 1], 'Tanzania': [35, -6],
+  'Rwanda': [30, -2], 'Nigeria': [8, 9], 'Ghana': [-1, 8],
+  'Ivory Coast': [-5, 8], 'Senegal': [-14, 14], 'Cameroon': [12, 5],
+  'Democratic Republic of the Congo': [23, -3], 'South Africa': [25, -29],
+  'Zimbabwe': [30, -19], 'Zambia': [28, -14], 'Mozambique': [35, -18],
+  'Mali': [-4, 17], 'Niger': [9, 17], 'Chad': [19, 15],
+  'Mexico': [-102, 24], 'Brazil': [-53, -11], 'Argentina': [-64, -35],
+  'Colombia': [-73, 4], 'Venezuela': [-66, 7], 'Chile': [-71, -33],
+  'Peru': [-76, -10], 'Ecuador': [-78, -1], 'Bolivia': [-64, -17],
+  'Cuba': [-79, 22], 'Haiti': [-72, 19],
+};
 
 const gdeltState = {
   map: null,          // { svg, projection, W, H }
   layerG: null,       // d3 selection of #gdelt-layer
-  geoFeatures: [],
+  countryAgg: [],   // [{name, count, coords:[lon,lat]}]
   articles: [],
   score: null,
   toneRecent: null,
@@ -75,17 +115,14 @@ function gdeltRenderMapLayer() {
   const g = gdeltState.layerG;
   if (!g) return;
 
-  // 表示負荷を抑えるため報道量上位120地点に制限
-  const feats = gdeltState.geoFeatures
-    .filter(f => f && f.geometry && Array.isArray(f.geometry.coordinates))
-    .sort((a, b) => (b.properties?.count || 0) - (a.properties?.count || 0))
-    .slice(0, 120);
+  const items = gdeltState.countryAgg;
+  if (!items.length) return;
 
-  const maxCount = Math.max(1, ...feats.map(f => f.properties?.count || 1));
-  const r = c => 1.5 + Math.sqrt((c || 1) / maxCount) * 6.5;
+  const maxCount = Math.max(1, ...items.map(d => d.count));
+  const r = c => 3 + Math.sqrt(c / maxCount) * 9;
 
   const sel = g.selectAll('circle.gdelt-point')
-    .data(feats, f => (f.properties?.name || '') + f.geometry.coordinates.join(','));
+    .data(items, d => d.name);
 
   sel.exit().remove();
 
@@ -96,17 +133,17 @@ function gdeltRenderMapLayer() {
 
   const all = entered.merge(sel);
   all
-    .attr('cx', f => {
-      const p = projection(f.geometry.coordinates);
+    .attr('cx', d => {
+      const p = projection(d.coords);
       return p ? p[0] : -100;
     })
-    .attr('cy', f => {
-      const p = projection(f.geometry.coordinates);
+    .attr('cy', d => {
+      const p = projection(d.coords);
       return p ? p[1] : -100;
     })
-    .attr('r', f => r(f.properties?.count));
+    .attr('r', d => r(d.count));
   all.select('title')
-    .text(f => `${f.properties?.name || '不明'} — 報道 ${f.properties?.count || '?'} 件 (24h)`);
+    .text(d => `${d.name} — 紛争関連報道 ${d.count}件 / 発信国別・直近24h`);
 
   // トグルの現在状態を反映
   const chk = document.querySelector('.map-layer-chip[data-layer="gdelt-layer"]');
@@ -135,7 +172,7 @@ function gdeltRenderPanel() {
     return;
   }
 
-  grid.innerHTML = gdeltState.articles.map(a => `
+  grid.innerHTML = gdeltState.articles.slice(0, 14).map(a => `
     <a class="gdelt-item" href="${a.url}" target="_blank" rel="noopener">
       <span class="gdelt-time">${gdeltFmtTime(a.seendate)}</span>
       <span class="gdelt-src">${(a.domain || '').replace(/^www\./,'')}${a.sourcecountry ? ' · ' + a.sourcecountry : ''}</span>
@@ -221,6 +258,20 @@ async function gdeltRefresh() {
       gdeltState.articles = doc.data.articles;
       gdeltState.lastFetch = new Date();
       gdeltRenderPanel();
+
+      // 発信国別に集計してマップレイヤー用データを構築
+      const agg = {};
+      const unknown = new Set();
+      doc.data.articles.forEach(a => {
+        const c = a.sourcecountry;
+        if (!c) return;
+        if (GDELT_COUNTRY_COORDS[c]) agg[c] = (agg[c] || 0) + 1;
+        else unknown.add(c);
+      });
+      gdeltState.countryAgg = Object.entries(agg)
+        .map(([name, count]) => ({ name, count, coords: GDELT_COUNTRY_COORDS[name] }));
+      if (unknown.size) console.info('[GDELT] 座標テーブル未登録の発信国:', [...unknown].join(', '));
+      gdeltRenderMapLayer();
       anyOk = true;
     }
     anyRateLimited = anyRateLimited || doc.rateLimited;
@@ -239,17 +290,7 @@ async function gdeltRefresh() {
     }
     anyRateLimited = anyRateLimited || tone.rateLimited;
 
-    // ③ 地図レイヤー(GEO API停止中のためフラグで制御)
-    if (GDELT_GEO_ENABLED) {
-      await gdeltSleep(GDELT_GAP_MS);
-      const geo = await gdeltTryFetch(GDELT_GEO_URL, 20000);
-      if (geo.ok && Array.isArray(geo.data?.features)) {
-        gdeltState.geoFeatures = geo.data.features;
-        gdeltRenderMapLayer();
-        anyOk = true;
-      }
-      anyRateLimited = anyRateLimited || geo.rateLimited;
-    }
+    // ③ 地図レイヤーは①の記事データから国別集計で生成(追加リクエスト不要)
   } finally {
     gdeltRunning = false;
   }
@@ -270,18 +311,6 @@ async function gdeltRefresh() {
 
 /* ── マップレイヤートグル配線 ── */
 function gdeltWireLayerToggles() {
-  // GEO API停止中はGDELTチップを準備中表示にして無効化
-  if (!GDELT_GEO_ENABLED) {
-    const chip = document.querySelector('.map-layer-chip[data-layer="gdelt-layer"]');
-    if (chip) {
-      chip.classList.remove('chip-on');
-      chip.disabled = true;
-      chip.style.opacity = '0.4';
-      chip.style.cursor = 'default';
-      chip.textContent = '◍ GDELT報道密度(準備中)';
-      chip.title = 'GDELT GEO APIの提供状況により一時停止中';
-    }
-  }
   document.querySelectorAll('.map-layer-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const on = chip.classList.toggle('chip-on');
@@ -296,7 +325,7 @@ function gdeltWireLayerToggles() {
 document.addEventListener('apexMapReady', (e) => {
   gdeltState.map = e.detail;
   gdeltEnsureLayer();
-  if (gdeltState.geoFeatures.length) gdeltRenderMapLayer();
+  if (gdeltState.countryAgg.length) gdeltRenderMapLayer();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
