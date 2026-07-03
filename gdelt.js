@@ -11,6 +11,9 @@ const GDELT_GEO_URL  = 'https://api.gdeltproject.org/api/v2/geo/geo?query=theme%
 const GDELT_DOC_URL  = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=ArtList&maxrecords=14&sort=datedesc&format=json&timespan=1d';
 const GDELT_TONE_URL = 'https://api.gdeltproject.org/api/v2/doc/doc?query=theme%3AARMEDCONFLICT&mode=timelinetone&format=json&timespan=7d';
 const GDELT_REFRESH_MS = 15 * 60 * 1000; // GDELTの更新周期に合わせ15分
+/* GEO 2.0 APIは2026-07時点で404(エンドポイント停止を確認)のため一時無効化。
+   マップレイヤーは次期対応で記事データの国別集計方式に置き換え予定。 */
+const GDELT_GEO_ENABLED = false;
 
 const gdeltState = {
   map: null,          // { svg, projection, W, H }
@@ -236,15 +239,17 @@ async function gdeltRefresh() {
     }
     anyRateLimited = anyRateLimited || tone.rateLimited;
 
-    // ③ 地図レイヤー
-    await gdeltSleep(GDELT_GAP_MS);
-    const geo = await gdeltTryFetch(GDELT_GEO_URL, 20000);
-    if (geo.ok && Array.isArray(geo.data?.features)) {
-      gdeltState.geoFeatures = geo.data.features;
-      gdeltRenderMapLayer();
-      anyOk = true;
+    // ③ 地図レイヤー(GEO API停止中のためフラグで制御)
+    if (GDELT_GEO_ENABLED) {
+      await gdeltSleep(GDELT_GAP_MS);
+      const geo = await gdeltTryFetch(GDELT_GEO_URL, 20000);
+      if (geo.ok && Array.isArray(geo.data?.features)) {
+        gdeltState.geoFeatures = geo.data.features;
+        gdeltRenderMapLayer();
+        anyOk = true;
+      }
+      anyRateLimited = anyRateLimited || geo.rateLimited;
     }
-    anyRateLimited = anyRateLimited || geo.rateLimited;
   } finally {
     gdeltRunning = false;
   }
@@ -265,6 +270,18 @@ async function gdeltRefresh() {
 
 /* ── マップレイヤートグル配線 ── */
 function gdeltWireLayerToggles() {
+  // GEO API停止中はGDELTチップを準備中表示にして無効化
+  if (!GDELT_GEO_ENABLED) {
+    const chip = document.querySelector('.map-layer-chip[data-layer="gdelt-layer"]');
+    if (chip) {
+      chip.classList.remove('chip-on');
+      chip.disabled = true;
+      chip.style.opacity = '0.4';
+      chip.style.cursor = 'default';
+      chip.textContent = '◍ GDELT報道密度(準備中)';
+      chip.title = 'GDELT GEO APIの提供状況により一時停止中';
+    }
+  }
   document.querySelectorAll('.map-layer-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const on = chip.classList.toggle('chip-on');

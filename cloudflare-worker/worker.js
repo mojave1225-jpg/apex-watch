@@ -23,7 +23,9 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:8000',
 ]);
 
-const CACHE_TTL_SECONDS = 300; // 5分
+const CACHE_TTL_SECONDS = 300; // 5分(既定)
+// GDELTは15分毎更新かつレート制限が厳しいため、長めにキャッシュ
+const HOST_TTL_OVERRIDES = { 'api.gdeltproject.org': 900 };
 
 export default {
   async fetch(request, env, ctx) {
@@ -64,6 +66,7 @@ export default {
     }
 
     // ── エッジキャッシュ ──
+    const ttl = HOST_TTL_OVERRIDES[upstream.hostname] || CACHE_TTL_SECONDS;
     const cache = caches.default;
     const cacheKey = new Request(upstream.toString(), { method: 'GET' });
     let res = await cache.match(cacheKey);
@@ -84,7 +87,7 @@ export default {
         });
       }
       res = new Response(originRes.body, originRes);
-      res.headers.set('Cache-Control', `public, max-age=${CACHE_TTL_SECONDS}`);
+      res.headers.set('Cache-Control', `public, max-age=${ttl}`);
       // 上流のSet-Cookie等は落とす
       res.headers.delete('Set-Cookie');
       if (originRes.ok) {
