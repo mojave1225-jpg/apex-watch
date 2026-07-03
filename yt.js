@@ -1,5 +1,5 @@
 /* ============================================================
-   YouTube Live Stream Loader v6.2
+   YouTube Live Stream Loader v7 — channel直接埋め込み方式(HTML解析による誤ID採用の問題を廃止)
    ライブ動画IDを実行時に解決する方式:
    自前Workerプロキシ経由で /live ページを取得し、canonical の
    watch?v=ID から現在のライブ配信IDを抽出して直接埋め込む。
@@ -44,64 +44,15 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
   return base + (base.includes('?') ? '&' : '?') + params;
 }
 
-function buildSourceList(ch, resolvedLive) {
-  if (resolvedLive) {
-    // 現在のライブIDを解決できた場合はそれを最優先
-    const live = { ...ch, liveVideoId: resolvedLive };
-    return [
-      buildEmbedSrc(live, false, 'video'),
-      buildEmbedSrc(live, true,  'video'),
-      buildEmbedSrc(ch,   false, 'channel'),
-      buildEmbedSrc(ch,   true,  'channel'),
-    ];
-  }
-  // 解決失敗時: 従来どおり固定動画を優先(channel方式は不安定なため保険に降格)
+function buildSourceList(ch) {
+  // channel埋め込み(現行ライブに自動解決)を最優先。
+  // 失敗時は「ソース切替」ボタンでVODフォールバックへ手動切替可能。
   return [
-    buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, false, 'channel'),
     buildEmbedSrc(ch, true,  'channel'),
+    buildEmbedSrc(ch, false, 'video'),
     buildEmbedSrc(ch, true,  'video'),
   ];
-}
-
-/* /live ページから現在のライブ動画IDを解決(Workerプロキシ経由) */
-async function resolveLiveVideoId(ch) {
-  if (typeof apexProxyUrl !== 'function') return null;
-  const pu = apexProxyUrl(ch.youtubeUrl);
-  if (!pu) return null;
-  try {
-    const res = await fetch(pu, { signal: AbortSignal.timeout(10000) });
-    if (!res.ok) return null;
-    const html = await res.text();
-
-    // ライブ配信フラグ(どれか1つで可)
-    const isLive =
-      /"isLiveNow"\s*:\s*true/.test(html) ||
-      /"isLiveContent"\s*:\s*true/.test(html) ||
-      /"isLive"\s*:\s*true/.test(html);
-
-    // 動画IDの抽出(確度の高い順に試行)
-    const m =
-      // ① canonical(パラメータ付き・引用符差異も許容)
-      html.match(/rel="canonical"\s+href="https:\/\/www\.youtube\.com\/watch\?v=([\w-]{11})/) ||
-      // ② プレイヤーのvideoDetails
-      html.match(/"videoDetails"\s*:\s*\{\s*"videoId"\s*:\s*"([\w-]{11})"/) ||
-      // ③ 最初のvideoId(最終手段)
-      html.match(/"videoId"\s*:\s*"([\w-]{11})"/);
-
-    if (!m) {
-      console.info('[YT] resolve: no videoId in page (isLive flag:', isLive, ')');
-      return null;
-    }
-    if (!isLive) {
-      console.info('[YT] resolve: videoId found but no live flag, skipping:', m[1]);
-      return null;
-    }
-    console.info('[YT] live video resolved:', m[1]);
-    return m[1];
-  } catch (_) {
-    return null;
-  }
 }
 
 function kickYouTubePlayer(iframe) {
@@ -222,8 +173,7 @@ async function setEmbed(ch) {
   const w = document.getElementById(ch.wrapperId);
   if (!w) return;
 
-  const resolvedLive = await resolveLiveVideoId(ch);
-  const sourceList = buildSourceList(ch, resolvedLive);
+  const sourceList = buildSourceList(ch);
   const srcPrimary = sourceList[0];
 
   const existingFrame = w.querySelector('iframe');
