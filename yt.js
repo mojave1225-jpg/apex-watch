@@ -62,17 +62,21 @@ function kickYouTubePlayer(iframe) {
       return;
     }
 
-    iframe.contentWindow.postMessage(JSON.stringify({
-      event: 'command',
-      func: 'mute',
-      args: [],
-    }), '*');
+    try {
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: 'mute',
+        args: [],
+      }), '*');
 
-    iframe.contentWindow.postMessage(JSON.stringify({
-      event: 'command',
-      func: 'playVideo',
-      args: [],
-    }), '*');
+      iframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: 'playVideo',
+        args: [],
+      }), '*');
+    } catch (e) {
+      clearInterval(timer);
+    }
 
     if (tries >= maxTries) clearInterval(timer);
   }, 1200);

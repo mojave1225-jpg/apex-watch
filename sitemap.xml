@@ -10,6 +10,12 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://apex-watch.jp/"/>
   </url>
   <url>
+    <loc>https://apex-watch.jp/southwest-taiwan.html</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://apex-watch.jp/disclaimer.html</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>

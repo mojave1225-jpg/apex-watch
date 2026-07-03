@@ -3,20 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>南西諸島・台湾海峡 緊張監視 | APEX WATCH REGIONAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
   :root{
+    /* 本体 styles.css のトークンに統一 (v292) */
     --bg:#03040d;
-    --panel:#0a0d1c;
-    --panel-border:#1b2440;
-    --text:#c9d3e8;
-    --text-dim:#5c6a8c;
-    --accent:#ff4d4d;      /* 中国側/危険 */
-    --accent-2:#3ea6ff;    /* 台湾/監視 */
-    --accent-3:#ffb020;    /* 警戒 */
-    --accent-jp:#7fffb2;   /* 自衛隊/日本側 */
-    --mono: "JetBrains Mono","SF Mono",Consolas,monospace;
+    --panel:#0a0f24;
+    --panel-border:#1a2a4a;
+    --text:#e0e8ff;
+    --text-dim:#7090b0;
+    --accent:#ff0044;      /* 中国側/危険 = --accent-red */
+    --accent-2:#00ccff;    /* 台湾/監視 = --accent-blue */
+    --accent-3:#ff8800;    /* 警戒 = --accent-orange */
+    --accent-jp:#00ff88;   /* 自衛隊/日本側 = --accent-green */
+    --mono: 'Share Tech Mono', 'Courier New', monospace;
+    --ui: 'Rajdhani', sans-serif;
   }
   *{box-sizing:border-box;}
   #globalMap .leaflet-container,
@@ -43,8 +51,10 @@
   }
   header h1{
     margin:8px 0 4px;
-    font-size:22px;
-    letter-spacing:.05em;
+    font-size:24px;
+    letter-spacing:.06em;
+    font-family:var(--ui);
+    font-weight:700;
   }
   header .sub{
     color:var(--text-dim);
@@ -231,10 +241,32 @@
     text-align:center;padding:24px;color:var(--text-dim);font-size:11px;
     border-top:1px solid var(--panel-border);
   }
+
+  /* ── 本体サイト共通ブランドバー ── */
+  .site-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 16px;background:rgba(4,6,16,0.97);
+    border-bottom:1px solid var(--panel-border);
+    position:sticky;top:0;z-index:100;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  }
+  .site-bar .brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+  .site-bar .brand .mark{color:var(--accent-2);font-size:15px;}
+  .site-bar .brand .name{font-family:var(--ui);font-weight:700;font-size:15px;letter-spacing:1.5px;color:var(--text);}
+  .site-bar .brand .name b{color:var(--accent-2);font-weight:700;}
+  .site-bar .back{font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:.5px;}
+  .site-bar .back:hover{color:var(--accent-2);}
 </style>
 </head>
 <body>
 
+<div class="site-bar">
+  <a class="brand" href="./index.html">
+    <span class="mark">◈</span>
+    <span class="name">APEX <b>WATCH</b></span>
+  </a>
+  <a class="back" href="./index.html">← メインダッシュボード</a>
+</div>
 <header>
   <div class="eyebrow">APEX WATCH REGIONAL FOCUS</div>
   <h1>◈ 南西諸島・台湾海峡 緊張監視</h1>
@@ -467,7 +499,7 @@
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script src="southwest-taiwan.js?v=20260701f"></script>
+<script src="southwest-taiwan.js?v=20260703a"></script>
 
 </body>
 </html>

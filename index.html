@@ -12,6 +12,9 @@
   <meta name="application-name" content="APEX WATCH">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#03040d">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="canonical" href="https://apex-watch.jp/">
   <link rel="alternate" hreflang="ja" href="https://apex-watch.jp/">
   <link rel="alternate" hreflang="en" href="https://apex-watch.jp/">
@@ -54,8 +57,9 @@
   }
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=291">
+  <link rel="stylesheet" href="styles.css?v=293">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -1307,21 +1311,19 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-  <script src="data.js?v=287"></script>
-  <script src="map.js?v=290"></script>
-  <script src="app.js?v=287"></script>
-  <script src="military.js?v=287"></script>
-  <script src="bizjet.js?v=287"></script>
-  <script src="shipping.js?v=287"></script>
-  <script src="cyber.js?v=288"></script>
-  <script src="defcon.js?v=287"></script>
-  <script src="neo.js?v=287"></script>
-  <script src="neo3d.js?v=287"></script>
-  <script src="earth.js?v=287"></script>
-  <script src="yt.js?v=295"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" defer></script>
+  <script src="data.js?v=287" defer></script>
+  <script src="map.js?v=290" defer></script>
+  <script src="app.js?v=287" defer></script>
+  <script src="military.js?v=287" defer></script>
+  <script src="bizjet.js?v=287" defer></script>
+  <script src="shipping.js?v=287" defer></script>
+  <script src="cyber.js?v=288" defer></script>
+  <script src="defcon.js?v=287" defer></script>
+  <script src="neo.js?v=292" defer></script>
+  <script src="earth.js?v=287" defer></script>
+  <script src="yt.js?v=296" defer></script>
 
   <!-- Floating TOP button -->
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
@@ -1344,17 +1346,70 @@
     const ids   = [...links].map(l => l.getAttribute('href').slice(1));
     const els   = ids.map(id => document.getElementById(id)).filter(Boolean);
 
+    let lastActive = null;
     function onScroll() {
       const y = window.scrollY + 130;
       let active = ids[0];
       els.forEach((el, i) => { if (el.offsetTop <= y) active = ids[i]; });
       links.forEach(l => l.classList.toggle('snav-active', l.getAttribute('href') === '#' + active));
+      // アクティブボタンをナビ内で可視位置へ自動スクロール
+      if (active !== lastActive) {
+        lastActive = active;
+        const nav = document.getElementById('sectionNav');
+        const btn = document.querySelector('.snav-btn.snav-active');
+        if (nav && btn) {
+          const target = btn.offsetLeft - (nav.clientWidth - btn.offsetWidth) / 2;
+          nav.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+        }
+      }
       // floating TOP button visibility
       document.getElementById('topBtn').classList.toggle('topBtn-visible', window.scrollY > 300);
     }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   })();
+
+  // ── Lazy-load Three.js + neo3d.js when the space section approaches ──
+  (function() {
+    const target = document.getElementById('neo3d-container');
+    if (!target) return;
+    let started = false;
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src; s.onload = resolve; s.onerror = reject;
+        document.body.appendChild(s);
+      });
+    }
+    function start() {
+      if (started) return;
+      started = true;
+      loadScript('https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js')
+        .then(() => loadScript('neo3d.js?v=292'))
+        .catch(() => {
+          target.innerHTML = '<div style="padding:20px;text-align:center;font-family:monospace;font-size:11px;color:#3a4a6a">3D モジュールの読み込みに失敗しました</div>';
+        });
+    }
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) { io.disconnect(); start(); }
+      }, { rootMargin: '800px' });
+      io.observe(target);
+    } else {
+      start();
+    }
+  })();
+
+  // ── Pause CSS animations in offscreen sections (battery saver) ──
+  (function() {
+    if (!('IntersectionObserver' in window)) return;
+    const sections = document.querySelectorAll('section');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => e.target.classList.toggle('anim-paused', !e.isIntersecting));
+    }, { rootMargin: '200px' });
+    sections.forEach(s => io.observe(s));
+  })();
+  
   </script>
 </body>
 </html>

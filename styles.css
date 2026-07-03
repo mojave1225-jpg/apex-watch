@@ -2318,8 +2318,15 @@ html, body {
 
 /* Mobile adjustments */
 @media (max-width: 600px) {
-  .section-nav { top: 52px; padding: 0 6px; }
-  .snav-btn    { font-size: 9px; padding: 8px 9px; }
+  .section-nav {
+    top: 52px; padding: 0 6px;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    /* 右端フェードで「まだ続く」ことを示唆 */
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
+  }
+  .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; }
   .snav-label  { display: none; }
   #topBtn      { bottom: 14px; right: 12px; width: 34px; height: 34px; font-size: 12px; }
 }
@@ -3438,4 +3445,25 @@ html, body {
   .ts-block { padding: 6px 7px; }
   .ts-indicators { gap: 2px; }
   .ts-box { height: 16px; font-size: 7px; }
+}
+
+
+/* ============================================================
+   PERFORMANCE / ACCESSIBILITY — v292
+   ============================================================ */
+
+/* Pause all animations inside offscreen sections (set by IntersectionObserver) */
+.anim-paused, .anim-paused * {
+  animation-play-state: paused !important;
+}
+
+/* Respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scanline, .noise { display: none !important; }
 }

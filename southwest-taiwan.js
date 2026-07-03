@@ -5,10 +5,10 @@ const WEATHER_TARGETS = [
 ];
 
 const MAP_POINTS = [
-  { name: 'Taiwan Strait Core', lat: 24.0, lon: 120.8, color: '#ff8f7f' },
-  { name: 'Nansei Islands', lat: 26.5, lon: 127.8, color: '#6bf7c3' },
-  { name: 'East China Sea Watch', lat: 28.8, lon: 124.5, color: '#6bf7c3' },
-  { name: 'Pacific Support Route', lat: 24.8, lon: 135.0, color: '#6bf7c3' },
+  { name: 'Taiwan Strait Core', lat: 24.0, lon: 120.8, color: '#ff0044' },
+  { name: 'Nansei Islands', lat: 26.5, lon: 127.8, color: '#00ff88' },
+  { name: 'East China Sea Watch', lat: 28.8, lon: 124.5, color: '#00ff88' },
+  { name: 'Pacific Support Route', lat: 24.8, lon: 135.0, color: '#00ff88' },
 ];
 
 let globalMapInstance;
@@ -189,9 +189,9 @@ function setStatus(text, tone = 'info') {
   if (!el) return;
   el.textContent = text;
   const tones = {
-    ok: '#7fffb2',
-    warn: '#ffb020',
-    info: '#5cc6ff',
+    ok: '#00ff88',
+    warn: '#ff8800',
+    info: '#00ccff',
   };
   el.style.color = tones[tone] || tones.info;
 }
@@ -284,7 +284,7 @@ async function initGlobalMap() {
   const leafletReady = await ensureLeafletLoaded();
   if (!leafletReady || typeof window.L === 'undefined') {
     setMapHealth('地図ライブラリの読み込みに失敗', 'err');
-    mapEl.innerHTML = '<div style="display:grid;place-items:center;height:100%;color:#7f8fb1;font-size:12px;">地図ライブラリの読み込みに失敗しました。</div>';
+    mapEl.innerHTML = '<div style="display:grid;place-items:center;height:100%;color:#7090b0;font-size:12px;">地図ライブラリの読み込みに失敗しました。</div>';
     return;
   }
 
@@ -304,9 +304,9 @@ async function initGlobalMap() {
     [18, 118],
     [32, 132],
   ], {
-    color: '#5cc6ff',
+    color: '#00ccff',
     weight: 1.5,
-    fillColor: '#5cc6ff',
+    fillColor: '#00ccff',
     fillOpacity: 0.09,
     dashArray: '6 4',
   }).addTo(map).bindTooltip('Primary Monitoring Box', { sticky: true });
@@ -328,7 +328,7 @@ async function initGlobalMap() {
     [24.0, 120.8],
     [22.6, 120.3],
   ], {
-    color: '#ffd166',
+    color: '#ffdd00',
     weight: 2,
     opacity: 0.85,
     dashArray: '5 7',

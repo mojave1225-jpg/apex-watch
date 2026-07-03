@@ -228,6 +228,7 @@ async function initNeoMonitor() {
     updateStats(neos, { fromCache, stale });
     renderList(neos);
 
+    window.__NEO_DATA = neos;
     document.dispatchEvent(new CustomEvent('neoDataReady', { detail: { neos } }));
 
     if (statusEl && !stale) {

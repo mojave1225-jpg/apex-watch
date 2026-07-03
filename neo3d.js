@@ -483,25 +483,34 @@
   // ── Entry point ──────────────────────────────────────────
   let _sceneReady = false;
 
-  document.addEventListener('neoDataReady', ({ detail: { neos } }) => {
+  function bootScene(neos) {
+    if (_sceneReady) return;
     _sceneReady = true;
-    wire3DToggle();
-    requestAnimationFrame(() => requestAnimationFrame(() => initScene(neos)));
-  });
+    try {
+      wire3DToggle();
+      requestAnimationFrame(() => requestAnimationFrame(() => initScene(neos)));
+    } catch (e) {
+      console.warn('neo3d init failed:', e);
+      const c = document.getElementById('neo3d-container');
+      if (c) c.innerHTML = '<div style="padding:20px;text-align:center;font-family:monospace;font-size:11px;color:#3a4a6a">3D 表示の初期化に失敗しました</div>';
+    }
+  }
+
+  document.addEventListener('neoDataReady', ({ detail: { neos } }) => bootScene(neos));
+
+  // Lazy-load support: NEO data may already be ready before this script loads
+  if (Array.isArray(window.__NEO_DATA)) {
+    bootScene(window.__NEO_DATA);
+  }
 
   // Fallback: show Earth globe without asteroid data if NEO fetch fails
   setTimeout(() => {
     if (_sceneReady) return;
-    if (typeof THREE === 'undefined') return;
-    wire3DToggle();
-    requestAnimationFrame(() => requestAnimationFrame(() => initScene([])));
-  }, 15000);
-
-  // Fallback: if Three.js didn't load
-  window.addEventListener('load', () => {
     if (typeof THREE === 'undefined') {
       const c = document.getElementById('neo3d-container');
       if (c) c.innerHTML = '<div style="padding:20px;text-align:center;font-family:monospace;font-size:11px;color:#3a4a6a">Three.js の読み込みに失敗しました</div>';
+      return;
     }
-  });
+    bootScene([]);
+  }, 15000);
 })();
