@@ -212,21 +212,10 @@ function calculateDefconFromIndicators() {
 
 // ── FETCH NATO ALERT STATUS ──
 async function fetchNATOAlertStatus() {
-  // Try multiple NATO/OSCE data sources
   try {
-    // Attempt 1: NATO situation update feed
-    const res1 = await fetch('https://www.nato.int/nato_static_fl2014/assets/pdf/pdf_press/20160415_160415-fcn-nep.pdf', {
-      signal: AbortSignal.timeout(5000),
-      mode: 'no-cors'
-    }).catch(() => null);
-    
-    // Attempt 2: OSCE public database
-    const res2 = await fetch('https://www.osce.org/odihr/elections', {
-      signal: AbortSignal.timeout(5000),
-    }).catch(() => null);
-    
-    // For now, use heuristic based on global conditions
-    // In real scenario, would parse XML/RSS from NATO official sources
+    // NATO/OSCEの公式フィードは公開APIが無いため、軍事活動スコアに基づく
+    // ヒューリスティック推定を使用(旧実装の未使用fetch 2本は404を出す
+    // だけだったため削除 — 2026-07-04)
     const now = new Date();
     
     // If recent high military activity detected, increase NATO alert

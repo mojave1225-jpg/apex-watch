@@ -58,7 +58,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=295">
+  <link rel="stylesheet" href="styles.css?v=297">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -284,27 +284,77 @@
       <!-- THREAT METER -->
       <section class="threat-section">
         <div class="threat-container">
-          <div class="threat-label-top">終末危機指数 / DOOMSDAY INDEX™</div>
+          <div class="threat-title-frame"><div class="threat-title-inner">終末危機指数&nbsp;&nbsp;/&nbsp;&nbsp;DOOMSDAY INDEX™</div></div>
           <div class="threat-meter-wrap">
             <div class="threat-arc">
               <svg viewBox="0 0 300 160" class="arc-svg">
                 <defs>
                   <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#00ff88"/>
-                    <stop offset="40%" style="stop-color:#ffdd00"/>
-                    <stop offset="70%" style="stop-color:#ff8800"/>
-                    <stop offset="100%" style="stop-color:#ff0044"/>
+                    <stop offset="0%" style="stop-color:#2f9bff"/>
+                    <stop offset="38%" style="stop-color:#7f9dff"/>
+                    <stop offset="62%" style="stop-color:#b98cff"/>
+                    <stop offset="82%" style="stop-color:#ff6a7d"/>
+                    <stop offset="100%" style="stop-color:#ff2e8a"/>
+                  </linearGradient>
+                  <linearGradient id="needleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff"/>
+                    <stop offset="100%" style="stop-color:#93a7d4"/>
                   </linearGradient>
                 </defs>
-                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#1a1a2e" stroke-width="18"/>
-                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.3"/>
+                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="#141b33" stroke-width="18"/>
+                <path d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round" opacity="0.25"/>
                 <path id="activeArc" d="M 20 150 A 130 130 0 0 1 280 150" fill="none" stroke="url(#arcGrad)" stroke-width="18" stroke-linecap="round"
                   stroke-dasharray="408" stroke-dashoffset="200" style="transition: stroke-dashoffset 2s ease"/>
-                <line id="needle" x1="150" y1="150" x2="150" y2="30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="150" cy="150" r="8" fill="#ffffff" opacity="0.9"/>
-                <text x="15" y="165" fill="#00ff88" font-size="10" font-family="monospace">0</text>
-                <text x="140" y="22" fill="#ffdd00" font-size="10" font-family="monospace">50</text>
-                <text x="275" y="165" fill="#ff0044" font-size="10" font-family="monospace">100</text>
+                <line x1="31.0" y1="150.0" x2="9.0" y2="150.0" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="36.8" y1="113.2" x2="15.9" y2="106.4" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="53.7" y1="80.1" x2="35.9" y2="67.1" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="80.1" y1="53.7" x2="67.1" y2="35.9" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="113.2" y1="36.8" x2="106.4" y2="15.9" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="150.0" y1="31.0" x2="150.0" y2="9.0" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="186.8" y1="36.8" x2="193.6" y2="15.9" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="219.9" y1="53.7" x2="232.9" y2="35.9" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="246.3" y1="80.1" x2="264.1" y2="67.1" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="263.2" y1="113.2" x2="284.1" y2="106.4" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="269.0" y1="150.0" x2="291.0" y2="150.0" stroke="#eef4ff" stroke-width="2.4" opacity="0.85"/>
+                <line x1="16.4" y1="139.5" x2="10.4" y2="139.0" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="17.6" y1="129.0" x2="11.7" y2="128.1" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="19.7" y1="118.7" x2="13.9" y2="117.3" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="26.2" y1="98.7" x2="20.7" y2="96.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="30.6" y1="89.2" x2="25.3" y2="86.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="35.7" y1="80.0" x2="30.6" y2="76.9" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="48.1" y1="63.0" x2="43.5" y2="59.1" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="55.2" y1="55.2" x2="51.0" y2="51.0" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="63.0" y1="48.1" x2="59.1" y2="43.5" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="80.0" y1="35.7" x2="76.9" y2="30.6" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="89.2" y1="30.6" x2="86.4" y2="25.3" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="98.7" y1="26.2" x2="96.4" y2="20.7" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="118.7" y1="19.7" x2="117.3" y2="13.9" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="129.0" y1="17.6" x2="128.1" y2="11.7" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="139.5" y1="16.4" x2="139.0" y2="10.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="160.5" y1="16.4" x2="161.0" y2="10.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="171.0" y1="17.6" x2="171.9" y2="11.7" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="181.3" y1="19.7" x2="182.7" y2="13.9" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="201.3" y1="26.2" x2="203.6" y2="20.7" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="210.8" y1="30.6" x2="213.6" y2="25.3" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="220.0" y1="35.7" x2="223.1" y2="30.6" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="237.0" y1="48.1" x2="240.9" y2="43.5" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="244.8" y1="55.2" x2="249.0" y2="51.0" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="251.9" y1="63.0" x2="256.5" y2="59.1" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="264.3" y1="80.0" x2="269.4" y2="76.9" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="269.4" y1="89.2" x2="274.7" y2="86.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="273.8" y1="98.7" x2="279.3" y2="96.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="280.3" y1="118.7" x2="286.1" y2="117.3" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="282.4" y1="129.0" x2="288.3" y2="128.1" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <line x1="283.6" y1="139.5" x2="289.6" y2="139.0" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
+                <path d="M 42 150 A 108 108 0 0 1 258 150" fill="none" stroke="#6f86c9" stroke-width="1.2" stroke-dasharray="0.5 5.5" opacity="0.55" stroke-linecap="round"/>
+                <g id="needle">
+                  <polygon points="146.2,152 150,36 153.8,152" fill="url(#needleGrad)"/>
+                </g>
+                <circle cx="150" cy="150" r="11" fill="#0d1428" stroke="#8fa8d8" stroke-width="1.5"/>
+                <circle cx="150" cy="150" r="4" fill="#c9d6f0"/>
+                <text x="15" y="163" fill="#3fa9ff" font-size="10" font-family="monospace">0</text>
+                <text x="143" y="14" fill="#b39bff" font-size="10" font-family="monospace">50</text>
+                <text x="268" y="163" fill="#ff2e8a" font-size="10" font-family="monospace">100</text>
               </svg>
             </div>
             <div class="threat-score-block">
@@ -312,11 +362,11 @@
               <div class="score-label" id="threatLabel">計算中...</div>
             </div>
           </div>
-          <div class="threat-sublabels">
-            <span class="sub-ok">通常<br><span class="sub-en">Normal</span></span>
-            <span class="sub-warn">警戒<br><span class="sub-en">Caution</span></span>
-            <span class="sub-danger">危険<br><span class="sub-en">Danger</span></span>
-            <span class="sub-critical">緊急<br><span class="sub-en">Critical</span></span>
+          <div class="threat-cards">
+            <div class="tcard tcard-ok" id="tcard-0"><div class="tcard-jp">通常</div><div class="tcard-en">Normal</div><svg class="tcard-icon" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><div class="tcard-dashes"><span class="on"></span><span class=""></span><span class=""></span><span class=""></span></div></div>
+            <div class="tcard tcard-warn" id="tcard-1"><div class="tcard-jp">警戒</div><div class="tcard-en">Caution</div><svg class="tcard-icon" viewBox="0 0 24 24"><path d="M12 3 22 20H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="12" y1="9.5" x2="12" y2="14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.1" fill="currentColor"/></svg><div class="tcard-dashes"><span class=""></span><span class="on"></span><span class=""></span><span class=""></span></div></div>
+            <div class="tcard tcard-danger" id="tcard-2"><div class="tcard-jp">危険</div><div class="tcard-en">Danger</div><svg class="tcard-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.1" fill="currentColor"/><path d="M12 12 L7.8 4.1 A9 9 0 0 1 16.2 4.1 Z" fill="currentColor" opacity="0.9"/><path d="M12 12 L21.0 12.3 A9 9 0 0 1 16.8 19.6 Z" fill="currentColor" opacity="0.9"/><path d="M12 12 L7.2 19.6 A9 9 0 0 1 3.0 12.3 Z" fill="currentColor" opacity="0.9"/></svg><div class="tcard-dashes"><span class=""></span><span class=""></span><span class="on"></span><span class=""></span></div></div>
+            <div class="tcard tcard-critical" id="tcard-3"><div class="tcard-jp">緊急</div><div class="tcard-en">Critical</div><svg class="tcard-icon" viewBox="0 0 24 24"><path d="M7 15a5 5 0 0 1 10 0v3H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="4.5" y1="18" x2="19.5" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="7.5" x2="12" y2="4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="6.8" y1="9" x2="4.8" y2="7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="17.2" y1="9" x2="19.2" y2="7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><div class="tcard-dashes"><span class=""></span><span class=""></span><span class=""></span><span class="on"></span></div></div>
           </div>
         </div>
       </section>
@@ -1284,7 +1334,7 @@
     <div class="gdelt-note">
       ソース: GDELT Project (DOC/GEO 2.0 API) — 世界の報道を15分毎に解析。緊張度は紛争関連報道の
       論調(トーン)の絶対値と7日平均からの悪化幅で算出し、DOOMSDAY INDEXに重み10%で反映。
-      マップの◍レイヤーは直近24時間の紛争関連報道の地理的密度。
+      マップの◍レイヤーは直近24時間の紛争関連報道の発信国別分布(円の大きさ=報道量)。
     </div>
   </section>
 
@@ -1344,16 +1394,16 @@
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" defer></script>
   <script src="data.js?v=287" defer></script>
   <script src="map.js?v=294" defer></script>
-  <script src="app.js?v=294" defer></script>
+  <script src="app.js?v=296" defer></script>
   <script src="military.js?v=287" defer></script>
   <script src="bizjet.js?v=287" defer></script>
   <script src="shipping.js?v=287" defer></script>
   <script src="cyber.js?v=293" defer></script>
-  <script src="defcon.js?v=287" defer></script>
+  <script src="defcon.js?v=288" defer></script>
   <script src="neo.js?v=292" defer></script>
   <script src="earth.js?v=293" defer></script>
-  <script src="gdelt.js?v=3" defer></script>
-  <script src="yt.js?v=300" defer></script>
+  <script src="gdelt.js?v=5" defer></script>
+  <script src="yt.js?v=301" defer></script>
 
   <!-- Floating TOP button -->
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
@@ -1423,7 +1473,7 @@
       if (started) return;
       started = true;
       loadScript('https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js')
-        .then(() => loadScript('neo3d.js?v=292'))
+        .then(() => loadScript('neo3d.js?v=293'))
         .catch(() => {
           target.innerHTML = '<div style="padding:20px;text-align:center;font-family:monospace;font-size:11px;color:#3a4a6a">3D モジュールの読み込みに失敗しました</div>';
         });

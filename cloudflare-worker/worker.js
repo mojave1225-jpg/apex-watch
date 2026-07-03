@@ -45,7 +45,57 @@ export default {
       return new Response('Method not allowed', { status: 405, headers: corsHeaders });
     }
 
-    const target = new URL(request.url).searchParams.get('url');
+    const reqUrl = new URL(request.url);
+
+    // ── /ytlive?channel=UCxxx : YouTube Data APIで現在のライブ動画IDを返す ──
+    // APIキーは `npx wrangler secret put YT_API_KEY` で登録(コードには含めない)
+    // エッジキャッシュ30分 → API消費 約4,800units/日(無料枠10,000の半分以下)
+    if (reqUrl.pathname === '/ytlive') {
+      const channel = reqUrl.searchParams.get('channel') || '';
+      if (!/^UC[\w-]{22}$/.test(channel)) {
+        return new Response(JSON.stringify({ error: 'invalid channel' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      if (!env.YT_API_KEY) {
+        return new Response(JSON.stringify({ error: 'YT_API_KEY not configured' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const apiUrl = 'https://www.googleapis.com/youtube/v3/search'
+        + '?part=id&type=video&eventType=live&maxResults=1&order=date'
+        + '&channelId=' + channel + '&key=' + env.YT_API_KEY;
+
+      const cache = caches.default;
+      // キャッシュキーにAPIキーを含めない(ログ・キー漏えい防止)
+      const cacheKey = new Request('https://ytlive.cache/' + channel, { method: 'GET' });
+      let cached = await cache.match(cacheKey);
+      if (cached) {
+        cached = new Response(cached.body, cached);
+        for (const [k, v] of Object.entries(corsHeaders)) cached.headers.set(k, v);
+        return cached;
+      }
+
+      let videoId = null;
+      try {
+        const apiRes = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+        if (apiRes.ok) {
+          const data = await apiRes.json();
+          videoId = data?.items?.[0]?.id?.videoId || null;
+        }
+      } catch (_) { /* fall through */ }
+
+      const body = JSON.stringify({ videoId });
+      const res = new Response(body, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=1800',
+        },
+      });
+      if (videoId) ctx.waitUntil(cache.put(cacheKey, res.clone()));
+      return res;
+    }
+
+    const target = reqUrl.searchParams.get('url');
     if (!target) {
       return new Response('Missing ?url= parameter', { status: 400, headers: corsHeaders });
     }

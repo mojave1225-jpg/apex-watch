@@ -136,9 +136,10 @@ function updatePanel(id, score, statusText) {
 
   // Color the score number
   const scoreEl = document.getElementById('score-' + id);
-  if (score >= 80) scoreEl.style.color = 'var(--accent-red)';
-  else if (score >= 60) scoreEl.style.color = 'var(--accent-orange)';
-  else scoreEl.style.color = 'var(--accent-yellow)';
+  if (score >= 80) scoreEl.style.color = 'var(--lvl-critical)';
+  else if (score >= 60) scoreEl.style.color = 'var(--lvl-danger)';
+  else if (score >= 40) scoreEl.style.color = 'var(--lvl-warn)';
+  else scoreEl.style.color = 'var(--lvl-ok)';
 }
 
 // ── ARROW HELPER ──
@@ -170,18 +171,16 @@ function recalcMain() {
   document.getElementById('mainScore').textContent = total;
 
   let label, color;
-  if (total >= 85) { label = '⚠ 緊急レベル: アポカリプス準備完了'; color = 'var(--accent-red)'; }
-  else if (total >= 70) { label = '⚡ 危険レベル: 大規模逃避フェーズ'; color = 'var(--accent-orange)'; }
-  else if (total >= 55) { label = '▲ 警戒レベル: 資産分散進行中'; color = 'var(--accent-yellow)'; }
-  else { label = '◈ 監視レベル: 通常範囲内'; color = 'var(--accent-green)'; }
+  if (total >= 85) { label = '⚠ 緊急レベル: アポカリプス準備完了'; color = 'var(--lvl-critical)'; }
+  else if (total >= 70) { label = '⚡ 危険レベル: 大規模逃避フェーズ'; color = 'var(--lvl-danger)'; }
+  else if (total >= 55) { label = '▲ 警戒レベル: 資産分散進行中'; color = 'var(--lvl-warn)'; }
+  else { label = '◈ 監視レベル: 通常範囲内'; color = 'var(--lvl-ok)'; }
 
   const labelEl = document.getElementById('threatLabel');
   labelEl.textContent = label;
   labelEl.style.color = color;
 
-  const scoreEl = document.getElementById('mainScore');
-  scoreEl.style.color = color;
-  scoreEl.style.textShadow = `0 0 20px ${color.replace(')', ', 0.6)')}, 0 0 40px ${color.replace(')', ', 0.3)')}`;
+  // スコア数字は7セグ・シルバー固定(色による危険度表示はカード点灯とラベルで表現)
 
   // Arc animation: 0=full dashoffset(408), 100=0 dashoffset
   const dashOffset = Math.round(408 * (1 - total / 100));
@@ -190,6 +189,12 @@ function recalcMain() {
   // Needle: 0=-90deg, 100=+90deg
   const deg = -90 + (total / 100) * 180;
   document.getElementById('needle').style.transform = `rotate(${deg}deg)`;
+
+  // 現在レベルのステータスカードを点灯
+  const lvlIdx = total >= 80 ? 3 : total >= 60 ? 2 : total >= 40 ? 1 : 0;
+  document.querySelectorAll('.tcard').forEach((el, i) => {
+    el.classList.toggle('tcard-active', i === lvlIdx);
+  });
 
   // Alert banner
   updateAlertBanner(total);

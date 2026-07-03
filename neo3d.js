@@ -33,7 +33,8 @@
   // and city-lights emissive for the dark side.
   // Falls back to a canvas-drawn Earth if any load fails.
 
-  const TEX_BASE = 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/textures/planets/';
+  // npmパッケージにはテクスチャが同梱されないため、GitHubリポジトリ直接配信を使用
+const TEX_BASE = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r155/examples/textures/planets/';
 
   function makeFallbackTex() {
     const W = 1024, H = 512;
