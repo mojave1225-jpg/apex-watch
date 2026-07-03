@@ -270,9 +270,17 @@ const LV_CONFIG = {
 
 async function loadVolcanoes() {
   try {
-    const url  = ES_PROXY + encodeURIComponent(VOL_RSS);
-    const res  = await esFetch(url, 8000);
-    const text = await res.text();
+    const pu   = (typeof apexProxyUrl === 'function') ? apexProxyUrl(VOL_RSS) : null;
+    let   res, text;
+    try {
+      // 自前プロキシ優先(設定時のみ)、失敗時はalloriginsへ
+      if (!pu) throw new Error('apex proxy not configured');
+      res  = await esFetch(pu, 8000);
+      text = await res.text();
+    } catch (_) {
+      res  = await esFetch(ES_PROXY + encodeURIComponent(VOL_RSS), 8000);
+      text = await res.text();
+    }
     if (!text.includes('<item') || text.startsWith('error') || text.includes('error code:')) {
       throw new Error('proxy error: ' + text.slice(0,40));
     }

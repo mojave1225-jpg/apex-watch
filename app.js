@@ -7,7 +7,7 @@
 // ── STATE ──
 const state = {
   btc: null, eth: null, gold: null, fearGreed: null,
-  scores: { assets: 0, residency: 72, medical: 78, comms: 81, mobility: 67, security: 85, military: 40, bizjet: 40, shipping: 50 },
+  scores: { assets: 0, residency: 72, medical: 78, comms: 81, mobility: 67, security: 85, military: 40, bizjet: 40, shipping: 50, gdelt: 50 },
   apiReady: false,
 };
 
@@ -153,7 +153,7 @@ function setArrow(id, change) {
 // ── MAIN SCORE RECALC ──
 function recalcMain() {
   const s = state.scores;
-  const weights = { assets: 0.14, residency: 0.09, medical: 0.07, comms: 0.10, mobility: 0.09, security: 0.12, military: 0.14, bizjet: 0.15, shipping: 0.10 };
+  const weights = { assets: 0.13, residency: 0.08, medical: 0.06, comms: 0.09, mobility: 0.08, security: 0.11, military: 0.13, bizjet: 0.14, shipping: 0.08, gdelt: 0.10 };
   const total = Math.round(
     s.assets    * weights.assets +
     s.residency * weights.residency +
@@ -163,7 +163,8 @@ function recalcMain() {
     s.security  * weights.security +
     (s.military  || 40) * weights.military +
     (s.bizjet    || 40) * weights.bizjet +
-    (s.shipping  || 50) * weights.shipping
+    (s.shipping  || 50) * weights.shipping +
+    (s.gdelt     || 50) * weights.gdelt
   );
 
   document.getElementById('mainScore').textContent = total;
@@ -448,3 +449,10 @@ document.addEventListener('DOMContentLoaded', () => {
   init();
   setInterval(refresh, 60000); // Refresh every 60s
 });
+
+
+// ── GDELTメディア緊張度スコアの受け口 (gdelt.jsから呼ばれる) ──
+window.setGdeltScore = function(score) {
+  state.scores.gdelt = score;
+  recalcMain();
+};

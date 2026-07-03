@@ -3467,3 +3467,76 @@ html, body {
   }
   .scanline, .noise { display: none !important; }
 }
+
+
+/* ============================================================
+   GDELT GLOBAL MEDIA MONITOR + MAP LAYER TOGGLES — v294
+   ============================================================ */
+
+.map-layer-toggles {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(4,6,16,0.6);
+}
+.mlt-label {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--text-dim); letter-spacing: 1.5px; margin-right: 2px;
+}
+.map-layer-chip {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.5px;
+  color: var(--text-dim); background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 3px 10px; cursor: pointer; transition: all 0.2s;
+}
+.map-layer-chip.chip-on {
+  color: var(--accent-blue);
+  border-color: var(--border-bright);
+  background: rgba(0,204,255,0.08);
+}
+.map-layer-chip:hover { border-color: var(--accent-blue); }
+
+.gdelt-score-wrap {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
+  margin-left: auto; margin-right: 10px; white-space: nowrap;
+}
+.gdelt-score { font-size: 16px; font-weight: bold; color: var(--accent-yellow); }
+.gdelt-score-detail {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+  padding: 4px 16px 0;
+}
+.gdelt-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 8px; padding: 10px 14px;
+}
+.gdelt-item {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto;
+  gap: 2px 10px; padding: 8px 10px;
+  background: var(--bg-panel); border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-yellow);
+  text-decoration: none; transition: all 0.2s;
+}
+.gdelt-item:hover { background: var(--bg-panel-hover); border-left-color: var(--accent-blue); }
+.gdelt-time  { font-family: var(--font-mono); font-size: 10px; color: var(--accent-blue); }
+.gdelt-src   { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+               overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gdelt-title { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 11.5px;
+               color: var(--text-primary); line-height: 1.45; }
+.gdelt-note {
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dim);
+  line-height: 1.7; padding: 4px 16px 12px;
+}
+
+/* マップ上のGDELT報道密度ポイント */
+.gdelt-point {
+  fill: rgba(255, 221, 0, 0.28);
+  stroke: rgba(255, 221, 0, 0.75);
+  stroke-width: 0.6;
+  pointer-events: all;
+}
+
+@media (max-width: 600px) {
+  .gdelt-grid { grid-template-columns: 1fr; padding: 8px; }
+  .map-layer-chip { font-size: 9px; padding: 3px 7px; }
+  .gdelt-score-wrap { margin-left: 0; }
+}

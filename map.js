@@ -501,6 +501,7 @@ async function initWorldMap() {
   svg.append('g').attr('id', 'cyber-layer');
 
   // Notify cyber.js that the map is ready
+  window.__APEX_MAP = { svg, projection, W, H };
   document.dispatchEvent(new CustomEvent('apexMapReady', {
     detail: { svg, projection, W, H }
   }));

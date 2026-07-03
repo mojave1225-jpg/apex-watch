@@ -122,7 +122,13 @@ async function loadThreatIntel() {
   // Try direct first (abuse.ch may allow CORS)
   try { data = await timedFetch(FEODO_URL, 5000); } catch (_) {}
 
-  // Fallback: public CORS proxy
+  // Fallback 1: 自前プロキシ (Cloudflare Worker, 設定時のみ)
+  if (!data && typeof apexProxyUrl === 'function') {
+    const pu = apexProxyUrl(FEODO_URL);
+    if (pu) { try { data = await timedFetch(pu, 9000); } catch (_) {} }
+  }
+
+  // Fallback 2: public CORS proxy
   if (!data) {
     try { data = await timedFetch(FEODO_PROXY, 9000); } catch (_) {}
   }

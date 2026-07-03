@@ -1,0 +1,17 @@
+{
+  "name": "APEX WATCH — 終末予兆監視システム",
+  "short_name": "APEX WATCH",
+  "description": "World Apocalypse Early Warning System — DEFCON・軍事活動・BizJet・海運・NEO・宇宙天気・サイバーのリアルタイム監視ダッシュボード",
+  "lang": "ja",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#03040d",
+  "theme_color": "#03040d",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

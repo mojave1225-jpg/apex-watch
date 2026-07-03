@@ -12,6 +12,7 @@
   <meta name="application-name" content="APEX WATCH">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#03040d">
+  <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -57,7 +58,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=293">
+  <link rel="stylesheet" href="styles.css?v=294">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -93,6 +94,7 @@
     <a href="#s-neo"      class="snav-btn">☄ 宇宙脅威 / Space</a>
     <a href="#s-earth"    class="snav-btn">∿ 地球活動 / Seismic</a>
     <a href="#s-news"     class="snav-btn">◈ ニュース / News</a>
+    <a href="#s-gdelt"    class="snav-btn">◍ GDELT / Media</a>
     <a href="#s-timeline" class="snav-btn">◈ 年表 / Timeline</a>
     <a href="southwest-taiwan.html" class="snav-btn">◈ 南西諸島 / 台湾海峡</a>
   </nav>
@@ -122,6 +124,13 @@
       <div class="map-header-row">
         <span>◈ グローバル脅威マップ / Global Threat Map — 戦争・紛争・不安定地域・サイバー攻撃 / War · Conflict · Instability · Cyber</span>
         <span class="map-loading" id="mapLoading">地図データ読み込み中...</span>
+      </div>
+      <div class="map-layer-toggles" id="mapLayerToggles">
+        <span class="mlt-label">LAYERS:</span>
+        <button class="map-layer-chip chip-on" data-layer="hotspot-layer">◉ 紛争ホットスポット</button>
+        <button class="map-layer-chip chip-on" data-layer="strategic-layer">◈ 戦略回廊</button>
+        <button class="map-layer-chip chip-on" data-layer="cyber-layer">⚡ サイバー</button>
+        <button class="map-layer-chip chip-on" data-layer="gdelt-layer">◍ GDELT報道密度</button>
       </div>
       <div class="map-container" id="mapContainer">
         <div class="map-hud" id="mapHud" aria-label="Global threat map intelligence overlay">
@@ -1260,6 +1269,25 @@
   </section>
 
 
+  <!-- GDELT GLOBAL MEDIA MONITOR -->
+  <section class="news-section gdelt-section" id="s-gdelt">
+    <div class="news-header">
+      <span class="news-title">◍ GDELT GLOBAL MEDIA MONITOR — 世界メディア紛争報道監視</span>
+      <span class="gdelt-score-wrap">メディア緊張度 <span class="gdelt-score" id="gdeltScore">--</span><small>/100</small></span>
+      <span class="news-refresh" id="gdeltStatus">初期化中...</span>
+      <button class="sec-toggle" title="折畳">▼ 折畳</button>
+    </div>
+    <div class="gdelt-score-detail" id="gdeltScoreDetail"></div>
+    <div class="gdelt-grid" id="gdeltGrid">
+      <div class="news-placeholder">GDELTデータ取得中...</div>
+    </div>
+    <div class="gdelt-note">
+      ソース: GDELT Project (DOC/GEO 2.0 API) — 世界の報道を15分毎に解析。緊張度は紛争関連報道の
+      論調(トーン)の絶対値と7日平均からの悪化幅で算出し、DOOMSDAY INDEXに重み10%で反映。
+      マップの◍レイヤーは直近24時間の紛争関連報道の地理的密度。
+    </div>
+  </section>
+
   <!-- TIMELINE -->
   <section class="timeline-section" id="s-timeline">
     <div class="timeline-header">
@@ -1311,18 +1339,20 @@
     </div>
   </footer>
 
+  <script src="config.js?v=1" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js" defer></script>
   <script src="data.js?v=287" defer></script>
-  <script src="map.js?v=290" defer></script>
-  <script src="app.js?v=287" defer></script>
+  <script src="map.js?v=294" defer></script>
+  <script src="app.js?v=294" defer></script>
   <script src="military.js?v=287" defer></script>
   <script src="bizjet.js?v=287" defer></script>
   <script src="shipping.js?v=287" defer></script>
-  <script src="cyber.js?v=288" defer></script>
+  <script src="cyber.js?v=293" defer></script>
   <script src="defcon.js?v=287" defer></script>
   <script src="neo.js?v=292" defer></script>
-  <script src="earth.js?v=287" defer></script>
+  <script src="earth.js?v=293" defer></script>
+  <script src="gdelt.js?v=1" defer></script>
   <script src="yt.js?v=296" defer></script>
 
   <!-- Floating TOP button -->
@@ -1369,6 +1399,14 @@
     onScroll();
   })();
 
+
+  // ── Service Worker 登録 (PWA) ──
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
+    });
+  }
+  
   // ── Lazy-load Three.js + neo3d.js when the space section approaches ──
   (function() {
     const target = document.getElementById('neo3d-container');

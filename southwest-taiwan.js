@@ -400,6 +400,11 @@ function fetchWithTimeout(url, timeout = 15000) {
 }
 
 function buildProxyUrl(url) {
+  // 自前プロキシ(Cloudflare Worker)優先、未設定時は従来のr.jina.ai
+  if (typeof apexProxyUrl === 'function') {
+    const pu = apexProxyUrl(url);
+    if (pu) return pu;
+  }
   return `https://r.jina.ai/http://${url.replace(/^https?:\/\//, '')}`;
 }
 
