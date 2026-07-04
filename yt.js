@@ -278,8 +278,20 @@ function wireChannelTabs() {
   });
 }
 
+/* メインのタブ切替プレイヤー(CBS等)とは別に、
+   Al Jazeera Englishを常設2枠目として独立に解決・埋め込みする */
+const ALJAZEERA_FIXED = {
+  wrapperId:  'yt-wrap-aljazeera',
+  channelId:  'UCNye-wNBqNL5ZzHSJj3l8Bg',
+  liveVideoId: null,
+  label:      '▶ Al Jazeera English Live',
+  youtubeUrl: 'https://www.youtube.com/@AlJazeeraEnglish/live',
+  officialUrl:'https://www.aljazeera.com/live/',
+};
+
 function initYoutubeLive() {
   setEmbed(YT_CHANNELS[0]);
+  setEmbed(ALJAZEERA_FIXED);
   wireChannelTabs();
 }
 
