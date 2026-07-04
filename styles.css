@@ -1949,7 +1949,7 @@ html, body {
 #threat-status-panel {
   position: absolute;
   /* .map-section基準: 上部パディング16px + ヘッダー行(約32px) + margin-bottom14px + 内側8px */
-  top: 70px;
+  top: 56px;
   right: 28px;
   z-index: 20;
   display: flex;
@@ -3709,4 +3709,23 @@ html, body {
 /* 各所のスコアバーを統一グラデーションへ */
 .panel-bar          { background: var(--gauge-grad) !important; }
 .cmd-theater-fill   { background: var(--gauge-grad) !important; }
+
+
+/* ============================================================
+   FOOTER POLICY LINKS — ハイライト化
+   ============================================================ */
+.footer-policy-link {
+  color: var(--accent-blue) !important;
+  text-decoration: none;
+  opacity: 1;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--accent-blue);
+  padding-bottom: 1px;
+  margin-right: 14px;
+}
+.footer-policy-link:hover {
+  opacity: 0.85;
+  filter: brightness(1.2);
+  border-bottom-color: var(--accent-cyan);
+}
 .map-hud-bar-fill   { background: linear-gradient(90deg, rgba(47,155,255,0.65), rgba(255,46,138,0.9)) !important; }
