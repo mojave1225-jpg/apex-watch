@@ -32,6 +32,24 @@ jobs:
         with:
           path: .
 
+      # GitHub側の一時障害(アーティファクトmetadata取得失敗)対策:
+      # 同一run内で最大3回まで自動リトライ(同一runの再試行なら
+      # アーティファクト重複問題は発生しない)
       - name: Deploy to GitHub Pages
         id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Retry deploy (attempt 2)
+        id: deployment2
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before final attempt
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
+        run: sleep 30
+
+      - name: Retry deploy (attempt 3)
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
         uses: actions/deploy-pages@v4
