@@ -2319,14 +2319,15 @@ html, body {
 /* Mobile adjustments */
 @media (max-width: 600px) {
   .section-nav {
-    top: 52px; padding: 0 6px;
+    top: 52px; padding: 0 6px 0 6px;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
     /* 右端フェードで「まだ続く」ことを示唆 */
     -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
     mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
   }
-  .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; }
+  .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; margin-right: 4px; }
+  .snav-btn:last-child { margin-right: 28px; }
   .snav-label  { display: none; }
   #topBtn      { bottom: 14px; right: 12px; width: 34px; height: 34px; font-size: 12px; }
 }
