@@ -3742,3 +3742,39 @@ html, body {
   .yt-channel-tabs { margin-left: 0; padding-left: 0; margin-top: 6px; width: 100%; }
   .yt-ch-tab { font-size: 9px; padding: 3px 8px; }
 }
+
+
+/* ============================================================
+   DEFCON/FPCON PANEL — 構造修正 v299
+   .map-section基準のtop決め打ち(ヘッダー+トグルバーの高さに依存)を廃止。
+   パネルをマップ本体(.map-container)内に移し「マップ右上から12px」に固定。
+   → 上部に要素が増減しても二度とズレない。
+   ============================================================ */
+.map-container { position: relative; }
+#threat-status-panel {
+  top: 12px;
+  right: 12px;
+}
+
+/* タブレット(601-900px): マップ内オーバーレイをやめ、マップ枠内の下部に横並び */
+@media (max-width: 900px) {
+  #threat-status-panel {
+    position: static;
+    width: auto;
+    margin: 0;
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px;
+    border-top: 1px solid var(--border);
+    background: rgba(4, 8, 20, 0.85);
+  }
+  .ts-block { flex: 1; }
+}
+
+/* スマホ(≤600px): flexカラム化したマップ枠内でHUDの下に配置 */
+@media (max-width: 600px) {
+  #threat-status-panel {
+    order: 3;
+    flex-wrap: wrap;
+  }
+}
