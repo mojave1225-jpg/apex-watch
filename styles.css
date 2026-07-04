@@ -1948,8 +1948,8 @@ html, body {
 .map-section { position: relative; }
 #threat-status-panel {
   position: absolute;
-  /* .map-section基準: マップの右側中央上部に配置 */
-  top: 90px;
+  /* .map-section基準: 上部パディング16px + ヘッダー行(約32px) + margin-bottom14px + 内側8px */
+  top: 70px;
   right: 28px;
   z-index: 20;
   display: flex;
@@ -2319,15 +2319,14 @@ html, body {
 /* Mobile adjustments */
 @media (max-width: 600px) {
   .section-nav {
-    top: 52px; padding: 0 6px 0 6px;
+    top: 52px; padding: 0 6px;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
     /* 右端フェードで「まだ続く」ことを示唆 */
     -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
     mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
   }
-  .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; margin-right: 4px; }
-  .snav-btn:last-child { margin-right: 28px; }
+  .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; }
   .snav-label  { display: none; }
   #topBtn      { bottom: 14px; right: 12px; width: 34px; height: 34px; font-size: 12px; }
 }
@@ -2825,13 +2824,6 @@ html, body {
 .site-footer > div {
   font-family: var(--font-mono); font-size: 9px;
   color: var(--text-dim); letter-spacing: 0.5px;
-}
-.footer-version {
-  color: var(--accent-blue);
-  font-weight: bold;
-  letter-spacing: 1px;
-  padding: 2px 6px;
-  border-bottom: 1px solid var(--accent-blue);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -3717,23 +3709,31 @@ html, body {
 /* 各所のスコアバーを統一グラデーションへ */
 .panel-bar          { background: var(--gauge-grad) !important; }
 .cmd-theater-fill   { background: var(--gauge-grad) !important; }
+.map-hud-bar-fill   { background: linear-gradient(90deg, rgba(47,155,255,0.65), rgba(255,46,138,0.9)) !important; }
 
 
 /* ============================================================
-   FOOTER POLICY LINKS — ハイライト化
+   LIVE NEWS CHANNEL TABS — v298
    ============================================================ */
-.footer-policy-link {
-  color: var(--accent-blue) !important;
-  text-decoration: none;
-  opacity: 1;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid var(--accent-blue);
-  padding-bottom: 1px;
-  margin-right: 14px;
+.yt-channel-tabs {
+  display: inline-flex; flex-wrap: wrap; gap: 5px;
+  margin-left: auto; padding-left: 12px;
 }
-.footer-policy-link:hover {
-  opacity: 0.85;
-  filter: brightness(1.2);
-  border-bottom-color: var(--accent-cyan);
+.news-live-header { display: flex; align-items: center; flex-wrap: wrap; }
+.yt-ch-tab {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.5px;
+  color: var(--text-dim); background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 3px 10px; cursor: pointer; transition: all 0.2s;
 }
-.map-hud-bar-fill   { background: linear-gradient(90deg, rgba(47,155,255,0.65), rgba(255,46,138,0.9)) !important; }
+.yt-ch-tab.on {
+  color: var(--accent-blue);
+  border-color: var(--border-bright);
+  background: rgba(0,204,255,0.08);
+}
+.yt-ch-tab:hover { border-color: var(--accent-blue); }
+
+@media (max-width: 600px) {
+  .yt-channel-tabs { margin-left: 0; padding-left: 0; margin-top: 6px; width: 100%; }
+  .yt-ch-tab { font-size: 9px; padding: 3px 8px; }
+}

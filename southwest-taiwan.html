@@ -243,6 +243,25 @@
     border-top:1px solid var(--panel-border);
   }
 
+
+  /* ── GDELT地域メディア監視 ── */
+  .gr-score{font-family:var(--mono);font-size:18px;font-weight:bold;color:var(--accent-3);}
+  .gr-score-detail{font-family:var(--mono);font-size:10px;color:var(--text-dim);padding:2px 2px 8px;}
+  .gr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px;}
+  .gr-item{
+    display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:2px 10px;
+    padding:8px 10px;background:var(--panel);border:1px solid var(--panel-border);
+    border-left:2px solid var(--accent-3);text-decoration:none;transition:all .2s;
+  }
+  .gr-item:hover{background:#0d1530;border-left-color:var(--accent-2);}
+  .gr-time{font-family:var(--mono);font-size:10px;color:var(--accent-2);}
+  .gr-src{font-family:var(--mono);font-size:10px;color:var(--text-dim);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .gr-title{grid-column:1/-1;font-family:var(--mono);font-size:11.5px;color:var(--text);line-height:1.45;}
+  .gr-note{font-family:var(--mono);font-size:9.5px;color:var(--text-dim);line-height:1.7;padding:10px 2px 0;}
+  .gr-placeholder{font-family:var(--mono);font-size:11px;color:var(--text-dim);padding:16px;text-align:center;grid-column:1/-1;}
+  @media (max-width:600px){ .gr-grid{grid-template-columns:1fr;} }
+
   /* ── 本体サイト共通ブランドバー ── */
   .site-bar{
     display:flex;align-items:center;justify-content:space-between;
@@ -281,6 +300,7 @@
   <a href="#s-jsdf">南西シフト配備</a>
   <a href="#s-naval">周辺艦艇</a>
   <a href="#s-timeline">緊張イベント年表</a>
+  <a href="#s-gdelt-region">地域メディア監視</a>
 </nav>
 
 <main>
@@ -490,6 +510,26 @@
     <div class="source-note">出典：防衛研究所NIDSコメンタリー, アジア経済研究所, 日米台安全保障研究, Reuters。今後は緊張度指数が閾値を超えたタイミングを自動でこの年表に追記する仕組みを実装予定。</div>
   </section>
 
+
+  <section id="s-gdelt-region">
+    <div class="sec-head">
+      <h2>◍ 地域メディア監視 / Regional Media Monitor — GDELT</h2>
+      <div class="links">
+        <span>地域メディア緊張度 <span class="gr-score" id="gdeltRegionScore">--</span><small>/100</small></span>
+        <span id="gdeltRegionStatus" style="margin-left:12px;color:var(--text-dim);font-size:11px;">初期化中...</span>
+      </div>
+    </div>
+    <div class="gr-score-detail" id="gdeltRegionDetail"></div>
+    <div class="gr-grid" id="gdeltRegionGrid">
+      <div class="gr-placeholder">GDELT地域データ取得中...</div>
+    </div>
+    <div class="gr-note">
+      ソース: GDELT Project (DOC 2.0 API) — 台湾・台湾海峡・尖閣・沖縄・南シナ海に関する
+      世界の報道を15分毎に解析。緊張度は関連報道の論調(トーン)の絶対値と7日平均からの
+      悪化幅で算出(本体のメディア緊張度と同一式・対象地域限定版)。
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -502,6 +542,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="config.js?v=1"></script>
 <script src="southwest-taiwan.js?v=20260703b"></script>
+<script src="gdelt-region.js?v=1"></script>
 
 </body>
 </html>

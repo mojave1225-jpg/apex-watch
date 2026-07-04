@@ -1,5 +1,5 @@
 /* ============================================================
-   YouTube Live Stream Loader v8 — YouTube Data API(Worker経由)でライブID解決 — channel直接埋め込み方式(HTML解析による誤ID採用の問題を廃止)
+   YouTube Live Stream Loader v9 — マルチチャンネル対応(タブ切替・プレイヤー1枠共有) — YouTube Data API(Worker経由)でライブID解決 — channel直接埋め込み方式(HTML解析による誤ID採用の問題を廃止)
    ライブ動画IDを実行時に解決する方式:
    自前Workerプロキシ経由で /live ページを取得し、canonical の
    watch?v=ID から現在のライブ配信IDを抽出して直接埋め込む。
@@ -10,11 +10,35 @@
 const YT_CHANNELS = [
   {
     wrapperId:  'yt-wrap-cbs',
-    channelId:  'UC8p1vwvWtl6T73JiExfWs1g',  // CBS News official channel
+    channelId:  'UC8p1vwvWtl6T73JiExfWs1g',  // CBS News
     liveVideoId:'zvMSZFgWYBA',              // CBS 24/7 stream fallback
     label:      '▶ CBS News 24/7',
     youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
     officialUrl:'https://www.cbsnews.com/live/',
+  },
+  {
+    wrapperId:  'yt-wrap-cbs',              // プレイヤーは1枠を共有
+    channelId:  'UCBi2mrWuNuyYy4gbM6fU18Q',  // ABC News
+    liveVideoId: null,
+    label:      '▶ ABC News Live',
+    youtubeUrl: 'https://www.youtube.com/@ABCNews/live',
+    officialUrl:'https://abcnews.go.com/Live',
+  },
+  {
+    wrapperId:  'yt-wrap-cbs',
+    channelId:  'UCNye-wNBqNL5ZzHSJj3l8Bg',  // Al Jazeera English
+    liveVideoId: null,
+    label:      '▶ Al Jazeera English Live',
+    youtubeUrl: 'https://www.youtube.com/@AlJazeeraEnglish/live',
+    officialUrl:'https://www.aljazeera.com/live/',
+  },
+  {
+    wrapperId:  'yt-wrap-cbs',
+    channelId:  'UCoMdktPbSTixAyNGwb-UYkQ',  // Sky News
+    liveVideoId: null,
+    label:      '▶ Sky News Live',
+    youtubeUrl: 'https://www.youtube.com/@SkyNews/live',
+    officialUrl:'https://news.sky.com/watch-live',
   },
 ];
 
@@ -114,9 +138,11 @@ function kickYouTubePlayer(iframe) {
 }
 
 function attachControls(w, ch, iframe, sourceList) {
-  if (w.dataset.ytControlsAttached === '1') return;
+  // チャンネル切替時は旧コントロールを除去して作り直す
+  w.querySelectorAll('.yt-ctrl-row, .yt-ctrl-note').forEach(el => el.remove());
 
   const controls = document.createElement('div');
+  controls.className = 'yt-ctrl-row';
   controls.style.display = 'flex';
   controls.style.flexWrap = 'wrap';
   controls.style.gap = '6px';
@@ -150,7 +176,7 @@ function attachControls(w, ch, iframe, sourceList) {
   officialLink.target = '_blank';
   officialLink.rel = 'noopener';
   officialLink.className = 'yt-error-link';
-  officialLink.textContent = '▶ CBS公式で視聴';
+  officialLink.textContent = '▶ 公式サイトで視聴';
   officialLink.style.padding = '3px 8px';
   officialLink.style.fontSize = '9px';
 
@@ -162,7 +188,8 @@ function attachControls(w, ch, iframe, sourceList) {
   note.style.color = '#7e90a6';
   note.style.lineHeight = '1.4';
   note.style.borderTop = '1px solid rgba(26,42,74,0.7)';
-  note.textContent = '埋め込み再生不可の環境では、上の「YouTubeで視聴」または「CBS公式で視聴」をご利用ください。';
+  note.className = 'yt-ctrl-note';
+  note.textContent = '埋め込み再生不可の環境では、上の「YouTubeで視聴」または「公式サイトで視聴」をご利用ください。';
 
   w.appendChild(controls);
   w.appendChild(note);
@@ -209,6 +236,8 @@ async function setEmbed(ch) {
     if (currentSrc !== srcPrimary) {
       existingFrame.src = srcPrimary;
     }
+    const lbl = w.querySelector('.yt-embed-label');
+    if (lbl) lbl.innerHTML = `${ch.label} <span style="font-size:10px;color:#88aa88">[字幕: 自動ON]</span>`;
 
     attachControls(w, ch, existingFrame, sourceList);
     return;
@@ -238,10 +267,20 @@ async function setEmbed(ch) {
   }
 }
 
-function initYoutubeLive() {
-  YT_CHANNELS.forEach((ch, i) => {
-    setTimeout(() => setEmbed(ch), i * 400);
+function wireChannelTabs() {
+  document.querySelectorAll('.yt-ch-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.ch, 10);
+      if (isNaN(idx) || !YT_CHANNELS[idx]) return;
+      document.querySelectorAll('.yt-ch-tab').forEach(b => b.classList.toggle('on', b === btn));
+      setEmbed(YT_CHANNELS[idx]);
+    });
   });
+}
+
+function initYoutubeLive() {
+  setEmbed(YT_CHANNELS[0]);
+  wireChannelTabs();
 }
 
 document.addEventListener('DOMContentLoaded', initYoutubeLive);

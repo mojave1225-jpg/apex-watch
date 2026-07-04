@@ -58,7 +58,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=297">
+  <link rel="stylesheet" href="styles.css?v=298">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -375,6 +375,12 @@
       <div class="news-live-panel">
         <div class="news-live-header">
           <span class="dot"></span>ライブニュース / LIVE NEWS FEED
+          <span class="yt-channel-tabs">
+            <button class="yt-ch-tab on" data-ch="0">CBS</button>
+            <button class="yt-ch-tab" data-ch="1">ABC</button>
+            <button class="yt-ch-tab" data-ch="2">Al Jazeera</button>
+            <button class="yt-ch-tab" data-ch="3">Sky News</button>
+          </span>
         </div>
         <div class="news-live-iframes">
           <div class="yt-embed-wrap" id="yt-wrap-cbs">
@@ -1381,11 +1387,11 @@
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-left">
-      <span class="footer-version">APEX WATCH v2.8.9</span> | データソース / Data Sources: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, GDELT Project, Henley &amp; Partners, GAMA, Baltic Exchange
+      APEX WATCH v2.8.8 | データソース / Data Sources: CoinGecko API, Alternative.me, OpenSky Network, NASA NeoWs, abuse.ch Feodo Tracker, NOAA SWPC, USGS Earthquakes, Smithsonian GVP, Henley &amp; Partners, GAMA, Baltic Exchange
     </div>
     <div class="footer-right">
-      <a href="./disclaimer.html" class="footer-policy-link">免責事項・方法論 / Disclaimer &amp; Methodology</a>
-      <a href="./privacy.html"    class="footer-policy-link">プライバシーポリシー / Privacy Policy</a>
+      <a href="./disclaimer.html" style="color:inherit; text-decoration:none; opacity:0.7; margin-right:14px;">免責事項・方法論 / Disclaimer &amp; Methodology</a>
+      <a href="./privacy.html"    style="color:inherit; text-decoration:none; opacity:0.7;">プライバシーポリシー / Privacy Policy</a>
     </div>
   </footer>
 
@@ -1403,7 +1409,7 @@
   <script src="neo.js?v=292" defer></script>
   <script src="earth.js?v=293" defer></script>
   <script src="gdelt.js?v=5" defer></script>
-  <script src="yt.js?v=301" defer></script>
+  <script src="yt.js?v=302" defer></script>
 
   <!-- Floating TOP button -->
   <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="ページ先頭へ">▲</button>
