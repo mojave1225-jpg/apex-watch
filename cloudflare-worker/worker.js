@@ -45,7 +45,77 @@ export default {
       return new Response('Method not allowed', { status: 405, headers: corsHeaders });
     }
 
-    const target = new URL(request.url).searchParams.get('url');
+    const reqUrl = new URL(request.url);
+
+    // ── /ytlive?channel=UCxxx : アップロードプレイリスト方式でライブ動画ID解決 ──
+    if (reqUrl.pathname === '/ytlive') {
+      const channel = reqUrl.searchParams.get('channel') || '';
+      if (!/^UC[\w-]{22}$/.test(channel)) {
+        return new Response(JSON.stringify({ error: 'invalid channel' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      if (!env.YT_API_KEY) {
+        return new Response(JSON.stringify({ error: 'YT_API_KEY not configured' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
+      const playlistId = 'UU' + channel.slice(2);
+      const cache = caches.default;
+      const cacheKey = new Request('https://ytlive.cache/' + channel, { method: 'GET' });
+      let cached = await cache.match(cacheKey);
+      if (cached) {
+        cached = new Response(cached.body, cached);
+        for (const [k, v] of Object.entries(corsHeaders)) cached.headers.set(k, v);
+        return cached;
+      }
+
+      let videoId = null;
+      try {
+        // ① playlistItems で最大15件の videoId を収集
+        const playlistUrl = 'https://www.googleapis.com/youtube/v3/playlistItems'
+          + '?part=contentDetails&maxResults=15&playlistId=' + playlistId + '&key=' + env.YT_API_KEY;
+        const playlistRes = await fetch(playlistUrl, { signal: AbortSignal.timeout(8000) });
+        if (!playlistRes.ok) throw new Error('playlist API failed: ' + playlistRes.status);
+
+        const playlistData = await playlistRes.json();
+        const videoIds = (playlistData.items || [])
+          .map(item => item.contentDetails?.videoId)
+          .filter(Boolean);
+
+        if (videoIds.length === 0) throw new Error('no videos in playlist');
+
+        // ② videos で liveBroadcastContent === 'live' を検索
+        const videosUrl = 'https://www.googleapis.com/youtube/v3/videos'
+          + '?part=snippet&id=' + videoIds.join(',') + '&key=' + env.YT_API_KEY;
+        const videosRes = await fetch(videosUrl, { signal: AbortSignal.timeout(8000) });
+        if (!videosRes.ok) throw new Error('videos API failed: ' + videosRes.status);
+
+        const videosData = await videosRes.json();
+        const liveVideo = (videosData.items || [])
+          .find(item => item.snippet?.liveBroadcastContent === 'live');
+
+        if (liveVideo) {
+          videoId = liveVideo.id;
+        }
+      } catch (e) {
+        console.warn('[ytlive]', e.message);
+      }
+
+      // ③ キャッシュTTL: videoId取得できたら600秒、なければ120秒
+      const ttl = videoId ? 600 : 120;
+      const body = JSON.stringify({ videoId });
+      const res = new Response(body, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${ttl}`,
+        },
+      });
+      if (videoId) ctx.waitUntil(cache.put(cacheKey, res.clone()));
+      return res;
+    }
+
+    const target = reqUrl.searchParams.get('url');
     if (!target) {
       return new Response('Missing ?url= parameter', { status: 400, headers: corsHeaders });
     }
