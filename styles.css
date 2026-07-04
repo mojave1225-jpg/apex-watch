@@ -2210,6 +2210,8 @@ html, body {
   scrollbar-width: none;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 60px), transparent);
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 60px), transparent);
 }
 .section-nav::-webkit-scrollbar { display: none; }
 
