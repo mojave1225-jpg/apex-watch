@@ -13,6 +13,10 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#03040d">
   <link rel="manifest" href="/manifest.json">
+  <!-- iOS PWA対応(iOSはmanifest.jsonの一部項目を無視するため個別指定が必要) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="APEX WATCH">
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -58,7 +62,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="styles.css?v=301">
+  <link rel="stylesheet" href="styles.css?v=302">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -1468,11 +1472,107 @@
   })();
 
 
-  // ── Service Worker 登録 (PWA) ──
+  // ── Service Worker 登録 + 更新通知 (PWA) ──
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        // 既に更新版が待機中(ページを開きっぱなしにしていた場合)
+        if (reg.waiting) showUpdateToast(reg);
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateToast(reg);
+            }
+          });
+        });
+      }).catch(e => console.warn('SW registration failed:', e));
+
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloading) return;
+        reloading = true;
+        window.location.reload();
+      });
     });
+  }
+
+  function showUpdateToast(reg) {
+    if (document.getElementById('swUpdateToast')) return;
+    const t = document.createElement('div');
+    t.id = 'swUpdateToast';
+    t.className = 'pwa-toast';
+    t.innerHTML = `
+      <span>◈ 新しいバージョンが利用可能です</span>
+      <button class="pwa-toast-btn" id="swUpdateBtn">今すぐ更新</button>
+      <button class="pwa-toast-close" id="swUpdateClose" aria-label="閉じる">×</button>`;
+    document.body.appendChild(t);
+    document.getElementById('swUpdateBtn').onclick = () => {
+      reg.waiting && reg.waiting.postMessage('SKIP_WAITING');
+      t.remove();
+    };
+    document.getElementById('swUpdateClose').onclick = () => t.remove();
+  }
+
+  // ── PWAインストール促進 (Android/Desktop Chrome: beforeinstallprompt) ──
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallBanner('android');
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    const b = document.getElementById('pwaInstallBanner');
+    if (b) b.remove();
+    try { localStorage.setItem('apexPwaInstalled', '1'); } catch (_) {}
+  });
+
+  // ── iOS Safari: beforeinstallpromptが発火しないため手動案内 ──
+  (function () {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    let dismissed = false;
+    try { dismissed = localStorage.getItem('apexPwaIosDismissed') === '1'; } catch (_) {}
+    if (isIOS && !isStandalone && !dismissed) {
+      setTimeout(() => showInstallBanner('ios'), 4000);
+    }
+  })();
+
+  function showInstallBanner(platform) {
+    if (document.getElementById('pwaInstallBanner')) return;
+    try { if (localStorage.getItem('apexPwaInstalled') === '1') return; } catch (_) {}
+    const b = document.createElement('div');
+    b.id = 'pwaInstallBanner';
+    b.className = 'pwa-install-banner';
+    if (platform === 'ios') {
+      b.innerHTML = `
+        <span class="pwa-install-icon">◈</span>
+        <span class="pwa-install-text">ホーム画面に追加してアプリとして起動できます — 共有ボタン
+          <svg viewBox="0 0 24 24" class="pwa-share-icon"><path d="M12 2v13m0-13-4 4m4-4 4 4M5 12v8a1 1 0 001 1h12a1 1 0 001-1v-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          →「ホーム画面に追加」</span>
+        <button class="pwa-install-close" aria-label="閉じる">×</button>`;
+      b.querySelector('.pwa-install-close').onclick = () => {
+        b.remove();
+        try { localStorage.setItem('apexPwaIosDismissed', '1'); } catch (_) {}
+      };
+    } else {
+      b.innerHTML = `
+        <span class="pwa-install-icon">◈</span>
+        <span class="pwa-install-text">APEX WATCHをアプリとしてインストールできます</span>
+        <button class="pwa-install-btn" id="pwaInstallBtn">インストール</button>
+        <button class="pwa-install-close" aria-label="閉じる">×</button>`;
+      b.querySelector('.pwa-install-close').onclick = () => b.remove();
+      b.querySelector('#pwaInstallBtn').onclick = async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        b.remove();
+      };
+    }
+    document.body.appendChild(b);
   }
   
   // ── Lazy-load Three.js + neo3d.js when the space section approaches ──

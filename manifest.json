@@ -1,17 +1,57 @@
 {
+  "id": "/?source=pwa",
   "name": "APEX WATCH — 終末予兆監視システム",
   "short_name": "APEX WATCH",
-  "description": "World Apocalypse Early Warning System — DEFCON・軍事活動・BizJet・海運・NEO・宇宙天気・サイバーのリアルタイム監視ダッシュボード",
+  "description": "World Apocalypse Early Warning System — DEFCON・軍事活動・BizJet・海運・NEO・宇宙天気・サイバー・GDELT世界メディア監視のリアルタイムダッシュボード",
   "lang": "ja",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#03040d",
   "theme_color": "#03040d",
+  "categories": ["news", "utilities"],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "グローバル脅威マップ",
+      "short_name": "マップ",
+      "url": "/?source=pwa#s-map",
+      "icons": [{ "src": "/shortcut-map.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "GDELT世界メディア監視",
+      "short_name": "GDELT",
+      "url": "/?source=pwa#s-gdelt",
+      "icons": [{ "src": "/shortcut-gdelt.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "ライブニュース",
+      "short_name": "ライブ",
+      "url": "/?source=pwa#s-news",
+      "icons": [{ "src": "/shortcut-live.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "540x1170",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "世界監視コマンドダッシュボード"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1600x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "グローバル脅威マップとDOOMSDAY INDEX"
+    }
   ]
 }
