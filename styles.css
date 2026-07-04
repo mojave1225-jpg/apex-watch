@@ -2240,7 +2240,7 @@ html, body {
 }
 .snav-btn:hover { color: var(--text-primary); border-bottom-color: var(--border-bright); }
 .snav-btn.snav-active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
-.snav-btn:last-child { margin-right: 48px; }
+.snav-btn:last-child { margin-right: 12px; }
 
 /* ── Section collapse toggle button ── */
 .sec-toggle {
@@ -2329,7 +2329,7 @@ html, body {
     mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent);
   }
   .snav-btn    { font-size: 9px; padding: 10px 11px; scroll-snap-align: start; margin-right: 4px; }
-  .snav-btn:last-child { margin-right: 48px; }
+  .snav-btn:last-child { margin-right: 12px; }
   .snav-label  { display: none; }
   #topBtn      { bottom: 14px; right: 12px; width: 34px; height: 34px; font-size: 12px; }
 }
