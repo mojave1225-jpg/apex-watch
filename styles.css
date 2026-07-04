@@ -1948,8 +1948,8 @@ html, body {
 .map-section { position: relative; }
 #threat-status-panel {
   position: absolute;
-  /* .map-section基準: マップタイトル+レイヤーボタン下、中央上部に配置 */
-  top: 140px;
+  /* .map-section基準: マップの右側中央上部に配置 */
+  top: 90px;
   right: 28px;
   z-index: 20;
   display: flex;
