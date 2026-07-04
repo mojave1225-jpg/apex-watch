@@ -3778,3 +3778,29 @@ html, body {
     flex-wrap: wrap;
   }
 }
+
+
+/* ============================================================
+   FOOTER HIGHLIGHT — v300
+   ============================================================ */
+.footer-ver {
+  color: var(--accent-blue);
+  font-weight: bold;
+  background: rgba(0, 204, 255, 0.08);
+  border: 1px solid var(--border-bright);
+  border-radius: 2px;
+  padding: 1px 8px;
+  text-shadow: 0 0 8px rgba(0, 204, 255, 0.5);
+  letter-spacing: 1px;
+}
+.footer-link {
+  color: var(--accent-blue) !important;
+  text-decoration: none;
+  opacity: 1 !important;
+  border-bottom: 1px dotted rgba(0, 204, 255, 0.45);
+  transition: all 0.2s;
+}
+.footer-link:hover {
+  text-shadow: 0 0 8px rgba(0, 204, 255, 0.6);
+  border-bottom-color: var(--accent-blue);
+}

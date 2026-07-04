@@ -244,7 +244,7 @@
           <div class="svc-name">YouTube / Google <span class="badge badge-amber">埋込み</span></div>
           <div class="svc-sub">youtube-nocookie.com</div>
         </td>
-        <td class="svc-desc">CBSニュースのライブ配信埋込み。閲覧時にGoogleのCookieが発行されます。プライバシー強化モード（nocookie）を使用しています。<br><a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener" style="font-size:11px;">Google プライバシーポリシー →</a></td>
+        <td class="svc-desc">ライブニュース配信の埋込み（CBS News / ABC News / Al Jazeera English / Sky News をタブで切替、プレイヤーは1枠）。閲覧時にGoogleのCookieが発行されます。フォールバック経路ではプライバシー強化モード（nocookie）を使用。また現在のライブ配信IDの特定のため、閲覧者のブラウザは当サイトのCloudflare Worker（下記）にチャンネルIDのみを送信します（閲覧者の個人情報は含まれません）。<br><a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener" style="font-size:11px;">Google プライバシーポリシー →</a></td>
         <td class="svc-risk"><span class="badge badge-amber">中</span></td>
       </tr>
       <tr>
@@ -298,7 +298,7 @@
           <div class="svc-name">allorigins.win <span class="badge badge-amber">CORSプロキシ</span></div>
           <div class="svc-sub">api.allorigins.win</div>
         </td>
-        <td class="svc-desc">Feodo Trackerへの直接アクセスがCORS制限でブロックされた場合のフォールバックプロキシ。リクエストURLのみが送信されます。<br><span style="font-size:11px; color:var(--text-dim);">※ Feodo Trackerへの直接接続が成功した場合は使用されません</span></td>
+        <td class="svc-desc">【非常用フォールバック】自前プロキシ（Cloudflare Worker）導入後は通常使用されず、Worker障害時のみ経由します。Feodo Trackerへの直接アクセスがCORS制限でブロックされた場合のフォールバックプロキシ。リクエストURLのみが送信されます。<br><span style="font-size:11px; color:var(--text-dim);">※ Feodo Trackerへの直接接続が成功した場合は使用されません</span></td>
         <td class="svc-risk"><span class="badge badge-amber">低〜中</span></td>
       </tr>
       <tr>
@@ -307,7 +307,7 @@
           <div class="svc-name">r.jina.ai <span class="badge badge-amber">CORSプロキシ</span></div>
           <div class="svc-sub">r.jina.ai</div>
         </td>
-        <td class="svc-desc">一部の外部データ（例: 台湾国防部の日次動態、Open-Meteo/USGS のフォールバック取得）で利用するHTTPプロキシ。閲覧者のIPアドレスとリクエスト先URLが送信されます。<br><span style="font-size:11px; color:var(--text-dim);">※ 直接取得が成功した場合は使用されません</span></td>
+        <td class="svc-desc">【非常用フォールバック】自前プロキシ（Cloudflare Worker）導入後は通常使用されず、Worker障害時のみ経由します。一部の外部データ（例: 台湾国防部の日次動態、Open-Meteo/USGS のフォールバック取得）で利用するHTTPプロキシ。閲覧者のIPアドレスとリクエスト先URLが送信されます。<br><span style="font-size:11px; color:var(--text-dim);">※ 直接取得が成功した場合は使用されません</span></td>
         <td class="svc-risk"><span class="badge badge-amber">低〜中</span></td>
       </tr>
       <tr>
@@ -326,6 +326,24 @@
           <div class="svc-sub">複数のニュースソース</div>
         </td>
         <td class="svc-desc">シグナルインテリジェンスフィード・ニュースソースへのリクエスト。</td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">12</td>
+        <td>
+          <div class="svc-name">Cloudflare Workers（apex-proxy） <span class="badge badge-cyan">自前プロキシ</span></div>
+          <div class="svc-sub">apex-proxy.mojave1225.workers.dev</div>
+        </td>
+        <td class="svc-desc">当サイト運営者が管理する中継サーバー。①GDELT等のCORS中継＋エッジキャッシュ（GDELTは15分）②YouTubeライブ配信IDの解決（YouTube Data APIをサーバー側から照会。閲覧者情報はGoogleに送信されません）。中継時に閲覧者のIPアドレスはCloudflare社のインフラを通過しますが、当サイト側でアクセスログの収集・保存は行いません。<br><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener" style="font-size:11px;">Cloudflare プライバシーポリシー →</a></td>
+        <td class="svc-risk"><span class="badge badge-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="svc-num">13</td>
+        <td>
+          <div class="svc-name">GDELT Project <span class="badge badge-green">API</span></div>
+          <div class="svc-sub">api.gdeltproject.org</div>
+        </td>
+        <td class="svc-desc">世界メディア監視（本体のGDELTセクション・マップ報道密度レイヤー・南西諸島ページの地域メディア監視）。原則として上記Cloudflare Worker経由で取得するため、閲覧者のブラウザからGDELTへ直接送信されるのはWorker障害時のフォールバックのみです。</td>
         <td class="svc-risk"><span class="badge badge-green">低</span></td>
       </tr>
     </tbody>
@@ -354,11 +372,15 @@
   ├─<span class="arrow">→</span> <span class="node">abuse.ch Feodo Tracker</span>  <span class="note">← C2ボットネットデータ（30分ごと）</span>
   │    └─<span class="arrow">→</span> <span class="node">allorigins.win</span>  <span class="note">← CORS失敗時のフォールバックのみ</span>
   │
-  ├─<span class="arrow">→</span> <span class="node">r.jina.ai</span>  <span class="note">← 台湾国防部・気象/地震データのCORSフォールバック</span>
+  ├─<span class="arrow">→</span> <span class="node">Cloudflare Workers (apex-proxy)</span>  <span class="note">← 自前プロキシ（運営者管理）</span>
+  │    ├─<span class="arrow">→</span> <span class="node">GDELT Project</span>  <span class="note">← 世界メディア監視（15分エッジキャッシュで一本化）</span>
+  │    └─<span class="arrow">→</span> <span class="node">YouTube Data API</span>  <span class="note">← ライブ配信ID解決（閲覧者情報は非送信）</span>
+  │
+  ├─<span class="arrow">→</span> <span class="node">r.jina.ai</span>  <span class="note">← 気象/地震データの非常用フォールバック</span>
   │
   ├─<span class="arrow">→</span> <span class="node">Alternative.me API</span>  <span class="note">← 恐怖&強欲指数（5分ごと）</span>
   │
-  ├─<span class="arrow">→</span> <span class="node">YouTube (nocookie)</span>  <span class="note">← CBSニュースライブ埋込み</span>
+  ├─<span class="arrow">→</span> <span class="node">YouTube</span>  <span class="note">← ライブニュース埋込み（CBS / ABC / Al Jazeera / Sky News）</span>
   │
   └─<span class="arrow">→</span> <span class="node">Yahoo Finance</span>  <span class="note">← BDI/FBX海運指数（5分ごと）</span>
 
@@ -444,7 +466,8 @@
     <h2 class="section-title"><span class="sym">◈</span>ポリシーの変更</h2>
   </div>
   <p>本ポリシーは、サイトの機能追加・外部APIの変更に応じて更新されることがあります。重要な変更が行われた場合は、ページ上部の「最終更新」日付に反映されます。継続的な閲覧は最新のポリシーへの同意とみなされます。</p>
-  <p style="font-size:12px; color:var(--text-dim);">v2.8.9（2026年7月4日）での変更点：GDELTプロジェクトを外部データソースに追加（世界メディア監視API）。自前CORSプロキシをCloudflare Workersで実装（許可ホストリストにapi.gdeltproject.org、www.youtube.com を追加）。YouTubeライブID実行時解決（v3アップロードプレイリスト方式）。PWA化（Service Worker、manifest.json）。これに伴いデータフロー図とセキュリティに関する記述を最新実装に同期。</p>
+  <p style="font-size:12px; color:var(--text-dim);">v2.8.9（2026年7月4日）での変更点：GDELTプロジェクトを外部データソースに追加（世界メディア監視API）。自前CORSプロキシをCloudflare Workersで実装（許可ホストリストにapi.gdeltproject.org、www.youtube.com を追加）。YouTubeライブID実行時解決（v3アップロードプレイリスト方式）。PWA化（Service Worker、manifest.json）。これに伴いデータフロー図とセキュリティに関する記述を最新実装に同期。<br>
+  <span style="color:var(--text-bright);">同日追記:</span> GDELTへの通信をCloudflare Workerのエッジキャッシュ（15分）経由に一本化し、閲覧者ブラウザからGDELTへの直接送信は非常時フォールバックのみに変更。ライブニュース埋込みを4局対応（CBS / ABC News / Al Jazeera English / Sky News）に拡張（接続先はいずれも従来同様YouTube / Google）。南西諸島ページに地域メディア監視（GDELT・Worker経由）を追加。サービス一覧にCloudflare WorkersとGDELTの項目を追加。</p>
 </section>
 
 <!-- 08 お問い合わせ -->
