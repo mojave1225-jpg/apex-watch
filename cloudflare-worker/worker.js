@@ -77,54 +77,87 @@ export default {
       const debugInfo = debug ? {
         plStatus: [],
         plCount: 0,
-        vStatus: null,
+        vStatus: [],
         states: [],
+        searchStatus: null,
       } : null;
 
       try {
         const suffix = channel.slice(2);
-        // 2段階プレイリスト照会: UULV優先、失敗時にUU
-        const playlists = ['UULV' + suffix, 'UU' + suffix];
-        let allVideoIds = [];
+        let liveVideo = null;
 
+        // ① プレイリスト照会(50件ずつ): UULVで50件検証、失敗時UUで50件検証
+        const playlists = ['UULV' + suffix, 'UU' + suffix];
         for (const playlistId of playlists) {
           const playlistUrl = 'https://www.googleapis.com/youtube/v3/playlistItems'
-            + '?part=contentDetails&maxResults=15&playlistId=' + playlistId + '&key=' + env.YT_API_KEY;
+            + '?part=contentDetails&maxResults=50&playlistId=' + playlistId + '&key=' + env.YT_API_KEY;
           const playlistRes = await fetch(playlistUrl, { signal: AbortSignal.timeout(8000) });
 
           if (debug) debugInfo.plStatus.push(playlistRes.status);
-
           if (!playlistRes.ok) continue;
 
           const playlistData = await playlistRes.json();
           const videoIds = (playlistData.items || [])
             .map(item => item.contentDetails?.videoId)
             .filter(Boolean);
-          allVideoIds = allVideoIds.concat(videoIds);
+
+          if (videoIds.length === 0) continue;
+          if (debug) debugInfo.plCount = videoIds.length;
+
+          // videos で liveBroadcastContent === 'live' を検索
+          const videosUrl = 'https://www.googleapis.com/youtube/v3/videos'
+            + '?part=snippet&id=' + videoIds.join(',') + '&key=' + env.YT_API_KEY;
+          const videosRes = await fetch(videosUrl, { signal: AbortSignal.timeout(8000) });
+
+          if (debug) debugInfo.vStatus.push(videosRes.status);
+          if (!videosRes.ok) continue;
+
+          const videosData = await videosRes.json();
+          if (debug) {
+            debugInfo.states = (videosData.items || [])
+              .map(item => item.snippet?.liveBroadcastContent || 'unknown');
+          }
+
+          liveVideo = (videosData.items || [])
+            .find(item => item.snippet?.liveBroadcastContent === 'live');
+
+          if (liveVideo) {
+            videoId = liveVideo.id;
+            break;
+          }
         }
 
-        if (debug) debugInfo.plCount = allVideoIds.length;
-        if (allVideoIds.length === 0) throw new Error('no videos in playlists');
+        // ② プレイリストでliveが見つからなければ search.list フォールバック
+        if (!liveVideo) {
+          const searchUrl = 'https://www.googleapis.com/youtube/v3/search'
+            + '?part=id&type=video&eventType=live&maxResults=3&channelId=' + channel
+            + '&key=' + env.YT_API_KEY;
+          const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(8000) });
 
-        // videos で liveBroadcastContent === 'live' を検索
-        const videosUrl = 'https://www.googleapis.com/youtube/v3/videos'
-          + '?part=snippet&id=' + allVideoIds.join(',') + '&key=' + env.YT_API_KEY;
-        const videosRes = await fetch(videosUrl, { signal: AbortSignal.timeout(8000) });
+          if (debug) debugInfo.searchStatus = searchRes.status;
+          if (searchRes.ok) {
+            const searchData = await searchRes.json();
+            const searchVideoIds = (searchData.items || [])
+              .map(item => item.id?.videoId)
+              .filter(Boolean);
 
-        if (debug) debugInfo.vStatus = videosRes.status;
-        if (!videosRes.ok) throw new Error('videos API failed: ' + videosRes.status);
+            if (searchVideoIds.length > 0) {
+              // 得たIDを videos.list で検証
+              const videosUrl = 'https://www.googleapis.com/youtube/v3/videos'
+                + '?part=snippet&id=' + searchVideoIds.join(',') + '&key=' + env.YT_API_KEY;
+              const videosRes = await fetch(videosUrl, { signal: AbortSignal.timeout(8000) });
 
-        const videosData = await videosRes.json();
-        if (debug) {
-          debugInfo.states = (videosData.items || [])
-            .map(item => item.snippet?.liveBroadcastContent || 'unknown');
-        }
+              if (videosRes.ok) {
+                const videosData = await videosRes.json();
+                liveVideo = (videosData.items || [])
+                  .find(item => item.snippet?.liveBroadcastContent === 'live');
 
-        const liveVideo = (videosData.items || [])
-          .find(item => item.snippet?.liveBroadcastContent === 'live');
-
-        if (liveVideo) {
-          videoId = liveVideo.id;
+                if (liveVideo) {
+                  videoId = liveVideo.id;
+                }
+              }
+            }
+          }
         }
       } catch (e) {
         console.warn('[ytlive]', e.message);
