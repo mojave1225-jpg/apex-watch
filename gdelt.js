@@ -70,26 +70,32 @@ const gdeltState = {
 async function gdeltFetchJson(url, timeoutMs = 12000) {
   async function once(u) {
     const res = await fetch(u, { signal: AbortSignal.timeout(timeoutMs) });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    // レート制限(5秒に1回)の応答はプレーンテキスト
-    if (text.includes('Please limit requests')) {
+    // レート制限: GDELT直接は200+テキスト、Worker経由は429で返る
+    if (res.status === 429 || text.includes('Please limit requests')) {
       const err = new Error('rate-limited');
       err.rateLimited = true;
       throw err;
     }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     // GDELTはクエリ異常時にHTMLを返すことがあるためガード
     const start = text.indexOf('{');
     if (start === -1) throw new Error('non-JSON response');
     return JSON.parse(text.slice(start));
   }
-  try {
-    return await once(url);
-  } catch (e) {
-    const pu = (typeof apexProxyUrl === 'function') ? apexProxyUrl(url) : null;
-    if (!pu) throw e;
-    return await once(pu);
+  /* Worker(エッジキャッシュ15分)を最優先。全訪問者・全タブが同じ
+     キャッシュを共有するため、GDELTへの実アクセスが世界全体で
+     15分に1回まで削減され、IPレート制限が構造的に発生しなくなる。
+     Worker障害時のみ直接アクセスにフォールバック。 */
+  const pu = (typeof apexProxyUrl === 'function') ? apexProxyUrl(url) : null;
+  if (pu) {
+    try {
+      return await once(pu);
+    } catch (e) {
+      if (e.rateLimited) throw e; // 上流制限中は直接も無駄撃ちしない
+    }
   }
+  return await once(url);
 }
 
 /* ============================================================

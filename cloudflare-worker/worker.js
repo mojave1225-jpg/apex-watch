@@ -225,12 +225,32 @@ export default {
           status: 502, headers: corsHeaders,
         });
       }
-      res = new Response(originRes.body, originRes);
-      res.headers.set('Cache-Control', `public, max-age=${ttl}`);
-      // 上流のSet-Cookie等は落とす
-      res.headers.delete('Set-Cookie');
-      if (originRes.ok) {
+      /* GDELTはレート制限時もHTTP 200でテキストを返すため、
+         本文を検査してキャッシュ汚染を防ぎ、クライアントには429で通知 */
+      if (upstream.hostname === 'api.gdeltproject.org') {
+        const bodyText = await originRes.text();
+        if (!originRes.ok || bodyText.includes('Please limit requests')) {
+          return new Response('GDELT rate-limited upstream', {
+            status: 429,
+            headers: { ...corsHeaders, 'Cache-Control': 'no-store' },
+          });
+        }
+        res = new Response(bodyText, {
+          status: 200,
+          headers: {
+            'Content-Type': originRes.headers.get('Content-Type') || 'application/json',
+            'Cache-Control': `public, max-age=${ttl}`,
+          },
+        });
         ctx.waitUntil(cache.put(cacheKey, res.clone()));
+      } else {
+        res = new Response(originRes.body, originRes);
+        res.headers.set('Cache-Control', `public, max-age=${ttl}`);
+        // 上流のSet-Cookie等は落とす
+        res.headers.delete('Set-Cookie');
+        if (originRes.ok) {
+          ctx.waitUntil(cache.put(cacheKey, res.clone()));
+        }
       }
     }
 
