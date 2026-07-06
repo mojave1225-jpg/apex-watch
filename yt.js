@@ -52,6 +52,7 @@ function buildEmbedSrc(ch, useNoCookie, mode = 'channel') {
     'autoplay=1&mute=1&rel=0&modestbranding=1',
     'playsinline=1',
     'cc_load_policy=1',
+    'cc_lang_pref=ja',
     'hl=ja',
     'enablejsapi=1',
   ].join('&') + originParam;
