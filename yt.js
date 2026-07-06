@@ -9,15 +9,7 @@
 
 const YT_CHANNELS = [
   {
-    wrapperId:  'yt-wrap-cbs',
-    channelId:  'UC8p1vwvWtl6T73JiExfWs1g',  // CBS News
-    liveVideoId:'zvMSZFgWYBA',              // CBS 24/7 stream fallback
-    label:      '▶ CBS News 24/7',
-    youtubeUrl: 'https://www.youtube.com/@CBSNews/live',
-    officialUrl:'https://www.cbsnews.com/live/',
-  },
-  {
-    wrapperId:  'yt-wrap-cbs',              // プレイヤーは1枠を共有
+    wrapperId:  'yt-wrap-main',
     channelId:  'UCBi2mrWuNuyYy4gbM6fU18Q',  // ABC News
     liveVideoId: null,
     label:      '▶ ABC News Live',
@@ -25,7 +17,7 @@ const YT_CHANNELS = [
     officialUrl:'https://abcnews.go.com/Live',
   },
   {
-    wrapperId:  'yt-wrap-cbs',
+    wrapperId:  'yt-wrap-main',              // プレイヤーは1枠を共有
     channelId:  'UCNye-wNBqNL5ZzHSJj3l8Bg',  // Al Jazeera English
     liveVideoId: null,
     label:      '▶ Al Jazeera English Live',
@@ -33,7 +25,7 @@ const YT_CHANNELS = [
     officialUrl:'https://www.aljazeera.com/live/',
   },
   {
-    wrapperId:  'yt-wrap-cbs',
+    wrapperId:  'yt-wrap-main',
     channelId:  'UCoMdktPbSTixAyNGwb-UYkQ',  // Sky News
     liveVideoId: null,
     label:      '▶ Sky News Live',
@@ -278,7 +270,7 @@ function wireChannelTabs() {
   });
 }
 
-/* メインのタブ切替プレイヤー(CBS等)とは別に、
+/* メインのタブ切替プレイヤー(ABC等)とは別に、
    Al Jazeera Englishを常設2枠目として独立に解決・埋め込みする */
 const ALJAZEERA_FIXED = {
   wrapperId:  'yt-wrap-aljazeera',
